@@ -34,6 +34,19 @@ class ClientManager:
         self.client_assessments[client_id] = []
         return client
     
+    async def search_clients(self, query: str = None) -> List[Client]:
+        if not query:
+            return list(self.clients.values())
+            
+        query = query.lower()
+        return [
+            client for client in self.clients.values()
+            if query in client.first_name.lower() or
+               query in client.last_name.lower() or
+               query in client.contact_info.get('email', '').lower() or
+               query in client.contact_info.get('phone', '')
+        ]
+    
     async def get_client(self, client_id: UUID) -> Optional[Client]:
         return self.clients.get(client_id)
     
