@@ -12,58 +12,46 @@ class Client:
     contact_info: Dict
     created_at: datetime
     assessments: List[UUID] = None
+    status: str = 'active'  # active, discharged, on_hold
+    assigned_therapist: UUID = None
+    program: str = None
 
 class ClientManager:
     def __init__(self):
         self.clients: Dict[UUID, Client] = {}
         self.client_assessments: Dict[UUID, List[UUID]] = {}
-        self.PAGE_SIZE = 10
-    
-    async def search_clients(self, 
-                          query: str = None, 
-                          filters: Dict = None, 
-                          sort_by: str = None,
-                          page: int = 1) -> Tuple[List[Client], int]:
-        clients = list(self.clients.values())
-        
-        # Apply search
-        if query:
-            query = query.lower()
-            clients = [
-                client for client in clients
-                if query in client.first_name.lower() or
-                   query in client.last_name.lower() or
-                   query in client.contact_info.get('email', '').lower() or
-                   query in client.contact_info.get('phone', '')
-            ]
-        
-        # Apply filters
-        if filters:
-            if filters.get('has_assessments'):
-                clients = [c for c in clients if c.assessments and len(c.assessments) > 0]
-            if filters.get('no_assessments'):
-                clients = [c for c in clients if not c.assessments or len(c.assessments) == 0]
-            if filters.get('date_range'):
-                start = datetime.fromisoformat(filters['date_range']['start'])
-                end = datetime.fromisoformat(filters['date_range']['end'])
-                clients = [c for c in clients if start <= c.created_at <= end]
-        
-        # Apply sorting
-        if sort_by:
-            if sort_by == 'name':
-                clients.sort(key=lambda x: f"{x.last_name} {x.first_name}".lower())
-            elif sort_by == 'date':
-                clients.sort(key=lambda x: x.created_at)
-            elif sort_by == 'assessments':
-                clients.sort(key=lambda x: len(x.assessments) if x.assessments else 0, reverse=True)
-        
-        # Calculate total pages
-        total_clients = len(clients)
-        total_pages = (total_clients + self.PAGE_SIZE - 1) // self.PAGE_SIZE
-        
-        # Apply pagination
-        start_idx = (page - 1) * self.PAGE_SIZE
-        end_idx = start_idx + self.PAGE_SIZE
-        paginated_clients = clients[start_idx:end_idx]
-        
-        return paginated_clients, total_pages
+
+    async def bulk_update_status(self, client_ids: List[UUID], new_status: str) -> List[Client]:
+        updated = []
+        for client_id in client_ids:
+            if client := self.clients.get(client_id):
+                client.status = new_status
+                updated.append(client)
+        return updated
+
+    async def bulk_assign_therapist(self, client_ids: List[UUID], therapist_id: UUID) -> List[Client]:
+        updated = []
+        for client_id in client_ids:
+            if client := self.clients.get(client_id):
+                client.assigned_therapist = therapist_id
+                updated.append(client)
+        return updated
+
+    async def bulk_assign_program(self, client_ids: List[UUID], program: str) -> List[Client]:
+        updated = []
+        for client_id in client_ids:
+            if client := self.clients.get(client_id):
+                client.program = program
+                updated.append(client)
+        return updated
+
+    async def bulk_start_assessments(self, client_ids: List[UUID], assessment_type: str) -> List[UUID]:
+        session_ids = []
+        for client_id in client_ids:
+            if client := self.clients.get(client_id):
+                session_id = uuid4()  # In real implementation, this would create actual assessment
+                if not client.assessments:
+                    client.assessments = []
+                client.assessments.append(session_id)
+                session_ids.append(session_id)
+        return session_ids
