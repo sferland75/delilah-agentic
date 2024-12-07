@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 from uuid import UUID, uuid4
 
 @dataclass
@@ -17,8 +17,13 @@ class ClientManager:
     def __init__(self):
         self.clients: Dict[UUID, Client] = {}
         self.client_assessments: Dict[UUID, List[UUID]] = {}
+        self.PAGE_SIZE = 10
     
-    async def search_clients(self, query: str = None, filters: Dict = None, sort_by: str = None) -> List[Client]:
+    async def search_clients(self, 
+                          query: str = None, 
+                          filters: Dict = None, 
+                          sort_by: str = None,
+                          page: int = 1) -> Tuple[List[Client], int]:
         clients = list(self.clients.values())
         
         # Apply search
@@ -52,4 +57,13 @@ class ClientManager:
             elif sort_by == 'assessments':
                 clients.sort(key=lambda x: len(x.assessments) if x.assessments else 0, reverse=True)
         
-        return clients
+        # Calculate total pages
+        total_clients = len(clients)
+        total_pages = (total_clients + self.PAGE_SIZE - 1) // self.PAGE_SIZE
+        
+        # Apply pagination
+        start_idx = (page - 1) * self.PAGE_SIZE
+        end_idx = start_idx + self.PAGE_SIZE
+        paginated_clients = clients[start_idx:end_idx]
+        
+        return paginated_clients, total_pages
