@@ -1,57 +1,71 @@
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional
 from uuid import UUID, uuid4
+from datetime import datetime
 
-@dataclass
-class Client:
-    id: UUID
-    first_name: str
-    last_name: str
-    date_of_birth: datetime
-    contact_info: Dict
-    created_at: datetime
-    assessments: List[UUID] = None
-    status: str = 'active'  # active, discharged, on_hold
-    assigned_therapist: UUID = None
-    program: str = None
+from api.models.client import Client, ClientCreate, ClientUpdate
 
 class ClientManager:
     def __init__(self):
-        self.clients: Dict[UUID, Client] = {}
-        self.client_assessments: Dict[UUID, List[UUID]] = {}
+        self.clients = {}
 
-    async def bulk_update_status(self, client_ids: List[UUID], new_status: str) -> List[Client]:
-        updated = []
-        for client_id in client_ids:
-            if client := self.clients.get(client_id):
-                client.status = new_status
-                updated.append(client)
-        return updated
+    async def create_client(self, client_data: ClientCreate) -> Client:
+        """Create a new client"""
+        client_id = uuid4()
+        now = datetime.utcnow()
+        
+        client = Client(
+            id=client_id,
+            created_at=now,
+            updated_at=now,
+            **client_data.model_dump()
+        )
+        
+        self.clients[client_id] = client
+        return client
 
-    async def bulk_assign_therapist(self, client_ids: List[UUID], therapist_id: UUID) -> List[Client]:
-        updated = []
-        for client_id in client_ids:
-            if client := self.clients.get(client_id):
-                client.assigned_therapist = therapist_id
-                updated.append(client)
-        return updated
+    async def get_client(self, client_id: UUID) -> Optional[Client]:
+        """Get a client by ID"""
+        return self.clients.get(client_id)
 
-    async def bulk_assign_program(self, client_ids: List[UUID], program: str) -> List[Client]:
-        updated = []
-        for client_id in client_ids:
-            if client := self.clients.get(client_id):
-                client.program = program
-                updated.append(client)
-        return updated
+    async def list_clients(
+        self,
+        skip: int = 0,
+        limit: int = 10,
+        search: Optional[str] = None
+    ) -> List[Client]:
+        """List clients with optional search"""
+        clients = list(self.clients.values())
+        
+        if search:
+            search = search.lower()
+            clients = [
+                c for c in clients
+                if search in c.first_name.lower() or
+                   search in c.last_name.lower() or
+                   (c.email and search in c.email.lower())
+            ]
+        
+        return clients[skip:skip + limit]
 
-    async def bulk_start_assessments(self, client_ids: List[UUID], assessment_type: str) -> List[UUID]:
-        session_ids = []
-        for client_id in client_ids:
-            if client := self.clients.get(client_id):
-                session_id = uuid4()  # In real implementation, this would create actual assessment
-                if not client.assessments:
-                    client.assessments = []
-                client.assessments.append(session_id)
-                session_ids.append(session_id)
-        return session_ids
+    async def update_client(self, client_id: UUID, client_update: ClientUpdate) -> Optional[Client]:
+        """Update a client's information"""
+        if client_id not in self.clients:
+            return None
+            
+        client = self.clients[client_id]
+        update_data = client_update.model_dump(exclude_unset=True)
+        
+        for field, value in update_data.items():
+            setattr(client, field, value)
+            
+        client.updated_at = datetime.utcnow()
+        return client
+
+    async def delete_client(self, client_id: UUID) -> None:
+        """Soft delete a client"""
+        if client_id not in self.clients:
+            raise ValueError("Client not found")
+            
+        client = self.clients[client_id]
+        client.is_active = False
+        client.updated_at = datetime.utcnow()
