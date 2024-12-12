@@ -4,14 +4,17 @@ from uuid import UUID
 
 from ..models.client import Client, ClientCreate, ClientUpdate
 from ..dependencies import get_coordinator
+from ..core.security import check_permissions
 from coordinator import AgentCoordinator
+from ..models.user import UserRole
 
 router = APIRouter()
 
 @router.post("/", response_model=Client)
 async def create_client(
     client: ClientCreate,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.ADMIN, UserRole.STAFF]))
 ):
     """Create a new client"""
     try:
@@ -22,7 +25,8 @@ async def create_client(
 @router.get("/{client_id}", response_model=Client)
 async def get_client(
     client_id: UUID,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.ADMIN, UserRole.STAFF, UserRole.THERAPIST]))
 ):
     """Get client by ID"""
     try:
@@ -40,7 +44,8 @@ async def list_clients(
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=10, ge=1, le=100),
     search: Optional[str] = None,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.ADMIN, UserRole.STAFF, UserRole.THERAPIST]))
 ):
     """List clients with optional search"""
     try:
@@ -52,7 +57,8 @@ async def list_clients(
 async def update_client(
     client_id: UUID,
     client_update: ClientUpdate,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.ADMIN, UserRole.STAFF]))
 ):
     """Update client information"""
     try:
@@ -68,7 +74,8 @@ async def update_client(
 @router.delete("/{client_id}")
 async def delete_client(
     client_id: UUID,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.ADMIN]))
 ):
     """Soft delete a client"""
     try:
