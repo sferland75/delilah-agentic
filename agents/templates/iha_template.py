@@ -1,85 +1,138 @@
 from datetime import datetime
-from typing import Dict, Optional
-from uuid import UUID
+from typing import Dict, List, Optional
+from dataclasses import dataclass
 
-class IHAReport:
+@dataclass
+class AssessmentSection:
+    title: str
+    required: bool = True
+    content: str = ""
+
+class InHomeAssessmentTemplate:
+    """Template for Occupational Therapy In-Home Assessments"""
+    
+    VERSION = "1.0"
+    
+    # Define all possible sections in order
+    SECTIONS = [
+        "header",
+        "demographics",
+        "therapist_qualifications",
+        "summary_findings",
+        "recommendations",
+        "informed_consent",
+        "documentation_reviewed",
+        "pre_accident_medical_history",
+        "mechanism_of_injury",
+        "nature_of_injury",
+        "course_of_recovery",
+        "current_medical_team",
+        "medication",
+        "subjective_information",
+        "functional_observations",
+        "range_of_motion",
+        "emotional_presentation",
+        "cognitive_presentation",
+        "typical_day",
+        "environmental_assessment",
+        "living_arrangements",
+        "activities_daily_living",
+        "attendant_care_needs",
+        "closing_comments"
+    ]
+
     def __init__(self):
-        self.sections = [
-            'demographics',
-            'documentation_reviewed',
-            'clinical_history',
-            'current_status',
-            'symptoms',
-            'functional_observations',
-            'range_of_motion',
-            'environmental',
-            'adl_assessment',
-            'attendant_care',
-            'recommendations',
-            'summary'
-        ]
+        self.report_date = datetime.now()
+        self.page_number = 1
+        self.total_pages = None
 
     async def generate(self, 
                       client_data: Dict,
                       assessment_data: Dict,
-                      therapist_data: Dict) -> str:
-        report = []
+                      therapist_data: Dict) -> Dict:
+        """Generate the complete assessment report"""
         
-        # Header
-        report.append('OCCUPATIONAL THERAPY IN-HOME ASSESSMENT\n')
+        report = {
+            'metadata': self._generate_metadata(client_data, therapist_data),
+            'sections': {}
+        }
 
-        # Demographics
-        report.append('DEMOGRAPHIC AND REFERRAL INFORMATION\n')
-        demo_table = [
-            ['Client Name:', client_data.get('name', ''), 'Date of Loss:', client_data.get('date_of_loss', '')],
-            ['Address:', client_data.get('address', ''), 'Date of Birth:', client_data.get('dob', '')],
-            ['Telephone #:', client_data.get('phone', '')],
-            ['Lawyer:', client_data.get('lawyer', ''), 'Firm:', client_data.get('law_firm', '')],
-            ['Adjuster:', client_data.get('adjuster', ''), 'Insurer:', client_data.get('insurer', '')],
-            ['Claim No.:', client_data.get('claim_number', '')],
-            ['Therapist:', therapist_data.get('name', ''), 'Date of Assessment:', assessment_data.get('date', '')],
-            ['Registration #:', therapist_data.get('registration', ''), 'Date of Report:', datetime.now().strftime('%Y-%m-%d')]
-        ]
-        report.extend(self._format_table(demo_table))
+        # Generate each section
+        for section in self.SECTIONS:
+            method_name = f'_generate_{section}'
+            if hasattr(self, method_name):
+                report['sections'][section] = await getattr(self, method_name)(
+                    client_data,
+                    assessment_data,
+                    therapist_data
+                )
 
-        # Clinical History
-        if assessment_data.get('clinical_history'):
-            report.append('\nCOMPREHENSIVE CLINICAL HISTORY\n')
-            history = assessment_data['clinical_history']
-            report.append('Pre-Accident Medical History\n')
-            history_table = [
-                ['Medical Condition', 'Treatment History', 'Impact on Function', 'Current Status']
-            ]
-            for condition in history.get('pre_accident', []):
-                history_table.append([
-                    condition.get('condition', ''),
-                    condition.get('treatment', ''),
-                    condition.get('impact', ''),
-                    condition.get('status', '')
-                ])
-            report.extend(self._format_table(history_table))
+        return report
 
-        # Continue for each section...
-        # This is a simplified version - full implementation would include all sections
+    def _generate_metadata(self, client_data: Dict, therapist_data: Dict) -> Dict:
+        return {
+            'report_date': self.report_date.strftime('%Y-%m-%d'),
+            'template_version': self.VERSION,
+            'client_name': client_data.get('name'),
+            'claim_number': client_data.get('claim_number'),
+            'referral_number': client_data.get('referral_number'),
+            'therapist_name': therapist_data.get('name'),
+            'therapist_credentials': therapist_data.get('credentials')
+        }
 
-        return '\n'.join(report)
+    def _generate_header(self, client_data: Dict, assessment_data: Dict, therapist_data: Dict) -> Dict:
+        return {
+            'title': 'OCCUPATIONAL THERAPY IN-HOME ASSESSMENT',
+            'company_info': {
+                'phone': '(613) 776-1266',
+                'website': 'www.ferlandassociates.com',
+                'email': 'info@ferlandassociates.com',
+                'tagline': 'Proudly Serving Eastern Ontario Since 2014'
+            }
+        }
 
-    def _format_table(self, data: list) -> list:
-        """Format a list of lists into a text table"""
-        if not data:
-            return []
+    def _generate_demographics(self, client_data: Dict, assessment_data: Dict, therapist_data: Dict) -> Dict:
+        return {
+            'client_info': {
+                'name': client_data.get('name'),
+                'address': client_data.get('address'),
+                'telephone': client_data.get('phone'),
+                'date_of_loss': client_data.get('date_of_loss'),
+                'date_of_birth': client_data.get('dob')
+            },
+            'legal_info': {
+                'lawyer': client_data.get('lawyer'),
+                'firm': client_data.get('law_firm')
+            },
+            'insurance_info': {
+                'adjuster': client_data.get('adjuster'),
+                'insurer': client_data.get('insurer'),
+                'claim_number': client_data.get('claim_number')
+            },
+            'assessment_info': {
+                'therapist': f"{therapist_data.get('name')} OT Reg.(Ont.)",
+                'registration': therapist_data.get('registration'),
+                'assessment_date': assessment_data.get('date'),
+                'report_date': self.report_date.strftime('%Y-%m-%d')
+            }
+        }
 
-        # Calculate column widths
-        cols = len(data[0])
-        widths = [0] * cols
-        for row in data:
-            for i, cell in enumerate(row):
-                widths[i] = max(widths[i], len(str(cell)))
-
-        # Format rows
+    def format_report(self, report_data: Dict) -> str:
+        """Format the report data into the standard template format"""
         formatted = []
-        for row in data:
-            formatted_row = '  '.join(str(cell).ljust(widths[i]) for i, cell in enumerate(row))
-            formatted.append(formatted_row)
-
-        return formatted
+        
+        # Add header
+        formatted.append(self._format_header(report_data['sections']['header']))
+        
+        # Add demographics table
+        formatted.append(self._format_demographics(report_data['sections']['demographics']))
+        
+        # Add remaining sections
+        for section in self.SECTIONS[2:]:
+            if section in report_data['sections']:
+                formatted.append(self._format_section(
+                    section, 
+                    report_data['sections'][section]
+                ))
+        
+        return '\n\n'.join(formatted)
