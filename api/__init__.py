@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .routes import api_router
+from .routes.auth import router as auth_router
 
 app = FastAPI(
     title="Delilah Agentic API",
@@ -18,7 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add routers
+# Add auth router without /api/v1 prefix
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+# Add other routers with /api/v1 prefix
 app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/health")
