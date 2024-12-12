@@ -1,17 +1,20 @@
-from fastapi import APIRouter, Depends, HTTPException
-from typing import List
+from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import List, Optional
 from uuid import UUID
 
 from ..models.assessment import AssessmentCreate, AssessmentStatus
 from ..dependencies import get_coordinator
+from ..core.security import check_permissions
 from coordinator import AgentCoordinator
+from ..models.user import UserRole
 
 router = APIRouter()
 
 @router.post("/", response_model=UUID)
 async def create_assessment(
     assessment: AssessmentCreate,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.THERAPIST, UserRole.ADMIN]))
 ):
     """Start a new assessment session"""
     try:
@@ -27,7 +30,8 @@ async def create_assessment(
 @router.get("/{session_id}", response_model=AssessmentStatus)
 async def get_assessment_status(
     session_id: UUID,
-    coordinator: AgentCoordinator = Depends(get_coordinator)
+    coordinator: AgentCoordinator = Depends(get_coordinator),
+    _: dict = Depends(check_permissions([UserRole.THERAPIST, UserRole.ADMIN, UserRole.STAFF]))
 ):
     """Get current status of an assessment session"""
     try:
