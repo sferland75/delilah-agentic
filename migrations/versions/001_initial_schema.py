@@ -18,6 +18,35 @@ branch_labels = None
 depends_on = None
 
 def upgrade() -> None:
+    # Create clients table
+    op.create_table(
+        'clients',
+        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column('first_name', sa.String, nullable=False),
+        sa.Column('last_name', sa.String, nullable=False),
+        sa.Column('date_of_birth', sa.Date, nullable=False),
+        sa.Column('email', sa.String),
+        sa.Column('phone', sa.String),
+        sa.Column('active', sa.Boolean, default=True),
+        sa.Column('created_at', sa.DateTime, server_default=sa.func.now()),
+        sa.Column('updated_at', sa.DateTime, server_default=sa.func.now(), onupdate=sa.func.now())
+    )
+    
+    # Create therapists table
+    op.create_table(
+        'therapists',
+        sa.Column('id', postgresql.UUID(as_uuid=True), primary_key=True),
+        sa.Column('first_name', sa.String, nullable=False),
+        sa.Column('last_name', sa.String, nullable=False),
+        sa.Column('email', sa.String, nullable=False),
+        sa.Column('license_number', sa.String),
+        sa.Column('specializations', postgresql.ARRAY(sa.String), default=[]),
+        sa.Column('is_active', sa.Boolean, default=True),
+        sa.Column('preferences', postgresql.JSONB, default={}),
+        sa.Column('created_at', sa.DateTime, server_default=sa.func.now()),
+        sa.Column('updated_at', sa.DateTime, server_default=sa.func.now(), onupdate=sa.func.now())
+    )
+    
     # Assessment Types enum
     op.execute("""
         CREATE TYPE assessment_type AS ENUM (
@@ -64,17 +93,28 @@ def upgrade() -> None:
     )
     
     # Indices
+    op.create_index('idx_clients_email', 'clients', ['email'])
+    op.create_index('idx_therapists_email', 'therapists', ['email'], unique=True)
+    op.create_index('idx_therapists_license', 'therapists', ['license_number'], unique=True)
     op.create_index('idx_assessments_client', 'assessments', ['client_id'])
     op.create_index('idx_assessments_therapist', 'assessments', ['therapist_id'])
     op.create_index('idx_assessment_messages_assessment', 'assessment_messages', ['assessment_id'])
 
 def downgrade() -> None:
+    # Drop indices
     op.drop_index('idx_assessment_messages_assessment')
     op.drop_index('idx_assessments_therapist')
     op.drop_index('idx_assessments_client')
+    op.drop_index('idx_therapists_license')
+    op.drop_index('idx_therapists_email')
+    op.drop_index('idx_clients_email')
     
+    # Drop tables
     op.drop_table('assessment_messages')
     op.drop_table('assessments')
+    op.drop_table('therapists')
+    op.drop_table('clients')
     
+    # Drop enums
     op.execute('DROP TYPE assessment_status')
     op.execute('DROP TYPE assessment_type')
