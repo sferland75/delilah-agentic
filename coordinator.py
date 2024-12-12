@@ -7,6 +7,7 @@ from agents.documentation_agent import DocumentationAgent
 from agents.analysis_agent import AnalysisAgent
 from agents.report_agent import ReportAgent
 from agents.client_manager import ClientManager
+from agents.therapist_manager import TherapistManager
 
 class AgentCoordinator:
     def __init__(self):
@@ -15,6 +16,7 @@ class AgentCoordinator:
         self.analysis_agent = AnalysisAgent()
         self.report_agent = ReportAgent()
         self.client_manager = ClientManager()
+        self.therapist_manager = TherapistManager()
         self.active_sessions: Dict[UUID, dict] = {}
     
     async def run(self):
@@ -32,6 +34,13 @@ class AgentCoordinator:
             message = await self.assessment_agent.message_queue.get()
             if message['type'] in ['assessment_started', 'step_completed', 'assessment_completed']:
                 await self.documentation_agent.process_message(message)
+                
+                if message['type'] == 'assessment_completed':
+                    # Record the assessment for the therapist
+                    await self.therapist_manager.record_assessment(
+                        therapist_id=message['therapist_id'],
+                        assessment_id=message['session_id']
+                    )
     
     async def _handle_documentation_messages(self):
         """Process messages from Documentation Agent"""
@@ -57,10 +66,16 @@ class AgentCoordinator:
     
     async def start_assessment(self, client_id: UUID, therapist_id: UUID, assessment_type: str) -> UUID:
         """Initialize a new assessment session"""
-        # Verify client exists
+        # Verify both client and therapist exist
         client = await self.client_manager.get_client(client_id)
         if not client:
             raise ValueError("Client not found")
+            
+        therapist = await self.therapist_manager.get_therapist(therapist_id)
+        if not therapist:
+            raise ValueError("Therapist not found")
+        if not therapist.is_active:
+            raise ValueError("Therapist is not active")
         
         session_id = await self.assessment_agent.start_assessment(
             client_id=client_id,
