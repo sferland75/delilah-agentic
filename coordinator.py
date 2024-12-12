@@ -6,6 +6,7 @@ from agents.assessment_agent import AssessmentAgent
 from agents.documentation_agent import DocumentationAgent
 from agents.analysis_agent import AnalysisAgent
 from agents.report_agent import ReportAgent
+from agents.client_manager import ClientManager
 
 class AgentCoordinator:
     def __init__(self):
@@ -13,6 +14,7 @@ class AgentCoordinator:
         self.documentation_agent = DocumentationAgent()
         self.analysis_agent = AnalysisAgent()
         self.report_agent = ReportAgent()
+        self.client_manager = ClientManager()
         self.active_sessions: Dict[UUID, dict] = {}
     
     async def run(self):
@@ -55,6 +57,11 @@ class AgentCoordinator:
     
     async def start_assessment(self, client_id: UUID, therapist_id: UUID, assessment_type: str) -> UUID:
         """Initialize a new assessment session"""
+        # Verify client exists
+        client = await self.client_manager.get_client(client_id)
+        if not client:
+            raise ValueError("Client not found")
+        
         session_id = await self.assessment_agent.start_assessment(
             client_id=client_id,
             therapist_id=therapist_id,
