@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 
 from database.models import Agent
 from database.database import get_db
+from api.validation.agent_validator import AgentStateValidator
 
 class AgentRepository:
     def __init__(self, session: AsyncSession):
@@ -15,6 +16,8 @@ class AgentRepository:
     async def create(self, agent_data: dict) -> Agent:
         """Create a new agent in the database."""
         try:
+            if 'state' in agent_data:
+                AgentStateValidator.validate_state(agent_data['state'])
             agent = Agent(**agent_data)
             self._session.add(agent)
             await self._session.flush()
@@ -38,6 +41,14 @@ class AgentRepository:
     async def update(self, agent_id: UUID, agent_data: dict) -> Optional[Agent]:
         """Update an agent's information."""
         try:
+            if 'state' in agent_data:
+                current_agent = await self.get_by_id(agent_id)
+                if not current_agent:
+                    raise HTTPException(status_code=404, detail="Agent not found")
+                AgentStateValidator.validate_state(agent_data['state'])
+                AgentStateValidator.validate_transition(current_agent.state, agent_data['state'])
+                AgentStateValidator.validate_progress(agent_data['state'])
+            
             query = update(Agent).where(Agent.id == agent_id).values(**agent_data)
             await self._session.execute(query)
             await self._session.flush()
@@ -60,6 +71,14 @@ class AgentRepository:
     async def update_state(self, agent_id: UUID, state: dict) -> Optional[Agent]:
         """Update an agent's state."""
         try:
+            current_agent = await self.get_by_id(agent_id)
+            if not current_agent:
+                raise HTTPException(status_code=404, detail="Agent not found")
+                
+            AgentStateValidator.validate_state(state)
+            AgentStateValidator.validate_transition(current_agent.state, state)
+            AgentStateValidator.validate_progress(state)
+            
             query = update(Agent).where(Agent.id == agent_id).values(state=state)
             await self._session.execute(query)
             await self._session.flush()
@@ -67,30 +86,3 @@ class AgentRepository:
         except Exception as e:
             await self._session.rollback()
             raise HTTPException(status_code=400, detail=f"Failed to update agent state: {str(e)}")
-
-class AgentUnitOfWork:
-    """Unit of Work pattern implementation for managing database transactions."""
-    
-    def __init__(self):
-        self._session: Optional[AsyncSession] = None
-        self.agents: Optional[AgentRepository] = None
-
-    async def __aenter__(self):
-        self._session = await anext(get_db())
-        self.agents = AgentRepository(self._session)
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            await self._session.rollback()
-        else:
-            await self._session.commit()
-        await self._session.close()
-
-    async def commit(self):
-        """Commit the current transaction."""
-        await self._session.commit()
-
-    async def rollback(self):
-        """Rollback the current transaction."""
-        await self._session.rollback()
