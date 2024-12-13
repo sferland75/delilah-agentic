@@ -1,16 +1,16 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 from functools import lru_cache
 
 class Settings(BaseSettings):
     # Database settings
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/delilah"
+    DATABASE_URL: str
     
     # Security
-    SECRET_KEY: str = "your-secret-key-here"
+    SECRET_KEY: str
     
     # Application settings
-    DEBUG: bool = True
+    DEBUG: bool = False
     APP_NAME: str = "Delilah Agentic"
     API_V1_STR: str = "/api/v1"
     
@@ -22,10 +22,13 @@ class Settings(BaseSettings):
     
     # Environment
     APP_ENV: str = "development"
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_file_encoding='utf-8',
+        case_sensitive=True,
+        extra='allow'
+    )
 
 @lru_cache()
 def get_settings() -> Settings:
