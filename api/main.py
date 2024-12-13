@@ -7,7 +7,6 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,4 +21,8 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    return {
+        "status": "healthy",
+        "environment": settings.APP_ENV,
+        "database_url": settings.DATABASE_URL.split("@")[1]  # Don't expose credentials
+    }
