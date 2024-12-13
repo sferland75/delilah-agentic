@@ -1,28 +1,34 @@
-from typing import Optional
 from pydantic_settings import BaseSettings
+from typing import Optional
+from functools import lru_cache
 
 class Settings(BaseSettings):
-    # Database
+    # Database settings
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/delilah"
-    DB_ECHO: bool = False
-    DB_POOL_SIZE: int = 5
-    DB_MAX_OVERFLOW: int = 10
     
-    # Application
+    # Security
+    SECRET_KEY: str = "your-secret-key-here"
+    
+    # Application settings
+    DEBUG: bool = True
     APP_NAME: str = "Delilah Agentic"
-    DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
     
-    # JWT
-    SECRET_KEY: str
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    # Redis settings
+    REDIS_URL: str = "redis://localhost:6379"
     
-    # CORS
-    BACKEND_CORS_ORIGINS: list = ["http://localhost:3000", "http://localhost:8000"]
+    # Rate limiting
+    RATE_LIMIT_PER_MINUTE: int = 60
+    
+    # Environment
+    APP_ENV: str = "development"
     
     class Config:
-        case_sensitive = True
         env_file = ".env"
+        case_sensitive = True
 
-settings = Settings()
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
+
+settings = get_settings()
