@@ -1,0 +1,4 @@
+{
+    "encoding": "base64",
+    "content": "VGVzdCBjb250ZW50IGZvciBkZWJ1Z2dpbmc="
+}
