@@ -1,17 +1,11 @@
 from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
 from typing import Dict, List, Optional
-import json
 import asyncio
-from uuid import UUID, uuid4
+from uuid import UUID
 
-class AssessmentType(Enum):
-    ADL = "Activities of Daily Living"
-    IADL = "Instrumental Activities of Daily Living"
-    COGNITIVE = "Cognitive Assessment"
-    PHYSICAL = "Physical Assessment"
-    SENSORY = "Sensory Assessment"
+from sqlalchemy.ext.asyncio import AsyncSession
+from models.assessment import AssessmentType, AssessmentStatus
+from repositories.assessment import AssessmentRepository
 
 @dataclass
 class AssessmentStep:
@@ -47,26 +41,98 @@ class AssessmentProtocol:
         return []
 
 class AssessmentAgent:
-    def __init__(self):
-        self.active_sessions: Dict[UUID, AssessmentSession] = {}
+    def __init__(self, session: AsyncSession):
         self.message_queue = asyncio.Queue()
+        self.repo = AssessmentRepository(session)
     
     async def start_assessment(self, client_id: UUID, therapist_id: UUID, assessment_type: AssessmentType) -> UUID:
-        session = AssessmentSession(client_id, therapist_id, assessment_type)
-        self.active_sessions[session.session_id] = session
+        # Create assessment in database
+        assessment = await self.repo.create_assessment(
+            client_id=client_id,
+            therapist_id=therapist_id,
+            assessment_type=assessment_type
+        )
         
+        # Create started message
+        await self.repo.create_message(
+            assessment_id=assessment.id,
+            message_type='assessment_started',
+            payload={
+                'client_id': str(client_id),
+                'assessment_type': assessment_type.value
+            }
+        )
+        
+        # Notify coordinator
         await self.message_queue.put({
-            "type": "assessment_started",
-            "session_id": session.session_id,
-            "client_id": client_id,
-            "assessment_type": assessment_type.value
+            'type': 'assessment_started',
+            'session_id': assessment.id,
+            'client_id': client_id,
+            'assessment_type': assessment_type.value
         })
         
-        return session.session_id
+        return assessment.id
 
     async def get_next_step(self, session_id: UUID) -> Optional[AssessmentStep]:
-        session = self.active_sessions.get(session_id)
-        if not session or session.current_step >= len(session.protocol.steps):
+        assessment = await self.repo.get_assessment(session_id)
+        if not assessment:
             return None
         
-        return session.protocol.steps[session.current_step]
+        protocol = AssessmentProtocol(assessment.type)
+        if assessment.current_step >= len(protocol.steps):
+            return None
+        
+        return protocol.steps[assessment.current_step]
+
+    async def submit_step(self, session_id: UUID, step_data: dict) -> bool:
+        assessment = await self.repo.get_assessment(session_id)
+        if not assessment:
+            raise ValueError("Assessment not found")
+        
+        # Update assessment with step data
+        assessment = await self.repo.update_assessment_step(
+            assessment_id=session_id,
+            step_data=step_data
+        )
+        
+        # Create step completion message
+        await self.repo.create_message(
+            assessment_id=session_id,
+            message_type='step_completed',
+            payload=step_data
+        )
+        
+        # Notify coordinator
+        await self.message_queue.put({
+            'type': 'step_completed',
+            'session_id': session_id,
+            'step_data': step_data
+        })
+        
+        # Check if assessment is complete
+        protocol = AssessmentProtocol(assessment.type)
+        if assessment.current_step >= len(protocol.steps):
+            await self.complete_assessment(session_id)
+            return True
+            
+        return False
+
+    async def complete_assessment(self, session_id: UUID):
+        assessment = await self.repo.complete_assessment(session_id)
+        
+        # Create completion message
+        await self.repo.create_message(
+            assessment_id=session_id,
+            message_type='assessment_completed',
+            payload={
+                'total_steps': assessment.current_step
+            }
+        )
+        
+        # Notify coordinator
+        await self.message_queue.put({
+            'type': 'assessment_completed',
+            'session_id': session_id,
+            'client_id': assessment.client_id,
+            'therapist_id': assessment.therapist_id
+        })
