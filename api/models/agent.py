@@ -1,12 +1,11 @@
-from enum import Enum
+from datetime import datetime
 from typing import Optional, Dict, Any
 from uuid import UUID
 from pydantic import BaseModel, Field, validator
-from datetime import datetime
-
+from enum import Enum
 from .base import TimestampedModel
 
-class AgentType(Enum):
+class AgentType(str, Enum):
     ASSESSMENT = "assessment"
     ANALYSIS = "analysis"
     DOCUMENTATION = "documentation"
@@ -16,7 +15,7 @@ class AgentType(Enum):
     USER_MANAGER = "user_manager"
     EXPORT_MANAGER = "export_manager"
 
-class AgentStatus(Enum):
+class AgentStatus(str, Enum):
     IDLE = "idle"
     BUSY = "busy"
     ERROR = "error"
@@ -32,7 +31,6 @@ class AgentConfig(BaseModel):
     @validator("custom_settings")
     def validate_custom_settings(cls, v):
         if v is not None:
-            # Ensure custom settings don't override core settings
             reserved_keys = {"max_concurrent_tasks", "timeout_seconds", "retry_attempts"}
             if any(key in v for key in reserved_keys):
                 raise ValueError(f"Custom settings cannot contain reserved keys: {reserved_keys}")
@@ -44,7 +42,7 @@ class AgentBase(TimestampedModel):
     type: AgentType
     name: str = Field(..., min_length=3, max_length=50)
     description: Optional[str] = Field(None, max_length=500)
-    version: str = Field(..., regex=r"^\d+\.\d+\.\d+$")
+    version: str = Field(..., pattern=r"^\d+\.\d+\.\d+$")
     status: AgentStatus = Field(default=AgentStatus.IDLE)
     config: AgentConfig
     last_active: Optional[datetime] = None
@@ -59,7 +57,6 @@ class AgentBase(TimestampedModel):
 
     @validator("version")
     def validate_version(cls, v):
-        # Additional semantic version validation if needed
         major, minor, patch = map(int, v.split("."))
         if any(x < 0 for x in (major, minor, patch)):
             raise ValueError("Version components must be non-negative")
@@ -70,7 +67,7 @@ class AgentCreate(BaseModel):
     type: AgentType
     name: str = Field(..., min_length=3, max_length=50)
     description: Optional[str] = Field(None, max_length=500)
-    version: str = Field(..., regex=r"^\d+\.\d+\.\d+$")
+    version: str = Field(..., pattern=r"^\d+\.\d+\.\d+$")
     config: AgentConfig
     metadata: Optional[Dict[str, Any]] = None
 
@@ -78,7 +75,7 @@ class AgentUpdate(BaseModel):
     """Model for updating an existing agent"""
     name: Optional[str] = Field(None, min_length=3, max_length=50)
     description: Optional[str] = Field(None, max_length=500)
-    version: Optional[str] = Field(None, regex=r"^\d+\.\d+\.\d+$")
+    version: Optional[str] = Field(None, pattern=r"^\d+\.\d+\.\d+$")
     status: Optional[AgentStatus] = None
     config: Optional[AgentConfig] = None
     metadata: Optional[Dict[str, Any]] = None
