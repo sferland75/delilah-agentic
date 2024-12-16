@@ -1,8 +1,10 @@
-from fastapi import Depends
-from coordinator import AgentCoordinator
-from functools import lru_cache
+from typing import Generator
+from sqlalchemy.orm import Session
+from database.session import SessionLocal
 
-@lru_cache()
-def get_coordinator() -> AgentCoordinator:
-    """Singleton pattern for AgentCoordinator"""
-    return AgentCoordinator()
+def get_db() -> Generator[Session, None, None]:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

@@ -1,30 +1,22 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
-from .routes import api_router
-from .routes.auth import router as auth_router
+from .routes.agent import router as agent_router
+from .core.config import settings
 
 app = FastAPI(
     title="Delilah Agentic API",
-    description="Occupational Therapy Assessment System API",
-    version="0.1.0"
+    description="Occupational Therapy Field Assessment System API",
+    version="1.0.0"
 )
 
-# CORS middleware
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update for production
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Add auth router without /api/v1 prefix
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
-
-# Add other routers with /api/v1 prefix
-app.include_router(api_router, prefix="/api/v1")
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+# Include routers
+app.include_router(agent_router, prefix="/api/v1")
