@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional, Dict, Any
 from datetime import datetime
 import uuid
@@ -22,6 +22,5 @@ class AgentResponse(AgentBase):
     id: uuid.UUID
     created_at: datetime
     updated_at: Optional[datetime]
-
-    class Config:
-        from_attributes = True
+    
+    model_config = ConfigDict(from_attributes=True)
