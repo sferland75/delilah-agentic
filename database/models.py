@@ -1,9 +1,9 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import String, JSON, Boolean, DateTime
 from datetime import datetime, UTC
+from typing import Optional
 import uuid
 from api.models.state import AgentStateManager, AgentState
-from typing import Optional
 
 class Base(DeclarativeBase):
     pass
