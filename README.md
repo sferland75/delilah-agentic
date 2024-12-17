@@ -1,19 +1,43 @@
 # Delilah Agentic
 
-A FastAPI-based occupational therapy field assessment system.
+A FastAPI-based occupational therapy field assessment system with support for client management, assessments, documentation, and reporting.
+
+## Project Overview
+
+Delilah Agentic is designed to streamline occupational therapy assessments and documentation. The system features:
+
+- Client and therapist management
+- Assessment scheduling and tracking
+- Clinical documentation
+- Report generation
+- Multi-agent architecture for distributed processing
+
+## Current Status
+
+The project has completed its initial database schema setup with the following components:
+
+### Database Schema
+- Clients (demographics, medical history)
+- Therapists (credentials, specialties)
+- Assessments (scheduling, status tracking)
+- Documentation (clinical notes, progress tracking)
+- Reports (assessment outcomes, recommendations)
+- Agents (system process management)
+
+All tables include UUID primary keys, timestamps for created_at/updated_at, and proper foreign key relationships.
 
 ## Setup
 
 1. Create a virtual environment and activate it:
 ```bash
 python -m venv venv
-venv\Scripts\activate  # Windows
+venv\\Scripts\\activate  # Windows
 source venv/bin/activate  # Unix
 ```
 
 2. Install dependencies:
 ```bash
-pip install fastapi sqlalchemy psycopg2-binary pydantic-settings uvicorn pytest pytest-asyncio httpx
+pip install fastapi sqlalchemy asyncpg pydantic-settings uvicorn pytest pytest-asyncio httpx
 ```
 
 3. Set up PostgreSQL:
@@ -31,22 +55,80 @@ ALTER USER "Delilah" WITH SUPERUSER;
 4. Create `.env` file:
 ```env
 SECRET_KEY=78f815264943c8e53bbd072a3c2e7db9ed7b22aa6dfe9ed467ff2044e7b07d8a
-DATABASE_URL=postgresql://Delilah:delilah123@localhost:5432/delilah
+POSTGRES_USER=Delilah
+POSTGRES_PASSWORD=delilah123
+POSTGRES_SERVER=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=delilah
 CORS_ORIGINS=["http://localhost:3000"]
 DEBUG=true
 ```
 
-5. Run the server:
+5. Initialize the database:
 ```bash
-python run.py
+alembic upgrade head
 ```
 
-## Testing
+## Database Models
 
-Run the tests with:
-```bash
-pytest tests/test_agent.py -v
-```
+### Client
+- Basic demographics
+- Contact information
+- Medical history
+- Related assessments and documentation
+
+### Therapist
+- Professional credentials
+- Specialties
+- Active status tracking
+
+### Assessment
+- Client and therapist references
+- Assessment type and status
+- Scheduling information
+- Completion tracking
+
+### Documentation
+- Clinical note types
+- Content and metadata
+- Links to clients, therapists, and assessments
+
+### Report
+- Assessment outcomes
+- Summary content
+- Recommendations
+
+### Agent
+- Process management
+- State tracking
+- Activity monitoring
+
+## Next Steps
+
+1. Data Population
+   - Create test data generators
+   - Design sample scenarios
+   - Validate relationships and constraints
+
+2. API Development
+   - Implement CRUD operations for each model
+   - Add validation and error handling
+   - Design API endpoints for common workflows
+
+3. Assessment System
+   - Build assessment template system
+   - Implement workflow logic
+   - Add progress tracking
+
+4. Documentation Features
+   - Create documentation templates
+   - Add auto-documentation features
+   - Implement versioning system
+
+5. Report Generation
+   - Design report templates
+   - Add customization options
+   - Implement export features
 
 ## API Documentation
 
@@ -56,115 +138,12 @@ When the server is running, visit:
 
 ## Project Progress
 
-### Core Infrastructure (85% Complete)
-- [x] FastAPI REST API setup (100%)
-- [x] PostgreSQL database integration (100%)
-- [x] Basic CRUD operations (100%)
-- [x] Authentication system setup (80%)
-- [x] Environment configuration (100%)
-- [x] Project structure (90%)
-- [-] Database migrations (30%)
-- [-] Error handling system (50%)
+See [Project Roadmap](ROADMAP.md) for detailed progress tracking.
 
-### Agent System (60% Complete)
-- [x] AgentCoordinator base implementation (90%)
-- [x] Inter-agent message queuing (80%)
-- [x] Session management (70%)
-- [-] Agent state persistence (40%)
-- [-] Error recovery mechanisms (20%)
-- [-] Agent monitoring system (0%)
+## Development Notes
 
-### Assessment Module (45% Complete)
-- [x] Basic assessment flow (80%)
-- [x] Assessment types structure (60%)
-- [-] Assessment templates (40%)
-- [-] Dynamic question generation (30%)
-- [-] Progress tracking (20%)
-- [-] Assessment validation (10%)
-- [ ] Assessment versioning (0%)
-- [ ] Branching logic (0%)
+To pick up development in a new conversation with an AI assistant, use this prompt:
 
-### Documentation System (40% Complete)
-- [x] Basic documentation structure (70%)
-- [-] Documentation templates (40%)
-- [-] Auto-documentation features (30%)
-- [ ] Documentation versioning (0%)
-- [ ] Audit trail system (0%)
-- [ ] Document export features (0%)
+"I'm working on the Delilah Agentic project (https://github.com/sferland75/delilah-agentic), an occupational therapy field assessment system. We've completed the database schema and migrations, including models for clients, therapists, assessments, documentation, and reports. The next phase involves creating test data generators and implementing basic CRUD operations. Could you help me continue the development?"
 
-### Analysis Engine (30% Complete)
-- [-] Basic data analysis (50%)
-- [-] Trend detection (20%)
-- [-] Pattern recognition (20%)
-- [ ] Comparative analysis (0%)
-- [ ] Statistical reporting (0%)
-- [ ] Data visualization (0%)
-
-### Report Generation (25% Complete)
-- [-] Basic report templates (40%)
-- [-] Report customization (30%)
-- [ ] Multi-format export (0%)
-- [ ] Report versioning (0%)
-- [ ] Template management (0%)
-
-### Client/Therapist Management (55% Complete)
-- [x] Basic client profiles (90%)
-- [x] Therapist profiles (80%)
-- [-] Client history tracking (40%)
-- [-] Therapist assignment system (30%)
-- [ ] Schedule management (0%)
-- [ ] Client portal (0%)
-
-### Frontend Development (15% Complete)
-- [-] Basic UI components (30%)
-- [-] Authentication views (20%)
-- [-] Assessment interface (10%)
-- [ ] Report viewing interface (0%)
-- [ ] Analytics dashboard (0%)
-- [ ] Admin panel (0%)
-
-## Development Roadmap
-
-### 1. Critical Path (Next 2-3 Weeks)
-1. Complete database migrations system
-2. Finish authentication system
-3. Implement core assessment templates
-4. Complete basic documentation features
-5. Enhance error handling system
-
-### 2. Core Features (Following 4-6 Weeks)
-1. Build out assessment validation
-2. Implement assessment branching logic
-3. Complete documentation templates
-4. Develop basic analysis engine features
-5. Create essential report templates
-6. Build fundamental frontend views
-
-### 3. Enhanced Features (6-8 Weeks)
-1. Implement advanced assessment features
-2. Build audit trail system
-3. Develop pattern recognition
-4. Create data visualization components
-5. Build client/therapist portals
-6. Implement schedule management
-
-### 4. Advanced Features (8-12 Weeks)
-1. Implement advanced analysis capabilities
-2. Build comprehensive reporting system
-3. Create analytics dashboard
-4. Develop advanced UI components
-5. Build template management system
-6. Implement system-wide versioning
-
-### 5. Final Phase (4-6 Weeks)
-1. System optimization
-2. Security hardening
-3. Performance testing
-4. User acceptance testing
-5. Documentation completion
-6. Production deployment preparation
-
-Legend:
-- [x] Complete (80-100%)
-- [-] In Progress (20-70%)
-- [ ] Not Started (0-10%)
+This will provide the AI with proper context about the project's current state and immediate goals.
