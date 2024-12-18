@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: delilah-fresh
+Version: 0.1
+Requires-Dist: sqlalchemy
+Requires-Dist: asyncpg
+Requires-Dist: pytest
+Requires-Dist: pytest-asyncio
