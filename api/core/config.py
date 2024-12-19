@@ -11,10 +11,8 @@ class Settings(BaseSettings):
     API_VERSION: str = "v1"
     DEBUG: bool = False  # default value if not set
     SECRET_KEY: str
-    
     # Database
     DATABASE_URL: str
-    
     # CORS
     CORS_ORIGINS: List[str]
 

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
@@ -32,3 +33,19 @@
     "vite": "^6.0.1"
   }
 }
+=======
+  "name": "delilah-agentic-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@/components/ui": "^0.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.263.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build"
+  }
+}
+>>>>>>> 6bb53329c68f8c4735e833d296a7da5546e63a5d

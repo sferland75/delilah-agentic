@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # tests/conftest.py
 import pytest
 from typing import AsyncGenerator
@@ -36,3 +37,8 @@ async def async_session(async_engine, create_tables) -> AsyncGenerator[AsyncSess
     async with async_session_maker() as session:
         yield session
         await session.rollback()
+=======
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+>>>>>>> 6bb53329c68f8c4735e833d296a7da5546e63a5d

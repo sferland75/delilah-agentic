@@ -1,10 +1,10 @@
+# database/models.py
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, JSON, Boolean, DateTime, ForeignKey, Text, Enum as SQLEnum
 from datetime import datetime, timezone
 from typing import Optional, List
 import uuid
-import enum
-from api.models.state import AgentStateManager, AgentState
+from .enums import AssessmentStatus, DocumentationType
 
 def utc_now_no_tz() -> datetime:
     """Returns current UTC time without timezone info"""
@@ -13,42 +13,23 @@ def utc_now_no_tz() -> datetime:
 class Base(DeclarativeBase):
     pass
 
-class AssessmentStatus(str, enum.Enum):
-    SCHEDULED = "scheduled"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
-
-class DocumentationType(str, enum.Enum):
-    ASSESSMENT_NOTE = "assessment_note"
-    PROGRESS_NOTE = "progress_note"
-    TREATMENT_PLAN = "treatment_plan"
-    DISCHARGE_SUMMARY = "discharge_summary"
-
 class Agent(Base):
     __tablename__ = "agents"
     
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(50))
-    state_manager: Mapped[dict] = mapped_column(JSON, default=lambda: AgentStateManager().model_dump())
+    state_manager: Mapped[dict] = mapped_column(JSON, default=dict)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, 
+        DateTime,
         default=utc_now_no_tz
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, 
-        nullable=True, 
+        DateTime,
+        nullable=True,
         onupdate=utc_now_no_tz
     )
-
-    def transition_state(self, new_state: AgentState, reason: Optional[str] = None) -> bool:
-        state_manager = AgentStateManager.model_validate(self.state_manager)
-        success = state_manager.transition_to(new_state, reason)
-        if success:
-            self.state_manager = state_manager.model_dump()
-        return success
 
 class Client(Base):
     __tablename__ = "clients"
