@@ -1,25 +1,17 @@
+# database/models.py
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy import String, JSON, Boolean, DateTime, ForeignKey, Text, Enum as SQLEnum
-from datetime import datetime, UTC
+from datetime import datetime, timezone
 from typing import Optional, List
 import uuid
-import enum
-from api.models.state import AgentStateManager, AgentState
+from .enums import AssessmentStatus, DocumentationType
+
+def utc_now_no_tz() -> datetime:
+    """Returns current UTC time without timezone info"""
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 class Base(DeclarativeBase):
     pass
-
-class AssessmentStatus(str, enum.Enum):
-    SCHEDULED = "scheduled"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
-
-class DocumentationType(str, enum.Enum):
-    ASSESSMENT_NOTE = "assessment_note"
-    PROGRESS_NOTE = "progress_note"
-    TREATMENT_PLAN = "treatment_plan"
-    DISCHARGE_SUMMARY = "discharge_summary"
 
 class Agent(Base):
     __tablename__ = "agents"
@@ -27,24 +19,17 @@ class Agent(Base):
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(50))
     type: Mapped[str] = mapped_column(String(50))
-    state_manager: Mapped[dict] = mapped_column(JSON, default=lambda: AgentStateManager().model_dump())
+    state_manager: Mapped[dict] = mapped_column(JSON, default=dict)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, 
-        default=lambda: datetime.now(UTC)
+        DateTime,
+        default=utc_now_no_tz
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, 
-        nullable=True, 
-        onupdate=lambda: datetime.now(UTC)
+        DateTime,
+        nullable=True,
+        onupdate=utc_now_no_tz
     )
-
-    def transition_state(self, new_state: AgentState, reason: Optional[str] = None) -> bool:
-        state_manager = AgentStateManager.model_validate(self.state_manager)
-        success = state_manager.transition_to(new_state, reason)
-        if success:
-            self.state_manager = state_manager.model_dump()
-        return success
 
 class Client(Base):
     __tablename__ = "clients"
@@ -56,11 +41,11 @@ class Client(Base):
     contact_info: Mapped[dict] = mapped_column(JSON)
     medical_history: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_no_tz)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True,
-        onupdate=lambda: datetime.now(UTC)
+        onupdate=utc_now_no_tz
     )
 
     # Relationships
@@ -76,11 +61,11 @@ class Therapist(Base):
     credentials: Mapped[dict] = mapped_column(JSON)
     specialties: Mapped[List[str]] = mapped_column(JSON)
     active: Mapped[bool] = mapped_column(Boolean, default=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_no_tz)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True,
-        onupdate=lambda: datetime.now(UTC)
+        onupdate=utc_now_no_tz
     )
 
     # Relationships
@@ -98,11 +83,11 @@ class Assessment(Base):
     data: Mapped[dict] = mapped_column(JSON, default=dict)
     scheduled_date: Mapped[datetime] = mapped_column(DateTime)
     completed_date: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_no_tz)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True,
-        onupdate=lambda: datetime.now(UTC)
+        onupdate=utc_now_no_tz
     )
 
     # Relationships
@@ -120,12 +105,12 @@ class Documentation(Base):
     assessment_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("assessments.id"), nullable=True)
     doc_type: Mapped[DocumentationType] = mapped_column(SQLEnum(DocumentationType))
     content: Mapped[str] = mapped_column(Text)
-    metadata: Mapped[dict] = mapped_column(JSON, default=dict)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    meta_info: Mapped[dict] = mapped_column(JSON, default=dict)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_no_tz)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True,
-        onupdate=lambda: datetime.now(UTC)
+        onupdate=utc_now_no_tz
     )
 
     # Relationships
@@ -141,11 +126,11 @@ class Report(Base):
     content: Mapped[dict] = mapped_column(JSON)
     summary: Mapped[str] = mapped_column(Text)
     recommendations: Mapped[List[str]] = mapped_column(JSON)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(UTC))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_no_tz)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime,
         nullable=True,
-        onupdate=lambda: datetime.now(UTC)
+        onupdate=utc_now_no_tz
     )
 
     # Relationships

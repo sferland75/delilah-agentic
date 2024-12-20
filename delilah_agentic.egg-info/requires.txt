@@ -1,0 +1,6 @@
+fastapi
+sqlalchemy
+asyncpg
+pytest
+pytest-asyncio
+pydantic-settings
