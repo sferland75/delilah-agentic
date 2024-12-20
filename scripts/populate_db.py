@@ -1,3 +1,5 @@
+# scripts/populate_db.py
+
 import asyncio
 from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
