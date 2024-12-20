@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "delilah-agentic"
+version = "0.1.0"
+description = "Modular Agentic Application for Occupational Therapy Field Assessments and Reporting"
+authors = ["sferland75"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.109.0"
+pydantic = "^2.10.3"
+pydantic-settings = "^2.7.0"
+SQLAlchemy = "^2.0.36"
+alembic = "^1.14.0"
+uvicorn = "^0.32.1"
+asyncpg = "^0.30.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.19"
+email-validator = "^2.2.0"
+python-dateutil = "^2.9.0"
+pytz = "^2024.2"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-asyncio = "^0.21.0"
+httpx = "^0.24.0"
+Faker = "^33.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+pythonpath = [
+    "."
+]
+asyncio_mode = "auto"
+testpaths = ["tests"]
