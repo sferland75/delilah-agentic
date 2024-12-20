@@ -14,17 +14,21 @@ Delilah Agentic is designed to streamline occupational therapy assessments and d
 
 ## Current Status
 
-The project has completed its initial database schema setup with the following components:
+The project has completed:
+1. Initial database schema setup
+2. Test data generation scripts
+3. CRUD API implementations for all models:
+   - Clients
+   - Therapists
+   - Assessments
+   - Documentation
+   - Reports
 
-### Database Schema
-- Clients (demographics, medical history)
-- Therapists (credentials, specialties)
-- Assessments (scheduling, status tracking)
-- Documentation (clinical notes, progress tracking)
-- Reports (assessment outcomes, recommendations)
-- Agents (system process management)
-
-All tables include UUID primary keys, timestamps for created_at/updated_at, and proper foreign key relationships.
+### Next Steps
+1. Testing API endpoints
+2. Implementing authentication
+3. Adding more complex queries and filters
+4. Building the frontend interface
 
 ## Setup
 
@@ -37,7 +41,7 @@ source venv/bin/activate  # Unix
 
 2. Install dependencies:
 ```bash
-pip install fastapi sqlalchemy asyncpg pydantic-settings uvicorn pytest pytest-asyncio httpx
+pip install fastapi sqlalchemy asyncpg pydantic-settings uvicorn pytest pytest-asyncio httpx faker
 ```
 
 3. Set up PostgreSQL:
@@ -55,80 +59,21 @@ ALTER USER "Delilah" WITH SUPERUSER;
 4. Create `.env` file:
 ```env
 SECRET_KEY=78f815264943c8e53bbd072a3c2e7db9ed7b22aa6dfe9ed467ff2044e7b07d8a
+DEBUG=true
+DATABASE_URL=postgresql+asyncpg://Delilah:delilah123@localhost:5432/delilah
+CORS_ORIGINS=["http://localhost:3000"]
+
 POSTGRES_USER=Delilah
 POSTGRES_PASSWORD=delilah123
 POSTGRES_SERVER=localhost
 POSTGRES_PORT=5432
 POSTGRES_DB=delilah
-CORS_ORIGINS=["http://localhost:3000"]
-DEBUG=true
 ```
 
-5. Initialize the database:
+5. Populate test data:
 ```bash
-alembic upgrade head
+python scripts/populate_db.py
 ```
-
-## Database Models
-
-### Client
-- Basic demographics
-- Contact information
-- Medical history
-- Related assessments and documentation
-
-### Therapist
-- Professional credentials
-- Specialties
-- Active status tracking
-
-### Assessment
-- Client and therapist references
-- Assessment type and status
-- Scheduling information
-- Completion tracking
-
-### Documentation
-- Clinical note types
-- Content and metadata
-- Links to clients, therapists, and assessments
-
-### Report
-- Assessment outcomes
-- Summary content
-- Recommendations
-
-### Agent
-- Process management
-- State tracking
-- Activity monitoring
-
-## Next Steps
-
-1. Data Population
-   - Create test data generators
-   - Design sample scenarios
-   - Validate relationships and constraints
-
-2. API Development
-   - Implement CRUD operations for each model
-   - Add validation and error handling
-   - Design API endpoints for common workflows
-
-3. Assessment System
-   - Build assessment template system
-   - Implement workflow logic
-   - Add progress tracking
-
-4. Documentation Features
-   - Create documentation templates
-   - Add auto-documentation features
-   - Implement versioning system
-
-5. Report Generation
-   - Design report templates
-   - Add customization options
-   - Implement export features
 
 ## API Documentation
 
@@ -136,14 +81,10 @@ When the server is running, visit:
 - http://localhost:8000/docs - Swagger UI
 - http://localhost:8000/redoc - ReDoc UI
 
-## Project Progress
-
-See [Project Roadmap](ROADMAP.md) for detailed progress tracking.
-
 ## Development Notes
 
 To pick up development in a new conversation with an AI assistant, use this prompt:
 
-"I'm working on the Delilah Agentic project (https://github.com/sferland75/delilah-agentic), an occupational therapy field assessment system. We've completed the database schema and migrations, including models for clients, therapists, assessments, documentation, and reports. The next phase involves creating test data generators and implementing basic CRUD operations. Could you help me continue the development?"
+"I'm working on the Delilah Agentic project (https://github.com/sferland75/delilah-agentic), an occupational therapy field assessment system. We've completed the database schema, test data generation, and CRUD operations for all models (clients, therapists, assessments, documentation, and reports). The next phase involves testing these API endpoints. Could you help me set up and run tests for these endpoints?"
 
 This will provide the AI with proper context about the project's current state and immediate goals.
