@@ -1,0 +1,44 @@
+{
+    "tool_id": "basic_screening",
+    "name": "Basic Mental Health Screening",
+    "version": "1.0",
+    "questions": [
+        {
+            "id": "mood",
+            "text": "How would you rate your mood over the past week?",
+            "type": "scale",
+            "options": ["1", "2", "3", "4", "5"],
+            "risk_weight": 0.3
+        },
+        {
+            "id": "anxiety",
+            "text": "How often do you feel anxious?",
+            "type": "choice",
+            "options": ["Never", "Rarely", "Sometimes", "Often", "Always"],
+            "risk_weight": 0.3
+        },
+        {
+            "id": "sleep",
+            "text": "How is your sleep quality?",
+            "type": "scale",
+            "options": ["1", "2", "3", "4", "5"],
+            "risk_weight": 0.2
+        }
+    ],
+    "scoring": {
+        "risk_levels": {
+            "low": {
+                "max_score": 0.3,
+                "description": "Minor or no concerns identified"
+            },
+            "moderate": {
+                "max_score": 0.6,
+                "description": "Some concerns present, monitoring recommended"
+            },
+            "high": {
+                "max_score": 1.0,
+                "description": "Significant concerns, immediate attention recommended"
+            }
+        }
+    }
+}
