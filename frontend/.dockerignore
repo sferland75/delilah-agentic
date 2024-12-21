@@ -1,13 +1,30 @@
+# Dependencies
 node_modules
-npm-debug.log
-build
-.git
-*.md
-.cache
-dist
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Testing
 coverage
+.nyc_output
+
+# Production
+dist
+build
+
+# Development
+.git
+.gitignore
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.eslintcache
+.vscode
+*.log
+
+# System
+.DS_Store
+*.pem
