@@ -1,42 +1,45 @@
-                pattern,
-                behavior: data.behavior
-            });
+import { BaseAgent } from '../core/BaseAgent';
+import { LearningDistributor } from '../core/learning/LearningDistributor';
+import { AgentCoordinator } from '../core/coordinator/AgentCoordinator';
+import { Pattern, AnalysisResult, Confidence } from '../types';
 
-            return analysis.matchScore ?? 0;
+export interface AnalysisAgentConfig {
+    confidenceThreshold?: number;
+}
+
+export class AnalysisAgent extends BaseAgent {
+    private learningDistributor: LearningDistributor;
+    private coordinator: AgentCoordinator;
+    private patternCache: Map<string, Pattern>;
+    private confidenceThreshold: number;
+
+    constructor(
+        coordinator: AgentCoordinator,
+        learningDistributor: LearningDistributor,
+        config: AnalysisAgentConfig
+    ) {
+        super('analysis');
+        this.coordinator = coordinator;
+        this.learningDistributor = learningDistributor;
+        this.patternCache = new Map();
+        this.confidenceThreshold = config.confidenceThreshold ?? 0.75;
+        
+        this.initializePatternLearning();
+    }
+
+    private async initializePatternLearning(): Promise<void> {
+        this.learningDistributor.subscribe('pattern-update', (pattern: Pattern) => {
+            this.updatePattern(pattern);
         });
 
-        const scores = await Promise.all(matchPromises);
-        return scores.reduce((sum, score) => sum + score, 0) / behavioral.length;
+        this.coordinator.register(this, ['assessment-result', 'pattern-request', 'behavioral-analysis']);
     }
 
-    private matchContext(pattern: Pattern, data: any): number {
-        const contextualFactors = [
-            this.calculatePatternRelevance(pattern, data),
-            this.assessDataCompleteness(data)
-        ];
-
-        return contextualFactors.reduce((sum, factor) => sum + factor, 0) / contextualFactors.length;
-    }
-
-    private compareFeatureValue(feature: PatternFeature, value: any): boolean {
-        if (value === undefined) {
-            return false;
-        }
-
-        switch (feature.type) {
-            case 'exact':
-                return feature.value === value;
-            case 'range':
-                return value >= feature.min && value <= feature.max;
-            case 'threshold':
-                return feature.operator === '>' ? value > feature.threshold :
-                       feature.operator === '<' ? value < feature.threshold :
-                       feature.operator === '>=' ? value >= feature.threshold :
-                       feature.operator === '<=' ? value <= feature.threshold :
-                       false;
-            default:
-                return false;
-        }
+    private updatePattern(pattern: Pattern): void {
+        this.patternCache.set(pattern.id, {
+            ...pattern,
+            lastUpdated: Date.now()
+        });
     }
 
     private async synthesizeInsight(
