@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { AdaptiveOptimizer } from '../agent/adaptive';
 import { MonitoringService } from '../../monitoring/service';
+import { LearningDistributor } from '../learning/LearningDistributor';
 
 interface AgentMessage {
   agentId: string;
@@ -14,16 +15,57 @@ export class AgentCoordinator {
   private messageQueue: AgentMessage[];
   private optimizer: AdaptiveOptimizer;
   private monitor: MonitoringService;
+  private learningDistributor: LearningDistributor;
   private eventEmitter: EventEmitter;
 
-  constructor(optimizer: AdaptiveOptimizer, monitor: MonitoringService) {
+  constructor(
+    optimizer: AdaptiveOptimizer,
+    monitor: MonitoringService
+  ) {
     this.agents = new Map();
     this.messageQueue = [];
     this.optimizer = optimizer;
     this.monitor = monitor;
+    this.learningDistributor = new LearningDistributor(optimizer);
     this.eventEmitter = new EventEmitter();
 
     this.setupMessageProcessing();
+    this.setupLearningSubscriptions();
+  }
+
+  private setupLearningSubscriptions(): void {
+    // Handle new learning patterns
+    this.learningDistributor.subscribe('newPattern', (pattern) => {
+      this.monitor.recordMetric({
+        name: 'learning_pattern_added',
+        value: 1,
+        timestamp: Date.now(),
+        tags: {
+          type: pattern.type,
+          source: pattern.source
+        }
+      });
+
+      // Distribute to relevant agents
+      this.agents.forEach((agent, agentId) => {
+        if (agent.handleLearningPattern) {
+          agent.handleLearningPattern(pattern);
+        }
+      });
+    });
+
+    // Handle rejected patterns
+    this.learningDistributor.subscribe('patternRejected', (data) => {
+      this.monitor.recordMetric({
+        name: 'learning_pattern_rejected',
+        value: 1,
+        timestamp: Date.now(),
+        tags: {
+          reason: data.reason.join(','),
+          type: data.pattern.type
+        }
+      });
+    });
   }
 
   // Register a new agent
@@ -35,6 +77,15 @@ export class AgentCoordinator {
       timestamp: Date.now(),
       tags: { agentId }
     });
+
+    // Share existing learning patterns with new agent
+    if (agent.handleLearningPattern) {
+      const status = this.learningDistributor.getStatus();
+      this.eventEmitter.emit('agentLearningSync', {
+        agentId,
+        patterns: status.totalPatterns
+      });
+    }
   }
 
   // Send message between agents
@@ -92,6 +143,16 @@ export class AgentCoordinator {
   private async handleObservation(message: AgentMessage): Promise<void> {
     const observation = message.payload;
     
+    // Create learning pattern from observation
+    await this.learningDistributor.addPattern({
+      id: `obs_${Date.now()}`,
+      source: message.agentId,
+      type: 'observation',
+      pattern: observation,
+      confidence: observation.confidence || 1,
+      timestamp: message.timestamp
+    });
+
     // Update optimizer with new observation
     this.optimizer.updateMetrics([{
       id: `${message.agentId}_observation`,
@@ -115,13 +176,15 @@ export class AgentCoordinator {
   private async handleAnalysis(message: AgentMessage): Promise<void> {
     const analysis = message.payload;
     
-    // Update learning system
+    // Create learning pattern from analysis
     if (analysis.patterns) {
-      this.sendMessage({
-        agentId: 'learning',
-        type: 'learning',
-        payload: analysis.patterns,
-        timestamp: Date.now()
+      await this.learningDistributor.addPattern({
+        id: `analysis_${Date.now()}`,
+        source: message.agentId,
+        type: 'analysis',
+        pattern: analysis.patterns,
+        confidence: analysis.confidence || 0.8,
+        timestamp: message.timestamp
       });
     }
 
@@ -140,6 +203,20 @@ export class AgentCoordinator {
   private async handleRecommendation(message: AgentMessage): Promise<void> {
     const recommendation = message.payload;
     
+    // Create learning pattern from recommendation
+    await this.learningDistributor.addPattern({
+      id: `rec_${Date.now()}`,
+      source: message.agentId,
+      type: 'outcome',
+      pattern: recommendation,
+      confidence: recommendation.confidence || 0.8,
+      timestamp: message.timestamp,
+      metadata: {
+        type: recommendation.type,
+        priority: recommendation.priority
+      }
+    });
+
     // Record recommendation metrics
     this.monitor.recordMetric({
       name: 'agent_recommendation',
@@ -150,14 +227,6 @@ export class AgentCoordinator {
         type: recommendation.type
       }
     });
-
-    // Update optimizer with recommendation quality
-    this.optimizer.updateMetrics([{
-      id: `${message.agentId}_recommendation`,
-      value: recommendation.quality || 1,
-      weight: 2,
-      timestamp: message.timestamp
-    }]);
   }
 
   // Handle learning messages
@@ -174,6 +243,16 @@ export class AgentCoordinator {
           timestamp: Date.now()
         });
       }
+    });
+
+    // Update learning system
+    await this.learningDistributor.addPattern({
+      id: `learning_${Date.now()}`,
+      source: message.agentId,
+      type: 'correlation',
+      pattern: learning,
+      confidence: learning.confidence || 0.7,
+      timestamp: message.timestamp
     });
 
     // Update optimizer with learning effectiveness
@@ -199,19 +278,20 @@ export class AgentCoordinator {
 
   // Subscribe to agent events
   public subscribe(
-    event: 'newMessage' | 'agentUpdate' | 'learningUpdate',
+    event: 'newMessage' | 'agentUpdate' | 'learningUpdate' | 'agentLearningSync',
     callback: (data: any) => void
   ): void {
     this.eventEmitter.on(event, callback);
   }
 
-  // Get agent status
+  // Get system status
   public getStatus(): object {
     return {
       activeAgents: Array.from(this.agents.keys()),
       queueLength: this.messageQueue.length,
       optimizerState: this.optimizer.getState(),
-      metrics: this.monitor.getRecentMetrics('agent_')
+      metrics: this.monitor.getRecentMetrics('agent_'),
+      learning: this.learningDistributor.getStatus()
     };
   }
 }
