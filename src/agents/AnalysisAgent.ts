@@ -1,149 +1,42 @@
-import { BaseAgent } from '../core/BaseAgent';
-import { LearningDistributor } from '../core/learning/LearningDistributor';
-import { AgentCoordinator } from '../core/coordinator/AgentCoordinator';
-import { Pattern, AnalysisResult, Confidence } from '../types';
+                pattern,
+                behavior: data.behavior
+            });
 
-export class AnalysisAgent extends BaseAgent {
-    private learningDistributor: LearningDistributor;
-    private coordinator: AgentCoordinator;
-    private patternCache: Map<string, Pattern>;
-    private confidenceThreshold: number;
-
-    constructor(
-        coordinator: AgentCoordinator,
-        learningDistributor: LearningDistributor,
-        config: AnalysisAgentConfig
-    ) {
-        super('analysis');
-        this.coordinator = coordinator;
-        this.learningDistributor = learningDistributor;
-        this.patternCache = new Map();
-        this.confidenceThreshold = config.confidenceThreshold ?? 0.75;
-        
-        this.initializePatternLearning();
-    }
-
-    private async initializePatternLearning(): Promise<void> {
-        // Subscribe to pattern updates from the LearningDistributor
-        this.learningDistributor.subscribe('pattern-update', (pattern: Pattern) => {
-            this.updatePattern(pattern);
+            return analysis.matchScore ?? 0;
         });
 
-        // Register with coordinator for inter-agent communication
-        this.coordinator.register(this, ['assessment-result', 'pattern-request']);
+        const scores = await Promise.all(matchPromises);
+        return scores.reduce((sum, score) => sum + score, 0) / behavioral.length;
     }
 
-    private updatePattern(pattern: Pattern): void {
-        this.patternCache.set(pattern.id, {
-            ...pattern,
-            lastUpdated: Date.now()
-        });
+    private matchContext(pattern: Pattern, data: any): number {
+        const contextualFactors = [
+            this.calculatePatternRelevance(pattern, data),
+            this.assessDataCompleteness(data)
+        ];
+
+        return contextualFactors.reduce((sum, factor) => sum + factor, 0) / contextualFactors.length;
     }
 
-    public async analyze(data: any): Promise<AnalysisResult> {
-        const patterns = await this.identifyRelevantPatterns(data);
-        const assessmentResults = await this.coordinator.request('assessment-result', { dataId: data.id });
-        
-        const analysis: AnalysisResult = {
-            id: data.id,
-            timestamp: Date.now(),
-            patterns: patterns,
-            confidence: this.calculateConfidence(patterns, assessmentResults),
-            insights: await this.generateInsights(data, patterns, assessmentResults)
-        };
-
-        await this.learningDistributor.distribute({
-            type: 'analysis-complete',
-            data: analysis,
-            source: this.id
-        });
-
-        return analysis;
-    }
-
-    private async identifyRelevantPatterns(data: any): Promise<Pattern[]> {
-        const relevantPatterns: Pattern[] = [];
-        
-        for (const [_, pattern] of this.patternCache) {
-            const match = await this.evaluatePatternMatch(pattern, data);
-            if (match.confidence > this.confidenceThreshold) {
-                relevantPatterns.push(pattern);
-            }
+    private compareFeatureValue(feature: PatternFeature, value: any): boolean {
+        if (value === undefined) {
+            return false;
         }
 
-        return relevantPatterns;
-    }
-
-    private async evaluatePatternMatch(pattern: Pattern, data: any): Promise<Confidence> {
-        // Implement pattern matching logic using your established validation approach
-        const matchScore = await this.calculatePatternMatchScore(pattern, data);
-        
-        return {
-            score: matchScore,
-            factors: {
-                patternRelevance: this.calculatePatternRelevance(pattern, data),
-                dataCompleteness: this.assessDataCompleteness(data),
-                historicalAccuracy: await this.getHistoricalAccuracy(pattern.id)
-            }
-        };
-    }
-
-    private async generateInsights(
-        data: any,
-        patterns: Pattern[],
-        assessmentResults: any
-    ): Promise<string[]> {
-        const insights: string[] = [];
-        
-        // Combine pattern knowledge with assessment results
-        for (const pattern of patterns) {
-            const insight = await this.synthesizeInsight(pattern, data, assessmentResults);
-            if (insight) {
-                insights.push(insight);
-            }
+        switch (feature.type) {
+            case 'exact':
+                return feature.value === value;
+            case 'range':
+                return value >= feature.min && value <= feature.max;
+            case 'threshold':
+                return feature.operator === '>' ? value > feature.threshold :
+                       feature.operator === '<' ? value < feature.threshold :
+                       feature.operator === '>=' ? value >= feature.threshold :
+                       feature.operator === '<=' ? value <= feature.threshold :
+                       false;
+            default:
+                return false;
         }
-
-        return insights;
-    }
-
-    private calculateConfidence(patterns: Pattern[], assessmentResults: any): Confidence {
-        const baseScore = patterns.reduce((acc, pattern) => 
-            acc + (pattern.confidence ?? 0), 0) / patterns.length;
-            
-        return {
-            score: baseScore,
-            factors: {
-                patternCount: patterns.length,
-                assessmentConfidence: assessmentResults.confidence?.score ?? 0,
-                patternConsistency: this.calculatePatternConsistency(patterns)
-            }
-        };
-    }
-
-    // Helper methods for confidence calculation and pattern matching
-    private async calculatePatternMatchScore(pattern: Pattern, data: any): Promise<number> {
-        // Implement your specific pattern matching logic here
-        return 0.0; // Placeholder
-    }
-
-    private calculatePatternRelevance(pattern: Pattern, data: any): number {
-        // Implement relevance calculation
-        return 0.0; // Placeholder
-    }
-
-    private assessDataCompleteness(data: any): number {
-        // Implement data completeness assessment
-        return 0.0; // Placeholder
-    }
-
-    private async getHistoricalAccuracy(patternId: string): Promise<number> {
-        // Implement historical accuracy retrieval
-        return 0.0; // Placeholder
-    }
-
-    private calculatePatternConsistency(patterns: Pattern[]): number {
-        // Implement pattern consistency calculation
-        return 0.0; // Placeholder
     }
 
     private async synthesizeInsight(
@@ -151,7 +44,106 @@ export class AnalysisAgent extends BaseAgent {
         data: any,
         assessmentResults: any
     ): Promise<string | null> {
-        // Implement insight synthesis logic
-        return null; // Placeholder
+        if (!pattern || !data || !assessmentResults) {
+            return null;
+        }
+
+        try {
+            const insightComponents = [];
+
+            const matchScore = await this.calculatePatternMatchScore(pattern, data);
+            if (matchScore > this.confidenceThreshold) {
+                insightComponents.push(`Strong pattern match (${(matchScore * 100).toFixed(1)}% confidence)`);
+            }
+
+            if (assessmentResults.findings) {
+                const correlatedFindings = this.correlateWithAssessment(
+                    pattern,
+                    assessmentResults.findings
+                );
+                if (correlatedFindings.length > 0) {
+                    insightComponents.push(
+                        `Correlated findings: ${correlatedFindings.join(', ')}`
+                    );
+                }
+            }
+
+            if (pattern.temporalConstraints && data.timestamp) {
+                const temporalInsight = this.analyzeTemporalAspects(
+                    pattern.temporalConstraints,
+                    data.timestamp
+                );
+                if (temporalInsight) {
+                    insightComponents.push(temporalInsight);
+                }
+            }
+
+            if (pattern.behavioral && data.behavior) {
+                const behavioralInsight = await this.analyzeBehavioralImplications(
+                    pattern.behavioral,
+                    data.behavior
+                );
+                if (behavioralInsight) {
+                    insightComponents.push(behavioralInsight);
+                }
+            }
+
+            if (insightComponents.length > 0) {
+                return this.formatInsight(pattern.type, insightComponents);
+            }
+
+            return null;
+        } catch (error) {
+            console.error('Error synthesizing insight:', error);
+            return null;
+        }
+    }
+
+    private correlateWithAssessment(
+        pattern: Pattern,
+        findings: string[]
+    ): string[] {
+        return findings.filter(finding =>
+            pattern.correlations?.some(correlation =>
+                finding.toLowerCase().includes(correlation.toLowerCase())
+            )
+        );
+    }
+
+    private analyzeTemporalAspects(
+        constraints: TemporalConstraints,
+        timestamp: number
+    ): string | null {
+        const age = Date.now() - timestamp;
+        
+        if (age <= constraints.highRelevance) {
+            return 'Pattern shows high temporal relevance (recent activity)';
+        } else if (age <= constraints.mediumRelevance) {
+            return 'Pattern shows moderate temporal relevance';
+        } else if (age <= constraints.lowRelevance) {
+            return 'Pattern shows historical relevance';
+        }
+        
+        return null;
+    }
+
+    private async analyzeBehavioralImplications(
+        behavioral: BehavioralPattern[],
+        behavior: any
+    ): Promise<string | null> {
+        const analysis = await this.coordinator.request('behavioral-analysis', {
+            patterns: behavioral,
+            behavior: behavior
+        });
+
+        if (analysis.implications?.length > 0) {
+            return `Behavioral implications: ${analysis.implications.join('; ')}`;
+        }
+
+        return null;
+    }
+
+    private formatInsight(patternType: string, components: string[]): string {
+        return `[${patternType.toUpperCase()}] ${components.join(' | ')}`;
     }
 }
