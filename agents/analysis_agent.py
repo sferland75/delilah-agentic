@@ -1,9 +1,10 @@
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Tuple
 from datetime import datetime
 from uuid import UUID
 from pydantic import BaseModel, Field
 from .base import AgentType, AgentContext
 from .agent_learning import LearningEnabledAgent
+from .cross_agent_learning import CrossAgentLearning
 
 class AnalysisParameters(BaseModel):
     """Parameters for analysis tasks"""
@@ -24,13 +25,18 @@ class DataSourceStats(BaseModel):
 class LearningAnalysisAgent(LearningEnabledAgent):
     """Analysis agent with learning capabilities"""
     
-    def __init__(self, name: str):
+    def __init__(self, name: str, cross_learning: Optional[CrossAgentLearning] = None):
         super().__init__(
             agent_type=AgentType.ANALYSIS,
             name=name
         )
         self._data_source_stats: Dict[str, DataSourceStats] = {}
         self._analysis_history: Dict[UUID, Dict[str, Any]] = {}
+        self._cross_learning = cross_learning
+        
+        # Register with cross-agent learning if provided
+        if cross_learning:
+            cross_learning.register_agent(self.agent_type.value, self.learning_core)
 
     async def process_task(self, task: Dict[str, Any], context: AgentContext) -> Dict[str, Any]:
         """Process an analysis task with learning optimization"""
@@ -42,7 +48,8 @@ class LearningAnalysisAgent(LearningEnabledAgent):
             'start_time': datetime.utcnow(),
             'parameters': parameters.dict(),
             'data_source_stats': None,
-            'optimizations_applied': []
+            'optimizations_applied': [],
+            'cross_agent_patterns_applied': []
         }
         
         try:
@@ -68,8 +75,29 @@ class LearningAnalysisAgent(LearningEnabledAgent):
                     'confidence': pattern.confidence,
                     'timestamp': datetime.utcnow().isoformat()
                 })
+                
+                # Apply cross-agent patterns if available
+                if self._cross_learning:
+                    cross_patterns = await self._cross_learning.analyze_cross_patterns(
+                        source_agent=self.agent_type.value,
+                        target_agent=AgentType.ASSESSMENT.value,
+                        min_confidence=0.8
+                    )
+                    
+                    for cross_pattern in cross_patterns:
+                        optimized_task = await self._cross_learning.apply_cross_pattern(
+                            pattern_id=cross_pattern.source_patterns[0],
+                            agent_type=self.agent_type.value,
+                            data=optimized_task
+                        )
+                        
+                        self._analysis_history[context.session_id]['cross_agent_patterns_applied'].append({
+                            'pattern_id': str(cross_pattern.source_patterns[0]),
+                            'correlation_strength': cross_pattern.correlation_strength,
+                            'timestamp': datetime.utcnow().isoformat()
+                        })
             
-            # Execute analysis
+            # Execute analysis with optimized parameters
             result = await self._execute_analysis(optimized_task, parameters)
             
             # Record successful completion
@@ -112,6 +140,7 @@ class LearningAnalysisAgent(LearningEnabledAgent):
                     'parameters': history['parameters'],
                     'data_source_stats': history['data_source_stats'],
                     'optimizations': history['optimizations_applied'],
+                    'cross_agent_patterns': history['cross_agent_patterns_applied'],
                     'duration': duration
                 },
                 outcome={
@@ -146,12 +175,34 @@ class LearningAnalysisAgent(LearningEnabledAgent):
         )
         
         # Add analysis-specific insights
-        insights.update({
+        base_insights = {
             'data_sources_analyzed': len(self._data_source_stats),
             'analysis_patterns': len(patterns),
             'optimization_impact': self._calculate_optimization_impact(patterns)
-        })
+        }
         
+        # Add cross-agent insights if available
+        if self._cross_learning:
+            cross_patterns = await self._cross_learning.analyze_cross_patterns(
+                source_agent=self.agent_type.value,
+                target_agent=AgentType.ASSESSMENT.value,
+                min_confidence=0.8
+            )
+            
+            base_insights.update({
+                'cross_agent_patterns': len(cross_patterns),
+                'cross_agent_impact': self._calculate_cross_agent_impact(cross_patterns),
+                'assessment_correlations': [
+                    {
+                        'correlation_strength': p.correlation_strength,
+                        'pattern_type': p.pattern_signature.split(':')[0],
+                        'correlation_factors': p.metadata.get('correlation_factors', {})
+                    }
+                    for p in cross_patterns
+                ]
+            })
+        
+        insights.update(base_insights)
         return insights
 
     def _calculate_optimization_impact(self, 
@@ -182,3 +233,31 @@ class LearningAnalysisAgent(LearningEnabledAgent):
                                       if duration_improvements else 0,
             'total_improvements': len(duration_improvements)
         }
+        
+    def _calculate_cross_agent_impact(self, cross_patterns: List[CrossAgentPattern]) -> Dict[str, Any]:
+        """Calculate the impact of cross-agent learning patterns"""
+        if not cross_patterns:
+            return {'status': 'insufficient_data'}
+            
+        strong_correlations = [p for p in cross_patterns if p.correlation_strength >= 0.9]
+        
+        if not strong_correlations:
+            return {'status': 'no_strong_correlations'}
+            
+        return {
+            'status': 'active',
+            'strong_correlations': len(strong_correlations),
+            'avg_correlation_strength': sum(p.correlation_strength for p in cross_patterns) / len(cross_patterns),
+            'common_correlation_factors': self._get_common_correlation_factors(cross_patterns)
+        }
+        
+    def _get_common_correlation_factors(self, patterns: List[CrossAgentPattern]) -> Dict[str, int]:
+        """Identify commonly occurring correlation factors across patterns"""
+        factor_counts: Dict[str, int] = {}
+        
+        for pattern in patterns:
+            factors = pattern.metadata.get('correlation_factors', {})
+            for factor in factors.keys():
+                factor_counts[factor] = factor_counts.get(factor, 0) + 1
+                
+        return factor_counts
