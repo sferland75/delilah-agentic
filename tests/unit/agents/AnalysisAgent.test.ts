@@ -13,13 +13,21 @@ describe('AnalysisAgent', () => {
         id: 'test-pattern-1',
         type: 'behavioral',
         confidence: 0.85,
-        lastUpdated: Date.now()
+        lastUpdated: Date.now(),
+        features: [
+            {
+                name: 'testFeature',
+                type: 'exact',
+                value: 'test'
+            }
+        ],
+        correlations: ['finding1', 'finding2']
     };
 
     const mockAssessmentResult = {
         id: 'test-assessment-1',
         confidence: { score: 0.9 },
-        findings: ['Finding 1', 'Finding 2']
+        findings: ['Finding 1: test result', 'Finding 2: another test']
     };
 
     beforeEach(() => {
@@ -42,8 +50,18 @@ describe('AnalysisAgent', () => {
         it('should generate analysis results with proper confidence scoring', async () => {
             const testData = {
                 id: 'test-data-1',
-                content: 'Test content'
+                timestamp: Date.now(),
+                content: 'Test content',
+                metadata: { source: 'test' },
+                features: {
+                    testFeature: 'test'
+                }
             };
+
+            // Trigger pattern update
+            const patternUpdateCallback = (learningDistributor.subscribe as jest.Mock)
+                .mock.calls[0][1];
+            patternUpdateCallback(mockPattern);
 
             const result = await analysisAgent.analyze(testData);
 
@@ -51,6 +69,7 @@ describe('AnalysisAgent', () => {
             expect(result.id).toBe(testData.id);
             expect(result.confidence).toBeDefined();
             expect(result.confidence.score).toBeGreaterThan(0);
+            expect(result.patterns).toHaveLength(1);
             expect(result.insights).toBeDefined();
             
             // Verify coordinator interaction
@@ -68,23 +87,15 @@ describe('AnalysisAgent', () => {
             );
         });
 
-        it('should properly handle pattern updates', async () => {
-            // Trigger pattern update
-            const patternUpdateCallback = (learningDistributor.subscribe as jest.Mock)
-                .mock.calls[0][1];
-            
-            patternUpdateCallback(mockPattern);
-
-            const testData = {
+        it('should handle missing data fields gracefully', async () => {
+            const incompleteData = {
                 id: 'test-data-2',
-                content: 'Test content matching pattern'
+                content: 'Incomplete test content'
             };
 
-            const result = await analysisAgent.analyze(testData);
-
-            expect(result.patterns).toContainEqual(
-                expect.objectContaining({ id: mockPattern.id })
-            );
+            const result = await analysisAgent.analyze(incompleteData);
+            expect(result).toBeDefined();
+            expect(result.confidence.score).toBeLessThan(0.5);
         });
 
         it('should respect confidence threshold for pattern matching', async () => {
@@ -96,7 +107,6 @@ describe('AnalysisAgent', () => {
             // Update with low confidence pattern
             const patternUpdateCallback = (learningDistributor.subscribe as jest.Mock)
                 .mock.calls[0][1];
-            
             patternUpdateCallback(lowConfidencePattern);
 
             const testData = {
@@ -105,11 +115,32 @@ describe('AnalysisAgent', () => {
             };
 
             const result = await analysisAgent.analyze(testData);
-
-            // Should not include low confidence pattern
             expect(result.patterns).not.toContainEqual(
                 expect.objectContaining({ id: lowConfidencePattern.id })
             );
+        });
+
+        it('should generate insights for matching patterns', async () => {
+            const testData = {
+                id: 'test-data-4',
+                timestamp: Date.now(),
+                content: 'Test content with matching pattern',
+                metadata: { source: 'test' },
+                features: {
+                    testFeature: 'test'
+                }
+            };
+
+            // Add pattern
+            const patternUpdateCallback = (learningDistributor.subscribe as jest.Mock)
+                .mock.calls[0][1];
+            patternUpdateCallback(mockPattern);
+
+            const result = await analysisAgent.analyze(testData);
+            expect(result.insights).toBeDefined();
+            expect(result.insights.length).toBeGreaterThan(0);
+            expect(result.insights[0]).toContain('BEHAVIORAL');
+            expect(result.insights[0]).toContain('Strong pattern match');
         });
     });
 });
