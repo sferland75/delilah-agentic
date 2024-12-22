@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Set, Tuple
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
 import asyncio
 from pydantic import BaseModel, Field
 
@@ -14,15 +14,34 @@ class CrossAgentPattern(BaseModel):
     pattern_signature: str
     discovered_at: datetime = Field(default_factory=datetime.utcnow)
     metadata: Dict[str, any] = Field(default_factory=dict)
+    source_agent: str
+    target_agent: str
+
+class PatternHistoryData(BaseModel):
+    """Model for pattern history data"""
+    patterns_added: int
+    patterns_evolved: int
+    avg_correlation: float
+    agent_pairs: List[str]
 
 class CrossAgentLearning:
     """Manages learning pattern sharing and correlation between different agent types"""
+    
+    _instance: Optional['CrossAgentLearning'] = None
+    
+    @classmethod
+    def get_instance(cls) -> 'CrossAgentLearning':
+        """Get singleton instance"""
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
     
     def __init__(self):
         self._cross_patterns: Dict[UUID, CrossAgentPattern] = {}
         self._agent_cores: Dict[str, AgentLearningCore] = {}
         self._lock = asyncio.Lock()
         self._correlation_threshold = 0.75
+        self._pattern_history: List[Dict[str, Any]] = []
         
     def register_agent(self, agent_type: str, learning_core: AgentLearningCore) -> None:
         """Register an agent's learning core for cross-agent pattern analysis"""
@@ -63,6 +82,8 @@ class CrossAgentLearning:
                             pattern_signature=self._generate_pattern_signature(
                                 source_pattern, target_pattern
                             ),
+                            source_agent=source_agent,
+                            target_agent=target_agent,
                             metadata={
                                 'source_metadata': source_pattern.metadata,
                                 'target_metadata': target_pattern.metadata,
@@ -75,8 +96,72 @@ class CrossAgentLearning:
                         pattern_id = UUID(int=len(self._cross_patterns))
                         self._cross_patterns[pattern_id] = cross_pattern
                         new_cross_patterns.append(cross_pattern)
+                        
+                        # Record pattern history
+                        self._pattern_history.append({
+                            'timestamp': datetime.utcnow(),
+                            'action': 'new_pattern',
+                            'pattern_id': str(pattern_id),
+                            'correlation_strength': correlation,
+                            'source_agent': source_agent,
+                            'target_agent': target_agent
+                        })
             
             return new_cross_patterns
+    
+    async def get_patterns_in_timerange(
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        agent_type: Optional[str] = None
+    ) -> List[CrossAgentPattern]:
+        """Get patterns discovered within a time range"""
+        async with self._lock:
+            patterns = [
+                pattern for pattern in self._cross_patterns.values()
+                if start_time <= pattern.discovered_at <= end_time and
+                (agent_type is None or
+                 agent_type in {pattern.source_agent, pattern.target_agent})
+            ]
+            return patterns
+    
+    async def get_pattern_history(
+        self,
+        start_time: datetime,
+        end_time: datetime,
+        agent_type: Optional[str] = None
+    ) -> PatternHistoryData:
+        """Get pattern history data for a time range"""
+        async with self._lock:
+            # Filter history entries
+            interval_entries = [
+                entry for entry in self._pattern_history
+                if start_time <= entry['timestamp'] <= end_time and
+                (agent_type is None or
+                 agent_type in {entry['source_agent'], entry['target_agent']})
+            ]
+            
+            # Calculate metrics
+            patterns_added = sum(1 for e in interval_entries 
+                               if e['action'] == 'new_pattern')
+            patterns_evolved = sum(1 for e in interval_entries 
+                                 if e['action'] == 'pattern_evolved')
+            
+            correlations = [e['correlation_strength'] 
+                          for e in interval_entries]
+            avg_correlation = sum(correlations) / max(1, len(correlations))
+            
+            agent_pairs = list(set(
+                f"{e['source_agent']}:{e['target_agent']}"
+                for e in interval_entries
+            ))
+            
+            return PatternHistoryData(
+                patterns_added=patterns_added,
+                patterns_evolved=patterns_evolved,
+                avg_correlation=avg_correlation,
+                agent_pairs=agent_pairs
+            )
     
     async def _calculate_pattern_correlation(self,
                                           pattern1: LearningPattern,
@@ -149,5 +234,14 @@ class CrossAgentLearning:
             for key, value in correlation_factors.items():
                 if key not in enhanced_data:
                     enhanced_data[key] = value
+                    
+            # Record pattern usage
+            self._pattern_history.append({
+                'timestamp': datetime.utcnow(),
+                'action': 'pattern_applied',
+                'pattern_id': str(pattern_id),
+                'agent_type': agent_type,
+                'success': True  # Could be updated based on outcome
+            })
                     
             return enhanced_data
