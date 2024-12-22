@@ -14,7 +14,8 @@ import {
 } from 'recharts';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, TrendingUp, Brain, Clock } from 'lucide-react';
+import { AlertCircle, TrendingUp, Brain, Clock, Network } from 'lucide-react';
+import CrossAgentPatternsDisplay from './CrossAgentPatternsDisplay';
 
 interface MetricData {
   timestamp: string;
@@ -43,6 +44,7 @@ const LearningMetricsDisplay: React.FC = () => {
   const [selectedAgent, setSelectedAgent] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<string>('24h');
   const [performanceData, setPerformanceData] = useState<AgentPerformance[]>([]);
+  const [activeTab, setActiveTab] = useState<'individual' | 'cross-agent'>('individual');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -97,192 +99,222 @@ const LearningMetricsDisplay: React.FC = () => {
     }, {} as Record<string, any>);
   };
 
+  const renderIndividualMetrics = () => (
+    <div className="grid grid-cols-2 gap-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            Performance Trends
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={Object.values(aggregateMetrics(performanceData))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#8884d8"
+                  name="Performance Score"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Brain className="h-5 w-5" />
+            Learning Patterns
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={Object.values(aggregatePatterns(performanceData))}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="pattern_id" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar
+                  dataKey="confidence"
+                  fill="#8884d8"
+                  name="Pattern Confidence"
+                />
+                <Bar
+                  dataKey="success_rate"
+                  fill="#82ca9d"
+                  name="Success Rate"
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Optimization Impact
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={performanceData.flatMap(agent =>
+                  agent.metrics
+                    .filter(m => m.metric_type === 'optimization_impact')
+                    .map(m => ({
+                      timestamp: m.timestamp,
+                      impact: m.value,
+                      agent: agent.agent_id
+                    }))
+                )}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="impact"
+                  stroke="#82ca9d"
+                  name="Optimization Impact"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5" />
+            System Health
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold">
+                {performanceData.reduce(
+                  (acc, agent) => acc + agent.patterns.length,
+                  0
+                )}
+              </div>
+              <div className="text-sm text-gray-500">Active Patterns</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold">
+                {(performanceData.reduce(
+                  (acc, agent) =>
+                    acc +
+                    agent.patterns.reduce(
+                      (sum, p) => sum + p.success_rate,
+                      0
+                    ),
+                  0
+                ) /
+                  Math.max(
+                    1,
+                    performanceData.reduce(
+                      (acc, agent) => acc + agent.patterns.length,
+                      0
+                    )
+                  )).toFixed(1)}%
+              </div>
+              <div className="text-sm text-gray-500">Average Success Rate</div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   return (
-    <div className="grid gap-4">
-      <div className="flex justify-between items-center mb-4">
-        <Select
-          value={selectedAgent}
-          onValueChange={setSelectedAgent}
-          className="w-48"
-        >
-          <option value="all">All Agents</option>
-          {performanceData.map(agent => (
-            <option key={agent.agent_id} value={agent.agent_id}>
-              {agent.agent_id}
-            </option>
-          ))}
-        </Select>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="flex gap-4 items-center">
+          <Select
+            value={selectedAgent}
+            onValueChange={setSelectedAgent}
+            className="w-48"
+          >
+            <option value="all">All Agents</option>
+            {performanceData.map(agent => (
+              <option key={agent.agent_id} value={agent.agent_id}>
+                {agent.agent_id}
+              </option>
+            ))}
+          </Select>
+
+          <div className="flex gap-2">
+            <Button
+              variant={timeRange === '24h' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('24h')}
+            >
+              24h
+            </Button>
+            <Button
+              variant={timeRange === '7d' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('7d')}
+            >
+              7d
+            </Button>
+            <Button
+              variant={timeRange === '30d' ? 'default' : 'outline'}
+              onClick={() => setTimeRange('30d')}
+            >
+              30d
+            </Button>
+          </div>
+        </div>
 
         <div className="flex gap-2">
           <Button
-            variant={timeRange === '24h' ? 'default' : 'outline'}
-            onClick={() => setTimeRange('24h')}
+            variant={activeTab === 'individual' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('individual')}
           >
-            24h
+            <Brain className="h-4 w-4 mr-2" />
+            Individual Metrics
           </Button>
           <Button
-            variant={timeRange === '7d' ? 'default' : 'outline'}
-            onClick={() => setTimeRange('7d')}
+            variant={activeTab === 'cross-agent' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('cross-agent')}
           >
-            7d
-          </Button>
-          <Button
-            variant={timeRange === '30d' ? 'default' : 'outline'}
-            onClick={() => setTimeRange('30d')}
-          >
-            30d
+            <Network className="h-4 w-4 mr-2" />
+            Cross-Agent Patterns
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5" />
-              Performance Trends
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={Object.values(aggregateMetrics(performanceData))}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="hour" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#8884d8"
-                    name="Performance Score"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Brain className="h-5 w-5" />
-              Learning Patterns
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={Object.values(aggregatePatterns(performanceData))}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="pattern_id" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar
-                    dataKey="confidence"
-                    fill="#8884d8"
-                    name="Pattern Confidence"
-                  />
-                  <Bar
-                    dataKey="success_rate"
-                    fill="#82ca9d"
-                    name="Success Rate"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              Optimization Impact
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={performanceData.flatMap(agent =>
-                    agent.metrics
-                      .filter(m => m.metric_type === 'optimization_impact')
-                      .map(m => ({
-                        timestamp: m.timestamp,
-                        impact: m.value,
-                        agent: agent.agent_id
-                      }))
-                  )}
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="timestamp" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="impact"
-                    stroke="#82ca9d"
-                    name="Optimization Impact"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5" />
-              System Health
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {performanceData.reduce(
-                    (acc, agent) => acc + agent.patterns.length,
-                    0
-                  )}
-                </div>
-                <div className="text-sm text-gray-500">Active Patterns</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {(performanceData.reduce(
-                    (acc, agent) =>
-                      acc +
-                      agent.patterns.reduce(
-                        (sum, p) => sum + p.success_rate,
-                        0
-                      ),
-                    0
-                  ) /
-                    Math.max(
-                      1,
-                      performanceData.reduce(
-                        (acc, agent) => acc + agent.patterns.length,
-                        0
-                      )
-                    )).toFixed(1)}%
-                </div>
-                <div className="text-sm text-gray-500">Average Success Rate</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {activeTab === 'individual' ? (
+        renderIndividualMetrics()
+      ) : (
+        <CrossAgentPatternsDisplay
+          timeRange={timeRange}
+          selectedAgent={selectedAgent !== 'all' ? selectedAgent : undefined}
+        />
+      )}
     </div>
   );
 };
