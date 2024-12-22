@@ -1,8 +1,9 @@
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
 from uuid import UUID
 from .base import AgentType, AgentStatus, AgentContext
 from .agent_learning import LearningEnabledAgent
+from .cross_agent_learning import CrossAgentLearning
 from pydantic import BaseModel, Field
 
 class AssessmentParameters(BaseModel):
@@ -16,13 +17,18 @@ class AssessmentParameters(BaseModel):
 class LearningAssessmentAgent(LearningEnabledAgent):
     """Assessment agent with learning capabilities for OT assessments"""
     
-    def __init__(self, name: str):
+    def __init__(self, name: str, cross_learning: Optional[CrossAgentLearning] = None):
         super().__init__(
             agent_type=AgentType.ASSESSMENT,
             name=name,
         )
         self.supported_assessments = set()
         self._assessment_history: Dict[UUID, Dict[str, Any]] = {}
+        self._cross_learning = cross_learning
+        
+        # Register with cross-agent learning if provided
+        if cross_learning:
+            cross_learning.register_agent(self.agent_type.value, self.learning_core)
 
     async def process_task(self, task: Dict[str, Any], context: AgentContext) -> Dict[str, Any]:
         """Process an assessment task with learning enhancement"""
@@ -47,6 +53,21 @@ class LearningAssessmentAgent(LearningEnabledAgent):
             if patterns:
                 pattern_id, pattern = patterns[0]
                 task = await self.learning_core.apply_pattern(pattern_id, task)
+                
+                # Apply cross-agent patterns if available
+                if self._cross_learning:
+                    cross_patterns = await self._cross_learning.analyze_cross_patterns(
+                        source_agent=self.agent_type.value,
+                        target_agent=AgentType.ANALYSIS.value,
+                        min_confidence=0.8
+                    )
+                    
+                    for cross_pattern in cross_patterns:
+                        task = await self._cross_learning.apply_cross_pattern(
+                            pattern_id=cross_pattern.source_patterns[0],
+                            agent_type=self.agent_type.value,
+                            data=task
+                        )
             
             # Process assessment steps
             result = await self._execute_assessment_steps(task, context, parameters)
@@ -71,6 +92,10 @@ class LearningAssessmentAgent(LearningEnabledAgent):
         
         results = {}
         for step in assessment_steps:
+            # Apply cross-agent patterns to step if available
+            if self._cross_learning:
+                step = await self._apply_cross_agent_step_patterns(step, context)
+                
             step_result = await self._execute_single_step(step, context, parameters)
             results[step['id']] = step_result
             
@@ -103,6 +128,30 @@ class LearningAssessmentAgent(LearningEnabledAgent):
             'steps': results,
             'summary': self._generate_assessment_summary(results, parameters)
         }
+
+    async def _apply_cross_agent_step_patterns(self,
+                                            step: Dict[str, Any],
+                                            context: AgentContext) -> Dict[str, Any]:
+        """Apply relevant cross-agent patterns to assessment step"""
+        if not self._cross_learning:
+            return step
+            
+        cross_patterns = await self._cross_learning.analyze_cross_patterns(
+            source_agent=self.agent_type.value,
+            target_agent=AgentType.ANALYSIS.value,
+            pattern_types=[f"assessment_step_{step['id']}"],
+            min_confidence=0.8
+        )
+        
+        enhanced_step = {**step}
+        for pattern in cross_patterns:
+            enhanced_step = await self._cross_learning.apply_cross_pattern(
+                pattern_id=pattern.source_patterns[0],
+                agent_type=self.agent_type.value,
+                data=enhanced_step
+            )
+            
+        return enhanced_step
 
     async def _record_assessment_completion(self,
                                           session_id: UUID,
@@ -156,7 +205,7 @@ class LearningAssessmentAgent(LearningEnabledAgent):
         )
         
         insights = await super().get_learning_insights()
-        insights.update({
+        base_insights = {
             'assessment_patterns': len(patterns),
             'optimized_steps': [
                 p.metadata.get('common_factors', {}).get('step_id')
@@ -165,6 +214,26 @@ class LearningAssessmentAgent(LearningEnabledAgent):
             ],
             'success_rate': sum(1 for _, p in patterns if 
                              p.metadata.get('success_rate', 0) >= 0.8) / len(patterns) if patterns else 0
-        })
+        }
         
+        # Add cross-agent insights if available
+        if self._cross_learning:
+            cross_patterns = await self._cross_learning.analyze_cross_patterns(
+                source_agent=self.agent_type.value,
+                target_agent=AgentType.ANALYSIS.value,
+                min_confidence=0.8
+            )
+            
+            base_insights.update({
+                'cross_agent_patterns': len(cross_patterns),
+                'cross_agent_correlations': [
+                    {
+                        'correlation_strength': p.correlation_strength,
+                        'correlation_factors': p.metadata.get('correlation_factors', {})
+                    }
+                    for p in cross_patterns
+                ]
+            })
+        
+        insights.update(base_insights)
         return insights
