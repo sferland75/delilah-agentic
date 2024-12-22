@@ -1,0 +1,1 @@
+# coordinator/queue_manager.py content
