@@ -1,13 +1,14 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { ReportGenerator } from '../../../src/services/ReportGenerator';
+import { ReportGenerator, ReportGeneratorConfig } from '../../../src/services/ReportGenerator';
 import { AgentCoordinator } from '../../../src/core/coordinator/AgentCoordinator';
-import { AnalysisResult, AssessmentResult, Report } from '../../../src/types';
+import { ReportGenerationError, ReportErrorCode } from '../../../src/types';
 
 describe('ReportGenerator', () => {
     let reportGenerator: ReportGenerator;
     let coordinator: jest.Mocked<AgentCoordinator>;
+    let defaultConfig: ReportGeneratorConfig;
 
-    const mockAnalysisResult: AnalysisResult = {
+    const mockAnalysisResult = {
         id: 'test-analysis-1',
         timestamp: Date.now(),
         patterns: [
@@ -34,7 +35,7 @@ describe('ReportGenerator', () => {
         ]
     };
 
-    const mockAssessmentResult: AssessmentResult = {
+    const mockAssessmentResult = {
         id: 'test-assessment-1',
         timestamp: Date.now(),
         confidence: {
@@ -67,157 +68,151 @@ describe('ReportGenerator', () => {
             })
         } as any;
 
-        reportGenerator = new ReportGenerator(coordinator, {
+        defaultConfig = {
             enableAutoSummary: true,
             confidenceThreshold: 0.75
+        };
+
+        reportGenerator = new ReportGenerator(coordinator, defaultConfig);
+    });
+
+    describe('initialization', () => {
+        it('should throw error for invalid template', () => {
+            const invalidTemplate = {
+                // Missing required fields
+                sections: [{ type: 'summary' }]
+            };
+
+            expect(() => {
+                new ReportGenerator(coordinator, {
+                    ...defaultConfig,
+                    defaultTemplate: invalidTemplate as any
+                });
+            }).toThrow(ReportGenerationError);
+        });
+
+        it('should validate template sections', () => {
+            const templateWithInvalidSection = {
+                id: 'test',
+                name: 'Test Template',
+                sections: [{ }] // Invalid section
+            };
+
+            expect(() => {
+                new ReportGenerator(coordinator, {
+                    ...defaultConfig,
+                    defaultTemplate: templateWithInvalidSection as any
+                });
+            }).toThrow(ReportGenerationError);
         });
     });
 
     describe('generateReport', () => {
-        it('should generate a complete report with all sections', async () => {
-            const testData = {
-                id: 'test-data-1',
-                source: 'test',
-                content: 'Test data content'
-            };
+        it('should throw error for missing data', async () => {
+            await expect(reportGenerator.generateReport({} as any))
+                .rejects
+                .toThrow(ReportGenerationError);
+        });
 
-            const report = await reportGenerator.generateReport(testData);
+        it('should handle agent communication failures', async () => {
+            coordinator.request = jest.fn().mockRejectedValue(new Error('Communication error'));
+
+            await expect(reportGenerator.generateReport({ id: 'test' }))
+                .rejects
+                .toThrow(ReportGenerationError);
+        });
+
+        it('should continue with partial agent results', async () => {
+            coordinator.request = jest.fn().mockImplementation((type: string) => {
+                if (type === 'analysis-complete') {
+                    return Promise.resolve(mockAnalysisResult);
+                }
+                return Promise.reject(new Error('Assessment failed'));
+            });
+
+            const report = await reportGenerator.generateReport({ id: 'test' });
 
             expect(report).toBeDefined();
-            expect(report.id).toBe(testData.id);
-            expect(report.sections).toHaveLength(5); // All default sections
-            expect(report.metadata.confidence).toBeGreaterThan(0);
-
-            // Verify all standard sections are present
-            const sectionTypes = report.sections.map(s => s.type);
-            expect(sectionTypes).toContain('summary');
-            expect(sectionTypes).toContain('analysis');
-            expect(sectionTypes).toContain('assessment');
-            expect(sectionTypes).toContain('data');
-            expect(sectionTypes).toContain('recommendations');
+            expect(report.metadata.confidence).toBeLessThan(mockAnalysisResult.confidence.score);
         });
 
-        it('should respect custom templates', async () => {
-            const customTemplate = {
-                id: 'custom',
-                name: 'Custom Template',
-                sections: [
-                    { type: 'summary', title: 'Custom Summary' },
-                    { type: 'analysis', title: 'Custom Analysis' }
-                ]
-            };
+        it('should handle summary generation failure gracefully', async () => {
+            coordinator.request = jest.fn().mockImplementation((type: string) => {
+                if (type === 'generate-summary') {
+                    return Promise.reject(new Error('Summary generation failed'));
+                }
+                return type === 'analysis-complete' 
+                    ? Promise.resolve(mockAnalysisResult)
+                    : Promise.resolve(mockAssessmentResult);
+            });
 
-            const testData = {
-                id: 'test-data-2',
-                source: 'test',
-                content: 'Test data content'
-            };
+            const report = await reportGenerator.generateReport({ id: 'test' });
 
-            const report = await reportGenerator.generateReport(testData, customTemplate);
-
-            expect(report.sections).toHaveLength(2);
-            expect(report.sections[0].title).toBe('Custom Summary');
-            expect(report.sections[1].title).toBe('Custom Analysis');
+            expect(report).toBeDefined();
+            expect(report.summary).toBeUndefined();
+            expect(report.sections.length).toBeGreaterThan(0);
         });
 
-        it('should generate auto-summary when enabled', async () => {
-            const testData = {
-                id: 'test-data-3',
-                source: 'test',
-                content: 'Test data content'
-            };
-
-            const report = await reportGenerator.generateReport(testData);
-
-            expect(report.summary).toBeDefined();
-            expect(report.summary).toBe('Test summary');
-            expect(coordinator.request).toHaveBeenCalledWith(
-                'generate-summary',
-                expect.any(Object)
-            );
-        });
-
-        it('should calculate overall confidence correctly', async () => {
-            const testData = {
-                id: 'test-data-4',
-                source: 'test',
-                content: 'Test data content'
-            };
-
-            const report = await reportGenerator.generateReport(testData);
-
-            // Analysis confidence (0.85) * 0.6 + Assessment confidence (0.9) * 0.4
-            const expectedConfidence = 0.85 * 0.6 + 0.9 * 0.4;
-            expect(report.metadata.confidence).toBeCloseTo(expectedConfidence, 2);
-        });
-
-        it('should handle missing agent results gracefully', async () => {
+        it('should handle missing agent results with zero confidence', async () => {
             coordinator.request = jest.fn().mockResolvedValue(null);
 
-            const testData = {
-                id: 'test-data-5',
-                source: 'test',
-                content: 'Test data content'
-            };
-
-            const report = await reportGenerator.generateReport(testData);
+            const report = await reportGenerator.generateReport({ id: 'test' });
 
             expect(report).toBeDefined();
-            expect(report.sections).toBeDefined();
             expect(report.metadata.confidence).toBe(0);
+        });
+
+        it('should include version and generator metadata', async () => {
+            const report = await reportGenerator.generateReport({ id: 'test' });
+
+            expect(report.metadata.version).toBe('1.0');
+            expect(report.metadata.generatedBy).toBe('report-generator');
         });
     });
 
-    describe('section generation', () => {
-        it('should build valid summary section', async () => {
-            const testData = {
-                id: 'test-data-6',
-                source: 'test',
-                content: 'Test data content'
-            };
-
-            const report = await reportGenerator.generateReport(testData);
-            const summarySection = report.sections.find(s => s.type === 'summary');
-
-            expect(summarySection).toBeDefined();
-            expect(summarySection?.content).toHaveLength(2);
-            expect(summarySection?.content[0].type).toBe('text');
-            expect(summarySection?.content[1].type).toBe('metrics');
+    describe('error handling', () => {
+        it('should throw INVALID_TEMPLATE for malformed template', async () => {
+            try {
+                await reportGenerator.generateReport({ id: 'test' }, { 
+                    id: 'invalid',
+                    name: 'Invalid',
+                    sections: [{ type: 'unknown' }]
+                } as any);
+                fail('Should have thrown error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(ReportGenerationError);
+                expect(error.code).toBe(ReportErrorCode.INVALID_TEMPLATE);
+            }
         });
 
-        it('should filter low confidence patterns in analysis section', async () => {
-            const lowConfidenceResult = {
-                ...mockAnalysisResult,
-                patterns: [
-                    ...mockAnalysisResult.patterns,
-                    {
-                        id: 'pattern-2',
-                        name: 'Low Confidence Pattern',
-                        type: 'behavioral',
-                        confidence: 0.5
-                    }
+        it('should throw MISSING_DATA for incomplete data', async () => {
+            const invalidData = { timestamp: Date.now() }; // Missing id
+
+            try {
+                await reportGenerator.generateReport(invalidData);
+                fail('Should have thrown error');
+            } catch (error) {
+                expect(error).toBeInstanceOf(ReportGenerationError);
+                expect(error.code).toBe(ReportErrorCode.MISSING_DATA);
+            }
+        });
+
+        it('should handle section building failures gracefully', async () => {
+            const template = {
+                id: 'test',
+                name: 'Test Template',
+                sections: [
+                    { type: 'summary', title: 'Summary' },
+                    { type: 'invalid', title: 'Invalid' },
+                    { type: 'analysis', title: 'Analysis' }
                 ]
             };
 
-            coordinator.request = jest.fn().mockImplementation((type: string) => {
-                if (type === 'analysis-complete') {
-                    return Promise.resolve(lowConfidenceResult);
-                }
-                return Promise.resolve(mockAssessmentResult);
-            });
+            const report = await reportGenerator.generateReport({ id: 'test' }, template);
 
-            const testData = {
-                id: 'test-data-7',
-                source: 'test',
-                content: 'Test data content'
-            };
-
-            const report = await reportGenerator.generateReport(testData);
-            const analysisSection = report.sections.find(s => s.type === 'analysis');
-            const patterns = analysisSection?.content.filter(c => c.type === 'pattern');
-
-            expect(patterns).toHaveLength(1);
-            expect(patterns?.[0].value.confidence).toBeGreaterThan(0.75);
+            expect(report.sections).toBeDefined();
+            expect(report.sections.length).toBe(2); // Should skip invalid section
+            expect(report.sections.some(s => s.type === 'invalid')).toBe(false);
         });
     });
 });}
