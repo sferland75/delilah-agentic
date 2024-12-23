@@ -1,53 +1,34 @@
 # Delilah Agentic
 
-Modular AI system for Occupational Therapy field assessments and reporting, combining specialized agents for assessment, analysis, and reporting.
+Modular AI system for Occupational Therapy field assessments and reporting.
 
-## Project Overview
-Delilah Agentic provides a comprehensive solution for Occupational Therapy practitioners to conduct field assessments and generate detailed reports using specialized AI agents.
+## Setup Instructions
 
-## Getting Started
+1. Install PostgreSQL 16
+2. Create database and user:
+   ```sql
+   CREATE USER delilah WITH PASSWORD 'delilah123';
+   CREATE DATABASE delilah_db;
+   GRANT ALL PRIVILEGES ON DATABASE delilah_db TO delilah;
+   ```
 
-### Prerequisites
-- Node.js (v18 or higher)
-- Python 3.9+
-- PostgreSQL 13+
+3. Grant schema privileges:
+   ```sql
+   \c delilah_db
+   GRANT ALL ON SCHEMA public TO delilah;
+   ALTER USER delilah SET search_path TO public;
+   ```
 
-### Installation
-1. Clone the repository
-```bash
-git clone https://github.com/sferland75/delilah-agentic.git
-cd delilah-agentic
-```
+4. Install dependencies:
+   ```bash
+   pip install alembic psycopg2-binary
+   ```
 
-2. Install dependencies
-```bash
-npm install
-```
+5. Run migrations:
+   ```bash
+   alembic upgrade head
+   ```
 
-3. Set up environment
-```bash
-cp .env.example .env
-# Configure your .env file
-```
+## Development
 
-4. Initialize database
-```bash
-python create_mydb.py
-python -m alembic upgrade head
-```
-
-5. Start development server
-```bash
-npm run dev
-```
-
-## Documentation
-- [API Documentation](docs/API.md)
-- [Development Guidelines](docs/CONTRIBUTING.md)
-- [Security Policy](docs/SECURITY.md)
-
-## Contributing
-Please read [CONTRIBUTING.md](docs/CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+See CONTRIBUTING.md for development workflow and guidelines.
