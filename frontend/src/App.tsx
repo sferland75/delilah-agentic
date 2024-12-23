@@ -1,53 +1,32 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Box, Container } from '@mui/material';
-import Navigation from './components/Navigation';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from './components/Dashboard';
-import ClientList from './components/ClientList';
-import TherapistList from './components/TherapistList';
-import Login from './components/Login';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider, useAuth } from './auth/AuthContext';
+import AssessmentDetail from './components/AssessmentDetail';
 
-function AppContent() {
-  const { isAuthenticated } = useAuth();
-
+const App: React.FC = () => {
   return (
-    <Box sx={{ display: 'flex' }}>
-      {isAuthenticated && <Navigation />}
-      <Box component="main" sx={{ flexGrow: 1, p: 3, mt: isAuthenticated ? 8 : 0 }}>
-        <Container maxWidth="lg">
+    <Router>
+      <div>
+        <nav className="bg-gray-800 text-white p-4">
+          <div className="container mx-auto">
+            <div className="flex justify-between items-center">
+              <h1 className="text-xl font-bold">Delilah Agentic</h1>
+              <div>
+                <Link to="/" className="px-4 py-2 hover:text-gray-300">Dashboard</Link>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <main className="container mx-auto mt-6">
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/clients" element={
-              <ProtectedRoute>
-                <ClientList />
-              </ProtectedRoute>
-            } />
-            <Route path="/therapists" element={
-              <ProtectedRoute>
-                <TherapistList />
-              </ProtectedRoute>
-            } />
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/assessment/:id" element={<AssessmentDetail />} />
           </Routes>
-        </Container>
-      </Box>
-    </Box>
+        </main>
+      </div>
+    </Router>
   );
-}
-
-function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
-}
+};
 
 export default App;
