@@ -8,6 +8,7 @@ from models.user import User
 from database import get_db
 from schemas.auth import Token
 from config import settings
+from auth import get_current_user
 
 router = APIRouter()
 
@@ -33,7 +34,5 @@ async def login(
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.get("/me", response_model=User)
-async def read_users_me(
-    current_user: User = Depends(AuthService.get_current_user)
-):
+async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
