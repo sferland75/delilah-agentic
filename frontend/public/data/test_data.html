@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delilah Agentic Test Data</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        pre { background-color: #f4f4f4; padding: 15px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Delilah Agentic Test Data</h1>
+    <pre id="data"></pre>
+
+    <script>
+        fetch('../tests/test_data_batch.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('data').textContent = 
+                    JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('data').textContent = 
+                    'Error loading data: ' + error;
+            });
+    </script>
+</body>
+</html>

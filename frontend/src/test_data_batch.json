@@ -1,0 +1,8 @@
+${JSON.stringify(
+    () => {
+        const fs = require('fs');
+        const path = require('path');
+        const testDataPath = path.join(__dirname, '..', '..', 'tests', 'test_data_batch.json');
+        return JSON.parse(fs.readFileSync(testDataPath, 'utf8'));
+    }
+)}
