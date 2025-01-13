@@ -1,100 +1,66 @@
-# Delilah Agentic - Assessment System Backup
+# Delilah Agentic - Assessment System
 Date: January 13, 2025
 
-## Overview
-This backup contains a comprehensive snapshot of the Delilah Agentic assessment form system, including all form components, validation schemas, and associated files.
+## Quick Start for Offline Assessment
+1. Clone the repository locally
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run in electron mode:
+   ```bash
+   npm run electron:dev
+   ```
+4. Save progress using built-in JSON export (top right menu)
 
-## Directory Structure
-```
-/backup_jan13_2025
-├── components/
-│   ├── InitialInformation/
-│   │   ├── DemographicsForm.tsx
-│   │   ├── DocumentationForm.tsx
-│   │   ├── LivingSituation.tsx
-│   │   └── index.tsx
-│   ├── MedicalHistory/
-│   │   ├── PreExistingConditions.tsx
-│   │   ├── InjuryMechanism.tsx
-│   │   ├── Medications.tsx
-│   │   └── index.tsx
-│   ├── TypicalDay/
-│   │   ├── DailyRoutine.tsx
-│   │   ├── WeeklySchedule.tsx
-│   │   └── index.tsx
-│   ├── FunctionalAssessment/
-│   │   ├── RangeOfMotion/
-│   │   │   ├── index.tsx
-│   │   │   └── rom-values.ts
-│   │   ├── ManualMuscleTest/
-│   │   │   ├── index.tsx
-│   │   │   └── mmt-values.ts
-│   │   ├── BergBalanceTest/
-│   │   │   ├── index.tsx
-│   │   │   └── berg-values.ts
-│   │   └── index.tsx
-│   └── EnvironmentalSection/
-│       ├── PropertyOverview.tsx
-│       ├── ExteriorFeatures.tsx
-│       ├── AccessibilityAssessment.tsx
-│       ├── SafetyAssessment.tsx
-│       └── index.tsx
-└── lib/
-    └── validation/
-        └── assessment-schema.ts
+## Offline Assessment Tips
+- Form auto-saves to localStorage every 30 seconds
+- Use Ctrl+S/Cmd+S to force save
+- Export to JSON at any time using the export button
+- All components work offline - no internet required
 
-## Component Details
+## Running on Your Laptop
+1. Clone repo and switch to `electron` branch
+2. Install core dependencies only:
+   ```bash
+   npm install react react-dom @hookform/resolvers zod react-hook-form @radix-ui/react-tabs electron
+   ```
+3. Install minimal UI components:
+   ```bash
+   npm install @radix-ui/react-form @radix-ui/react-select lucide-react
+   ```
+4. Start the application:
+   ```bash
+   npm run electron:dev
+   ```
 
-### Initial Information Section
-- Demographics & contact information
-- Documentation review system
-- Living situation assessment
+## Exporting Data for LLM Processing
+1. Complete the assessment
+2. Click 'Export' in top menu
+3. Save the JSON file
+4. The exported JSON contains all form data in a structured format ready for LLM processing
 
-### Medical History Section
-- Pre-existing conditions
-- Injury mechanism & details
-- Current medications
-
-### Typical Day Assessment
-- Pre-accident daily routines
-- Current daily routines
-- Weekly schedule comparison
-
-### Functional Assessment
-- Range of Motion (ROM) measurements
-- Manual Muscle Testing (MMT)
-- Berg Balance Test
-
-### Environmental Assessment
-- Property overview
-- Exterior features evaluation
-- Accessibility assessment
-- Safety evaluation
+## Component Structure
+[Previous component documentation remains the same...]
 
 ## Dependencies
-- @hookform/resolvers/zod
+### Core (Required)
+- react
 - react-hook-form
-- shadcn/ui components
-- lucide-react icons
-- tailwindcss
+- zod
+- electron
 
-## Restoration Notes
-1. Ensure all dependencies are installed:
-   ```bash
-   npm install @hookform/resolvers zod react-hook-form
-   ```
-2. Install required shadcn/ui components:
-   ```bash
-   npx shadcn-ui@latest add card form input textarea tabs select button
-   ```
-3. Verify Tailwind CSS configuration includes all required classes
+### UI (Minimal Set)
+- @radix-ui/react-tabs
+- @radix-ui/react-form
+- @radix-ui/react-select
+- lucide-react
 
-## Testing Checklist
-- [ ] Form validation works for all sections
-- [ ] Data persistence functions correctly
-- [ ] All dynamic fields (add/remove) work properly
-- [ ] Navigation between sections is smooth
-- [ ] All default values load correctly
+## Offline Storage
+- Uses electron-store for persistent storage
+- Automatic backups every 30 seconds
+- Manual save option (Ctrl+S/Cmd+S)
+- Export to JSON at any time
 
 ## Last Updated
-January 13, 2025 - Full system backup including all components and schemas.
+January 13, 2025 - Added offline usage and export documentation
