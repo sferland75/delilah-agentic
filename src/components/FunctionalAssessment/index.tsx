@@ -6,7 +6,7 @@ import { RangeOfMotion } from '@/components/RangeOfMotion';
 import { ManualMuscleTest } from '@/components/ManualMuscle';
 import { BergBalanceTest } from '@/components/BergBalance';
 import { PosturalTolerances } from './postural-tolerances';
-import { TransfersAssessment } from './transfers-assessment';
+import { MobilityAssessment } from './MobilityAssessment';
 import { useFormContext } from 'react-hook-form';
 import { ActivitySquare, MoveVertical, Move, Ruler, GripHorizontal, Scale3d } from 'lucide-react';
 
@@ -30,28 +30,19 @@ export function FunctionalAssessment() {
       
       <Tabs defaultValue="physical" className="w-full">
         <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger 
-            value="physical" 
-            className="bg-white/50 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 hover:bg-blue-50"
-          >
+          <TabsTrigger value="physical">
             <div className="flex items-center gap-2">
               <ActivitySquare className="h-4 w-4" />
               <span>Physical Assessment</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger 
-            value="postural" 
-            className="bg-white/50 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 hover:bg-blue-50"
-          >
+          <TabsTrigger value="postural">
             <div className="flex items-center gap-2">
               <MoveVertical className="h-4 w-4" />
               <span>Postural Tolerances</span>
             </div>
           </TabsTrigger>
-          <TabsTrigger 
-            value="transfers" 
-            className="bg-white/50 data-[state=active]:bg-blue-100 data-[state=active]:text-blue-700 hover:bg-blue-50"
-          >
+          <TabsTrigger value="transfers">
             <div className="flex items-center gap-2">
               <Move className="h-4 w-4" />
               <span>Mobility & Transfers</span>
@@ -102,7 +93,10 @@ export function FunctionalAssessment() {
 
         <TabsContent value="transfers">
           <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
-            <TransfersAssessment control={control} />
+            <MobilityAssessment 
+              control={control} 
+              prefix="functionalAssessment.mobility"
+            />
           </div>
         </TabsContent>
       </Tabs>

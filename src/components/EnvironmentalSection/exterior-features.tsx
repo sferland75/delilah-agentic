@@ -6,7 +6,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from 'lucide-react';
 import { nanoid } from 'nanoid';
-import { environmentalConfigs } from './config';
+
+const EXTERIOR_COMPONENTS = [
+  'Steps/Stairs',
+  'Ramp',
+  'Handrails',
+  'Walkway',
+  'Driveway',
+  'Landing',
+  'Door',
+  'Lighting',
+  'Other'
+] as const;
 
 const AccessibilityLevels = {
   Fully_Accessible: 'Fully accessible',
@@ -48,7 +59,7 @@ const FeatureComponent = ({ index, featureId, onRemove }: FeatureComponentProps)
               <FormLabel>Type</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
-                value={field.value || environmentalConfigs.exterior.components[0]}
+                value={field.value || EXTERIOR_COMPONENTS[0]}
               >
                 <FormControl>
                   <SelectTrigger>
@@ -56,7 +67,7 @@ const FeatureComponent = ({ index, featureId, onRemove }: FeatureComponentProps)
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {environmentalConfigs.exterior.components.map((type) => (
+                  {EXTERIOR_COMPONENTS.map((type) => (
                     <SelectItem key={type} value={type}>{type}</SelectItem>
                   ))}
                 </SelectContent>
@@ -185,7 +196,7 @@ export function ExteriorFeatures() {
   const addFeature = () => {
     const newFeature: ExteriorFeature = {
       id: nanoid(),
-      type: environmentalConfigs.exterior.components[0],
+      type: EXTERIOR_COMPONENTS[0],
       accessibility: defaultAccessibilityLevel,
       safety: defaultSafetyLevel,
       recommendations: [],

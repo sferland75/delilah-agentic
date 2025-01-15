@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Clock, Sun, Sunset, Moon } from 'lucide-react';
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface DailyRoutineProps {
   control: Control<any>;
@@ -18,6 +19,14 @@ interface DailyRoutineProps {
   title: string;
   description: string;
 }
+
+const WAKE_TIMES = [
+  '5:00', '5:30', '6:00', '6:30', '7:00', '7:30', '8:00', '8:30', '9:00', '9:30', '10:00'
+];
+
+const BED_TIMES = [
+  '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00', '23:30', '00:00'
+];
 
 const TIME_PERIODS = [
   { 
@@ -46,6 +55,16 @@ const TIME_PERIODS = [
   }
 ];
 
+// Format 24hr time to 12hr display
+const formatTimeDisplay = (time: string) => {
+  if (!time) return '';
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour % 12 || 12;
+  return `${displayHour}:${minutes} ${ampm}`;
+};
+
 export function DailyRoutine({ control, prefix, title, description }: DailyRoutineProps) {
   return (
     <div className="space-y-6">
@@ -54,41 +73,159 @@ export function DailyRoutine({ control, prefix, title, description }: DailyRouti
         <p className="text-sm text-slate-600">{description}</p>
       </div>
 
+      {/* Irregular Schedule Checkbox */}
+      <FormField
+        control={control}
+        name={`${prefix}.hasIrregularSchedule`}
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+            <FormControl>
+              <Checkbox
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <div className="space-y-1 leading-none">
+              <FormLabel className="text-slate-700">
+                Irregular/Variable Schedule
+              </FormLabel>
+              <p className="text-sm text-slate-600">
+                Check this if sleep/wake times vary significantly or don't follow a typical pattern
+              </p>
+            </div>
+          </FormItem>
+        )}
+      />
+
       {/* Sleep Schedule */}
       <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4 space-y-4">
         <div className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-600" />
           <h4 className="font-medium text-slate-800">Sleep Schedule</h4>
         </div>
-        <div className="grid grid-cols-2 gap-6">
-          <FormField
-            control={control}
-            name={`${prefix}.sleepSchedule.wakeTime`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Typical Wake Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} className="bg-white" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
-          <FormField
-            control={control}
-            name={`${prefix}.sleepSchedule.bedTime`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Typical Bed Time</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} className="bg-white" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={control}
+          name={`${prefix}.hasIrregularSchedule`}
+          render={({ field }) => (
+            <>
+              {field.value ? (
+                <div className="space-y-4">
+                  <FormField
+                    control={control}
+                    name={`${prefix}.irregularSchedule.description`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700">Describe Sleep Pattern</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder="Describe your typical sleep patterns, including when you usually sleep and wake, how it varies, and any relevant factors..."
+                            className="min-h-[100px] bg-white"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={control}
+                    name={`${prefix}.irregularSchedule.factors`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700">Factors Affecting Schedule</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            {...field}
+                            placeholder="What influences your sleep schedule? (e.g., work shifts, health conditions, caregiving duties)..."
+                            className="min-h-[100px] bg-white"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <FormField
+                    control={control}
+                    name={`${prefix}.sleepSchedule.wakeTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700">Typical Wake Time</FormLabel>
+                        <div className="space-y-2">
+                          <FormControl>
+                            <Input 
+                              type="time" 
+                              {...field} 
+                              className="bg-white mb-2" 
+                              placeholder="Select or type time..."
+                            />
+                          </FormControl>
+                          <div className="flex flex-wrap gap-2">
+                            {WAKE_TIMES.map((time) => (
+                              <button
+                                key={time}
+                                type="button"
+                                onClick={() => field.onChange(time)}
+                                className={`px-3 py-1 rounded-md text-sm ${
+                                  field.value === time 
+                                    ? 'bg-blue-600 text-white' 
+                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                }`}
+                              >
+                                {formatTimeDisplay(time)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={control}
+                    name={`${prefix}.sleepSchedule.bedTime`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-slate-700">Typical Bed Time</FormLabel>
+                        <div className="space-y-2">
+                          <FormControl>
+                            <Input 
+                              type="time" 
+                              {...field} 
+                              className="bg-white mb-2" 
+                              placeholder="Select or type time..."
+                            />
+                          </FormControl>
+                          <div className="flex flex-wrap gap-2">
+                            {BED_TIMES.map((time) => (
+                              <button
+                                key={time}
+                                type="button"
+                                onClick={() => field.onChange(time)}
+                                className={`px-3 py-1 rounded-md text-sm ${
+                                  field.value === time 
+                                    ? 'bg-blue-600 text-white' 
+                                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                                }`}
+                              >
+                                {formatTimeDisplay(time)}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+            </>
+          )}
+        />
       </div>
 
       {/* Daily Routines by Time Period */}
