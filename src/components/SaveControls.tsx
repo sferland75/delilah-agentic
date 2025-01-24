@@ -4,6 +4,7 @@ import { Save, Download } from 'lucide-react';
 import { useForm } from '../context/FormContext';
 import { validateAssessmentData } from '../utils/validation';
 import { useToast } from "@/components/ui/use-toast";
+import { ClearFormButton } from './ui/ClearFormButton';
 
 export const SaveControls: React.FC = () => {
   const { formData } = useForm();
@@ -91,6 +92,8 @@ export const SaveControls: React.FC = () => {
 
   return (
     <div className="fixed top-4 right-4 flex gap-2 z-50">
+      <ClearFormButton />
+      
       <Button
         onClick={saveLocal}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"

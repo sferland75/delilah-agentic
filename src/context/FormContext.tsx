@@ -64,9 +64,13 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const clearDraft = () => {
     console.log('Clearing form draft');
+    // Clear localStorage
     localStorage.removeItem('form_draft');
+    // Clear formData state
     setFormData({});
     setLastSaved(null);
+    // Force reload to ensure all components reset
+    window.location.reload();
   };
 
   const value = {

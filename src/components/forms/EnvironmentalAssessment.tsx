@@ -1,13 +1,27 @@
 import React from 'react';
 import { useFormContext } from "react-hook-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PropertyOverview } from '../EnvironmentalSection/property-overview';
+import { RoomAssessment } from '../EnvironmentalSection/room-assessment';
+import { ExteriorFeatures } from '../EnvironmentalSection/exterior-features';
+import { SafetyAssessment } from '../EnvironmentalSection/safety-assessment';
 
 export function EnvironmentalAssessment() {
-  const { register } = useFormContext();
+  const { watch } = useFormContext();
 
   return (
     <div className="space-y-8">
-      <h3 className="text-lg font-medium">Environmental Assessment</h3>
-      {/* Add your environmental assessment form fields here */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Environmental Assessment</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <PropertyOverview />
+          <RoomAssessment />
+          <ExteriorFeatures />
+          <SafetyAssessment />
+        </CardContent>
+      </Card>
     </div>
   );
 }
