@@ -1,0 +1,3129 @@
+D:\delilah>npm test src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.tsnpm test src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts
+
+> delilah-agentic@1.0.0 test
+> jest src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.tsnpm test src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts
+
+ PASS  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/formatting.test.ts
+  ROM Formatting
+    √ formats brief output correctly (19 ms)
+    √ formats standard output correctly (2 ms)
+    √ formats detailed output correctly (3 ms)
+    √ handles empty data gracefully (1 ms)
+
+ PASS  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/analysis.test.ts
+  ROM Analysis
+    √ identifies restricted patterns (4 ms)
+    √ identifies asymmetrical patterns (1 ms)
+    √ identifies painful movements (1 ms)
+
+ FAIL  src/components/ReportGeneration/testing/TestableAgent.test.ts
+  ● Test suite failed to run
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+       6 |     describe('Core Functionality', () => {
+       7 |         const context = createMockContext();
+    >  8 |         const agent = new TestAgent(context);
+         |                       ^
+       9 |
+      10 |         it('initializes with correct metadata', () => {
+      11 |             const metadata = agent.getMetadata();
+
+      at src/components/ReportGeneration/testing/TestableAgent.test.ts:8:23
+      at src/components/ReportGeneration/testing/TestableAgent.test.ts:6:5
+      at Object.<anonymous> (src/components/ReportGeneration/testing/TestableAgent.test.ts:5:1)
+
+ FAIL  src/components/ReportGeneration/testing/narrative-test-utils.test.ts
+  Narrative Test Utilities
+    createNarrativeTestData
+      √ creates default test data (24 ms)
+      √ allows data overrides (4 ms)
+    validateNarrativeOutput
+      × validates content inclusions (92 ms)
+      × validates content exclusions (21 ms)
+      × validates temporal patterns (17 ms)
+      √ throws on missing required content (4 ms)
+    createNarrativeTestContext
+      √ creates context with default features (8 ms)
+      √ allows feature overrides (1 ms)
+      √ creates valid assessment data (1 ms)
+      √ integrates custom data into assessment (1 ms)
+
+  ● Narrative Test Utilities › validateNarrativeOutput › validates content inclusions
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to include context indicators"
+
+          166 |         const hasContext = /\b(due to|because of|related to|in context of)\b/i.test(content);
+          167 |         if (!hasContext) {
+        > 168 |             throw new Error('Expected content to include context indicators');
+              |                   ^
+          169 |         }
+          170 |     }
+          171 |
+
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:168:19)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:46:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:51:21)
+
+      49 |                     includes: ['John Doe', 'lower back', 'Ibuprofen']
+      50 |                 }
+    > 51 |             })).not.toThrow();
+         |                     ^
+      52 |         });
+      53 |
+      54 |         it('validates content exclusions', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:51:21)
+
+  ● Narrative Test Utilities › validateNarrativeOutput › validates content exclusions
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to include context indicators"
+
+          166 |         const hasContext = /\b(due to|because of|related to|in context of)\b/i.test(content);
+          167 |         if (!hasContext) {
+        > 168 |             throw new Error('Expected content to include context indicators');
+              |                   ^
+          169 |         }
+          170 |     }
+          171 |
+
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:168:19)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:55:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:61:21)
+
+      59 |                     excludes: ['bad', 'normal', 'problems']
+      60 |                 }
+    > 61 |             })).not.toThrow();
+         |                     ^
+      62 |         });
+      63 |
+      64 |         it('validates temporal patterns', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:61:21)
+
+  ● Narrative Test Utilities › validateNarrativeOutput › validates temporal patterns
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to match pattern /initially.*subsequently.*current/i but it did not"
+
+          151 |     expectations.content.patterns?.forEach(pattern => {
+          152 |         if (!pattern.test(content)) {
+        > 153 |             throw new Error(`Expected content to match pattern ${pattern} but it did not`);
+              |                   ^
+          154 |         }
+          155 |     });
+          156 |
+
+          at src/components/ReportGeneration/testing/narrative-test-utils.ts:153:19
+              at Array.forEach (<anonymous>)
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:151:36)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:65:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:71:21)
+
+      69 |                     patterns: [/initially.*subsequently.*current/i]
+      70 |                 }
+    > 71 |             })).not.toThrow();
+         |                     ^
+      72 |         });
+      73 |
+      74 |         it('throws on missing required content', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:71:21)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts
+  BaseAgent
+    Standard Mode
+      × initializes with correct parameters (12 ms)
+      × processes data correctly (2 ms)
+      × generates sections with correct structure (1 ms)
+      × formats content correctly for different detail levels (1 ms)
+      × validates data correctly (1 ms)
+      × handles missing data gracefully (1 ms)
+      × generates appropriate error messages (1 ms)
+      × handles constructor errors gracefully (1 ms)
+      × handles processData errors gracefully (1 ms)
+      × handles formatContent errors gracefully (1 ms)
+      × handles invalid detail levels gracefully (1 ms)
+    Narrative Mode
+      × initializes with narrative engine when enabled (3 ms)
+      × generates narrative content when enabled (1 ms)
+      × falls back to standard formatting if narrative generation fails (17 ms)
+      × includes context in narrative when contextual analysis is enabled (1 ms)
+      × handles narrative engine initialization errors (1 ms)
+      × handles narrative generation errors gracefully (1 ms)
+      × handles missing narrative engine gracefully
+    Error Boundaries
+      × recovers from catastrophic errors (1 ms)
+      × handles null context values
+      × handles corrupted process data (1 ms)
+
+  ● BaseAgent › Standard Mode › initializes with correct parameters
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › processes data correctly
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › generates sections with correct structure
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › formats content correctly for different detail levels
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › validates data correctly
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › generates appropriate error messages
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles constructor errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles processData errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles formatContent errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles invalid detail levels gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Narrative Mode › initializes with narrative engine when enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      121 |
+      122 |         it('initializes with narrative engine when enabled', () => {
+    > 123 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      124 |             expect(agent.hasNarrativeEngine()).toBe(true);
+      125 |         });
+      126 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:123:27)
+
+  ● BaseAgent › Narrative Mode › generates narrative content when enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      126 |
+      127 |         it('generates narrative content when enabled', async () => {
+    > 128 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      129 |             const section = await agent.generateSection({
+      130 |                 raw: mockAssessmentData
+      131 |             });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:128:27)
+
+  ● BaseAgent › Narrative Mode › falls back to standard formatting if narrative generation fails
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      136 |
+      137 |         it('falls back to standard formatting if narrative generation fails', async () => {
+    > 138 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      139 |             const invalidData = {
+      140 |                 raw: null
+      141 |             } as any;
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:138:27)
+
+  ● BaseAgent › Narrative Mode › includes context in narrative when contextual analysis is enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      148 |
+      149 |         it('includes context in narrative when contextual analysis is enabled', async () => {
+    > 150 |             const contextualAgent = new TestAgent(createMockContext({
+          |                                     ^
+      151 |                 features: {
+      152 |                     enableNarrative: true,
+      153 |                     enableContextualAnalysis: true
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:150:37)
+
+  ● BaseAgent › Narrative Mode › handles narrative engine initialization errors
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      166 |                 features: null
+      167 |             };
+    > 168 |             const agent = new TestAgent(errorContext);
+          |                           ^
+      169 |             expect(agent.hasNarrativeEngine()).toBe(false);
+      170 |         });
+      171 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:168:27)
+
+  ● BaseAgent › Narrative Mode › handles narrative generation errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      171 |
+      172 |         it('handles narrative generation errors gracefully', async () => {
+    > 173 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      174 |             jest.spyOn(agent as any, 'generateNarrativeContent').mockRejectedValue(new Error('Narrative error'));
+      175 |
+      176 |             const section = await agent.generateSection({
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:173:27)
+
+  ● BaseAgent › Narrative Mode › handles missing narrative engine gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      181 |
+      182 |         it('handles missing narrative engine gracefully', async () => {
+    > 183 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      184 |             (agent as any).narrativeEngine = null;
+      185 |
+      186 |             const section = await agent.generateSection({
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:183:27)
+
+  ● BaseAgent › Error Boundaries › recovers from catastrophic errors
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      193 |     describe('Error Boundaries', () => {
+      194 |         it('recovers from catastrophic errors', async () => {
+    > 195 |             const agent = new TestAgent(createMockContext());
+          |                           ^
+      196 |
+      197 |             // Create a failing version of processData
+      198 |             jest.spyOn(agent as any, 'processData').mockImplementation(() => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:195:27)
+
+  ● BaseAgent › Error Boundaries › handles null context values
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      216 |             } as any;
+      217 |
+    > 218 |             const agent = new TestAgent(nullContext);
+          |                           ^
+      219 |             expect(agent).toBeDefined();
+      220 |         });
+      221 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:218:27)
+
+  ● BaseAgent › Error Boundaries › handles corrupted process data
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      221 |
+      222 |         it('handles corrupted process data', async () => {
+    > 223 |             const agent = new TestAgent(createMockContext());
+          |                           ^
+      224 |             const corruptedData = {
+      225 |                 raw: {
+      226 |                     ...mockAssessmentData,
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:223:27)
+
+ PASS  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/normalROM.test.ts
+  Normal ROM Data
+    √ should have expected joints defined (2 ms)
+    √ should have correct shoulder values (1 ms)
+    √ should have correct knee values (1 ms)
+
+ PASS  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/types.test.ts
+  ROM Types
+    ROMData
+      √ validates ROMData structure (2 ms)
+      √ handles optional fields (4 ms)
+    ROMPattern
+      √ validates unilateral pattern structure (1 ms)
+      √ validates painful pattern structure
+      √ validates restricted pattern structure (2 ms)
+
+ PASS  src/components/ReportGeneration/agents/__tests__/utils.test.ts
+  Utils
+    validateData
+      √ should validate required fields correctly (15 ms)
+    formatDate
+      √ should format dates correctly (72 ms)
+    sanitizeText
+      √ should remove unsafe content (3 ms)
+    createSection
+      √ should create a valid section (3 ms)
+
+ PASS  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/import-test.ts
+  Test Environment
+    √ should run basic test (4 ms)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts
+  MobilityAgent
+    processData
+      × processes mobility data correctly (43 ms)
+      × analyzes balance data
+      × generates appropriate recommendations (1 ms)
+    formatting
+      × formats at different detail levels (1 ms)
+      × handles minimal data gracefully (1 ms)
+
+  ● MobilityAgent › processData › processes mobility data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:14:34)
+
+  ● MobilityAgent › processData › analyzes balance data
+
+    TypeError: Cannot read properties of undefined (reading 'functionalAssessment')
+
+      23 |         ...mockMobilityData,
+      24 |         functionalAssessment: {
+    > 25 |           ...mockMobilityData.functionalAssessment,
+         |                               ^
+      26 |           bergBalance: {
+      27 |             totalScore: 35,
+      28 |             items: {}
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:25:31)
+
+  ● MobilityAgent › processData › generates appropriate recommendations
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:40:34)
+
+  ● MobilityAgent › formatting › formats at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:48:34)
+
+  ● MobilityAgent › formatting › handles minimal data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'functionalAssessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.functionalAssessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:71:34)
+
+ FAIL  src/components/ReportGeneration/agents/adl/__tests__/BasicADLAgent.test.ts
+  BasicADLAgent
+    √ processes ADL data correctly (35 ms)
+    √ generates appropriate recommendations (2 ms)
+    × formats output at different detail levels (6 ms)
+    √ handles empty data gracefully (21 ms)
+
+  ● BasicADLAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "ADL Status"
+    Received object: {}
+
+      63 |
+      64 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 65 |     expect(brief).toContain('ADL Status');
+         |                   ^
+      66 |     expect(brief).toContain('feeding: Independent');
+      67 |
+      68 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/adl/__tests__/BasicADLAgent.test.ts:65:19)
+
+ FAIL  src/components/ReportGeneration/__tests__/anderson.test.ts
+  Anderson Report Generation
+    × should generate a complete assessment report (37 ms)
+    × handles missing data gracefully
+    × includes all required sections
+
+  ● Anderson Report Generation › should generate a complete assessment report
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+  ● Anderson Report Generation › handles missing data gracefully
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+  ● Anderson Report Generation › includes all required sections
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts
+  ● Test suite failed to run
+
+    Cannot find module '../ADLAgent' from 'src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts'
+
+    > 1 | import { ADLAgent } from '../ADLAgent';
+        | ^
+      2 | import { mockAssessmentData } from '../testing/mockData';
+      3 | import { AgentContext } from '../../types';
+      4 |
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts:1:1)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/SymptomIntegrationAgent.test.ts
+  SymptomIntegrationAgent
+    √ processes all symptom types correctly (23 ms)
+    × formats integrated report correctly (4 ms)
+
+  ● SymptomIntegrationAgent › formats integrated report correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Physical Symptoms"
+    Received string:    "Standard: Error formatting baseagent content"
+
+      16 |     const section = await agent.generateSection(sampleSymptomData);
+      17 |     expect(section.valid).toBe(true);
+    > 18 |     expect(section.content).toContain('Physical Symptoms');
+         |                             ^
+      19 |     expect(section.content).toContain('Lower Back');
+      20 |     expect(section.content).toContain('Memory issues');
+      21 |     expect(section.content).toContain('Anxiety');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/SymptomIntegrationAgent.test.ts:18:29)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts
+  EmotionalSymptomAgent
+    √ processes symptom data correctly (15 ms)
+    × formats output at different detail levels (4 ms)
+    × handles empty data gracefully (2 ms)
+
+  ● EmotionalSymptomAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Anxiety"
+    Received object: {}
+
+      36 |
+      37 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 38 |     expect(brief).toContain('Anxiety');
+         |                   ^
+      39 |     expect(brief).toContain('Moderate');
+      40 |
+      41 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts:38:19)
+
+  ● EmotionalSymptomAgent › handles empty data gracefully
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "No emotional symptoms reported"
+    Received object: {}
+
+      56 |
+      57 |     const formatted = agent.getFormattedContent(processed, 'standard');
+    > 58 |     expect(formatted).toContain('No emotional symptoms reported');
+         |                       ^
+      59 |     expect(formatted).not.toContain('undefined');
+      60 |   });
+      61 | });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts:58:23)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts
+  PhysicalSymptomsAgent
+    × processes symptom data correctly (54 ms)
+    × formats content at different detail levels
+    × handles empty symptoms gracefully (1 ms)
+
+  ● PhysicalSymptomsAgent › processes symptom data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:34:32)
+
+  ● PhysicalSymptomsAgent › formats content at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:41:35)
+
+  ● PhysicalSymptomsAgent › handles empty symptoms gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:66:35)
+
+ FAIL  src/components/ReportGeneration/agents/adl/__tests__/IADLAgent.test.ts
+  IADLAgent
+    √ processes IADL data correctly (14 ms)
+    × formats output at different detail levels (5 ms)
+    √ generates appropriate recommendations (2 ms)
+    √ handles empty data gracefully (2 ms)
+
+  ● IADLAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "IADL Status"
+    Received object: {}
+
+      42 |
+      43 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 44 |     expect(brief).toContain('IADL Status');
+         |                   ^
+      45 |     expect(brief).toContain('Meal Prep: Modified Independent');
+      46 |
+      47 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/adl/__tests__/IADLAgent.test.ts:44:19)
+
+ FAIL  src/components/ReportGeneration/agents/narrative/__tests__/TransfersAgent.test.ts
+  NarrativeTransfersAgent
+    processData
+      √ generates narrative correctly (33 ms)
+      √ generates bullet points (1 ms)
+      √ generates recommendations (1 ms)
+    formatting
+      × formats at different detail levels (7 ms)
+
+  ● NarrativeTransfersAgent › formatting › formats at different detail levels
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Patient demonstrates modified independent transfer abilities. bed mobility is modified independent, and sit-to-stand transfers are independent, and toilet transfers are modified independent using grab_bars and toilet_riser, and shower transfers are modified independent using shower_chair and grab_bars. Balance testing indicates moderate fall risk."
+    Received: {}
+
+      61 |
+      62 |       const brief = agent.getFormattedContent(result, 'brief');
+    > 63 |       expect(brief).toBe(result.narrative);
+         |                     ^
+      64 |
+      65 |       const standard = agent.getFormattedContent(result, 'standard');
+      66 |       expect(standard).toContain(result.narrative);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/narrative/__tests__/TransfersAgent.test.ts:63:21)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts
+  DocumentationAgent
+    processData
+      √ processes documentation correctly (56 ms)
+      √ processes medical documentation details (2 ms)
+      √ generates recommendations when needed (2 ms)
+    formatting
+      × formats at different detail levels (3 ms)
+      × handles minimal data gracefully (2 ms)
+
+  ● DocumentationAgent › formatting › formats at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Documentation Summary"
+    Received object: {}
+
+      82 |
+      83 |       const brief = agent.getFormattedContent(result, 'brief');
+    > 84 |       expect(brief).toContain('Documentation Summary');
+         |                     ^
+      85 |       expect(brief).toContain('Medical Documentation: 1');
+      86 |
+      87 |       const detailed = agent.getFormattedContent(result, 'detailed');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts:84:21)
+
+  ● DocumentationAgent › formatting › handles minimal data gracefully
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Medical Report"
+    Received object: {}
+
+      110 |       const result = await agent.processData(minimalData);
+      111 |       const formatted = agent.getFormattedContent(result, 'standard');
+    > 112 |       expect(formatted).toContain('Medical Report');
+          |                         ^
+      113 |       expect(formatted).not.toContain('undefined');
+      114 |     });
+      115 |   });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts:112:25)
+
+ FAIL  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts
+  RangeOfMotionAgent
+    × processes data correctly (31 ms)
+    × identifies unilateral patterns (2 ms)
+    × identifies painful movements (1 ms)
+    × formats brief content correctly (6 ms)
+    × formats standard content correctly (2 ms)
+    × formats detailed content correctly (1 ms)
+
+  ● RangeOfMotionAgent › processes data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      35 |     const result = await agent.processData(testData);
+      36 |     expect(result.valid).toBe(true);
+    > 37 |     expect(result.data.patterns).toBeDefined();
+         |                        ^
+      38 |   });
+      39 |
+      40 |   it('identifies unilateral patterns', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:37:24)
+
+  ● RangeOfMotionAgent › identifies unilateral patterns
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      40 |   it('identifies unilateral patterns', async () => {
+      41 |     const result = await agent.processData(testData);
+    > 42 |     expect(result.data.patterns.unilateral).toBeDefined();
+         |                        ^
+      43 |     expect(result.data.patterns.unilateral).toContainEqual({
+      44 |       joint: 'shoulder',
+      45 |       side: 'right'
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:42:24)
+
+  ● RangeOfMotionAgent › identifies painful movements
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      49 |   it('identifies painful movements', async () => {
+      50 |     const result = await agent.processData(testData);
+    > 51 |     expect(result.data.patterns.painful).toBeDefined();
+         |                        ^
+      52 |     expect(result.data.patterns.painful).toContainEqual({
+      53 |       joint: 'shoulder',
+      54 |       movement: 'flexion',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:51:24)
+
+  ● RangeOfMotionAgent › formats brief content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Range of Motion Summary"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      60 |     const result = await agent.processData(testData);
+      61 |     const briefFormat = await (agent as any).getFormattedContent(result, 'brief');
+    > 62 |     expect(briefFormat).toContain('Range of Motion Summary');
+         |                         ^
+      63 |     expect(briefFormat).toContain('shoulder');
+      64 |   });
+      65 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:62:25)
+
+  ● RangeOfMotionAgent › formats standard content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Shoulder"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      68 |     const standardFormat = await (agent as any).getFormattedContent(result, 'standard');
+      69 |     expect(standardFormat).toContain('Range of Motion Assessment');
+    > 70 |     expect(standardFormat).toContain('Shoulder');
+         |                            ^
+      71 |   });
+      72 |
+      73 |   it('formats detailed content correctly', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:70:28)
+
+  ● RangeOfMotionAgent › formats detailed content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Detailed Range of Motion Assessment"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      74 |     const result = await agent.processData(testData);
+      75 |     const detailedFormat = await (agent as any).getFormattedContent(result, 'detailed');
+    > 76 |     expect(detailedFormat).toContain('Detailed Range of Motion Assessment');
+         |                            ^
+      77 |     expect(detailedFormat).toContain('Pain Patterns');
+      78 |   });
+      79 | });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:76:28)
+
+ FAIL  src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts
+  NarrativeEngine
+    Core Functionality
+      × generates basic narrative content (16 ms)
+      × includes temporal information (1 ms)
+    Error Handling
+      √ handles missing data gracefully (2 ms)
+      √ recovers from invalid section type (3 ms)
+      × handles corrupt or malformed data (1 ms)
+    Section Generation
+      × generates medication narrative (2 ms)
+      × generates symptoms narrative (2 ms)
+      × generates functional narrative (1 ms)
+    Context Integration
+      × integrates temporal context (3 ms)
+      √ links symptoms to function
+      × connects medications to management
+    Clinical Accuracy
+      × uses appropriate clinical terminology (4 ms)
+      √ maintains professional tone (1 ms)
+
+  ● NarrativeEngine › Core Functionality › generates basic narrative content
+
+    Expected content to include "lower back" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:13:36)
+
+  ● NarrativeEngine › Core Functionality › includes temporal information
+
+    Expected content to include "initially" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:28:36)
+
+  ● NarrativeEngine › Error Handling › handles corrupt or malformed data
+
+    ReferenceError: rawAssessment is not defined
+
+      56 |
+      57 |         it('handles corrupt or malformed data', async () => {
+    > 58 |             const corruptData = {
+         |                                 ^
+      59 |                 ...rawAssessment,
+      60 |                 demographics: null,
+      61 |                 symptoms: undefined
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:58:33)
+
+  ● NarrativeEngine › Section Generation › generates medication narrative
+
+    Expected content to match pattern /\b(medication|treatment)\b/i but it did not
+
+      151 |     expectations.content.patterns?.forEach(pattern => {
+      152 |         if (!pattern.test(content)) {
+    > 153 |             throw new Error(`Expected content to match pattern ${pattern} but it did not`);
+          |                   ^
+      154 |         }
+      155 |     });
+      156 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:153:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:151:36)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:75:36)
+
+  ● NarrativeEngine › Section Generation › generates symptoms narrative
+
+    Expected content to include timeframe indicators
+
+      159 |         const hasTimeframe = /\b(initially|subsequently|currently|now)\b/i.test(content);
+      160 |         if (!hasTimeframe) {
+    > 161 |             throw new Error('Expected content to include timeframe indicators');
+          |                   ^
+      162 |         }
+      163 |     }
+      164 |
+
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:161:19)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:91:36)
+
+  ● NarrativeEngine › Section Generation › generates functional narrative
+
+    Expected content to include "long-handled devices" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:107:36)
+
+  ● NarrativeEngine › Context Integration › integrates temporal context
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /initially.*subsequently.*currently/i
+    Received string:  "John Doe presents with no significant symptoms. Currently managed with Ibuprofen for symptom management, baseline functional status. Symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      125 |         it('integrates temporal context', async () => {
+      126 |             const narrative = await engine.generateNarrative(rawAssessment, 'overview');
+    > 127 |             expect(narrative).toMatch(/initially.*subsequently.*currently/i);
+          |                               ^
+      128 |         });
+      129 |
+      130 |         it('links symptoms to function', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:127:31)
+
+  ● NarrativeEngine › Context Integration › connects medications to management
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /managed.*with.*medication/i
+    Received string:  "John Doe presents with no significant symptoms. Currently managed with Ibuprofen for symptom management, baseline functional status. Symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      135 |         it('connects medications to management', async () => {
+      136 |             const narrative = await engine.generateNarrative(rawAssessment, 'overview');
+    > 137 |             expect(narrative).toMatch(/managed.*with.*medication/i);
+          |                               ^
+      138 |         });
+      139 |     });
+      140 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:137:31)
+
+  ● NarrativeEngine › Clinical Accuracy › uses appropriate clinical terminology
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "independence"
+    Received string:    "john doe presents with no significant symptoms. currently managed with ibuprofen for symptom management, baseline functional status. symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      154 |
+      155 |             clinicalTerms.forEach(term => {
+    > 156 |                 expect(narrative.toLowerCase()).toContain(term.toLowerCase());
+          |                                                 ^
+      157 |             });
+      158 |         });
+      159 |
+
+      at src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:156:49
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:155:27)
+
+ FAIL  src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts
+  ● Test suite failed to run
+
+    TypeError: a.getOrderNumber is not a function
+
+      39 |
+      40 |     // Sort by order number
+    > 41 |     this.agents.sort((a, b) => a.getOrderNumber() - b.getOrderNumber());
+         |                                  ^
+      42 |   }
+      43 |
+      44 |   async generateReport(data: AssessmentData | null | undefined): Promise<ReportSection[]> {
+
+      at getOrderNumber (src/components/ReportGeneration/AgentOrchestrator.ts:41:34)
+          at Array.sort (<anonymous>)
+      at new sort (src/components/ReportGeneration/AgentOrchestrator.ts:41:17)
+      at src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts:9:24
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts:7:1)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts
+  ● Test suite failed to run
+
+    TypeError: (0 , narrative_1.createNarrativeTestData) is not a function
+
+      12 | describe('TransfersAgent', () => {
+      13 |     const mockTransferData: AssessmentData = {
+    > 14 |         ...createNarrativeTestData(),
+         |                                   ^
+      15 |         functionalAssessment: {
+      16 |             transfers: {
+      17 |                 bedMobility: 'Modified Independent',
+
+      at src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts:14:35
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts:12:1)
+
+ FAIL  src/components/ReportGeneration/test.ts
+  ● Test suite failed to run
+
+    TypeError: Cannot read properties of undefined (reading 'context')
+
+       7 |
+       8 |     constructor(config: AgentConfig) {
+    >  9 |         this.context = config.context;
+         |                               ^
+      10 |         this.config = config;
+      11 |     }
+      12 |
+
+      at new context (src/components/ReportGeneration/agents/core/BaseAgent.ts:9:31)
+      at new TypicalDayAgent (src/components/ReportGeneration/agents/TypicalDayAgent.ts:17:1)
+      at new AgentOrchestrator (src/components/ReportGeneration/AgentOrchestrator.ts:36:7)
+      at src/components/ReportGeneration/test.ts:5:24
+      at Object.<anonymous> (src/components/ReportGeneration/test.ts:4:1)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts
+  CognitiveSymptomAgent
+    × processes symptom data correctly (1 ms)
+    × formats content at different detail levels (1 ms)
+    × handles empty symptoms gracefully
+    × correctly identifies patterns in symptoms (1 ms)
+
+  ● CognitiveSymptomAgent › processes symptom data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      28 |
+      29 |   it('processes symptom data correctly', async () => {
+    > 30 |     const result = await agent.processData(testData);
+         |                                ^
+      31 |     expect(result.valid).toBe(true);
+      32 |     expect(result.data.symptoms).toBeDefined();
+      33 |     expect(result.data.symptoms.length).toBe(1);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:30:32)
+
+  ● CognitiveSymptomAgent › formats content at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      36 |
+      37 |   it('formats content at different detail levels', async () => {
+    > 38 |     const processed = await agent.processData(testData);
+         |                                   ^
+      39 |
+      40 |     const formats = await runStandardTests({ agent, context, testData });
+      41 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:38:35)
+
+  ● CognitiveSymptomAgent › handles empty symptoms gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      64 |     };
+      65 |
+    > 66 |     const processed = await agent.processData(emptyData);
+         |                                   ^
+      67 |     const formatted = await (agent as any).getFormattedContent(processed, 'standard');
+      68 |     expect(formatted).toContain('No cognitive symptoms reported');
+      69 |   });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:66:35)
+
+  ● CognitiveSymptomAgent › correctly identifies patterns in symptoms
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      70 |
+      71 |   it('correctly identifies patterns in symptoms', async () => {
+    > 72 |     const result = await agent.processData(testData);
+         |                                ^
+      73 |     expect(result.data.patterns).toBeDefined();
+      74 |     expect(result.data.patterns.triggers).toContain('Stress');
+      75 |     expect(result.data.patterns.triggers).toContain('Fatigue');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:72:32)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts
+  MedicalHistoryAgent
+    Standard Mode
+      × processes medical history data correctly (1 ms)
+      × formats content at different detail levels (1 ms)
+      × handles missing data gracefully (1 ms)
+    Narrative Mode
+      × generates comprehensive treatment narrative
+      × includes medication management details
+      × synthesizes injury history narrative
+      × integrates medical background appropriately
+      × describes treatment progression
+    Edge Cases
+      × handles incomplete medication information
+      × manages conflicting treatment information
+      × handles mode switching with complex data
+
+  ● MedicalHistoryAgent › Standard Mode › processes medical history data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      63 |
+      64 |         it('processes medical history data correctly', async () => {
+    > 65 |             const result = await agent.processData(testData);
+         |                                        ^
+      66 |             expect(result.valid).toBe(true);
+      67 |             expect(result.data.currentTreatment).toHaveLength(2);
+      68 |             expect(result.data.medications).toHaveLength(2);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:65:40)
+
+  ● MedicalHistoryAgent › Standard Mode › formats content at different detail levels
+
+    TypeError: (0 , setup_1.runStandardTests) is not a function
+
+      70 |
+      71 |         it('formats content at different detail levels', async () => {
+    > 72 |             const { brief, standard, detailed } = await runStandardTests({
+         |                                                                         ^
+      73 |                 agent,
+      74 |                 context,
+      75 |                 testData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:72:73)
+
+  ● MedicalHistoryAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      109 |             };
+      110 |
+    > 111 |             const result = await agent.processData(minimalData);
+          |                                        ^
+      112 |             expect(result.valid).toBe(true);
+      113 |
+      114 |             const section = await agent.generateSection(minimalData);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:111:40)
+
+  ● MedicalHistoryAgent › Narrative Mode › generates comprehensive treatment narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      126 |
+      127 |         it('generates comprehensive treatment narrative', async () => {
+    > 128 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      129 |             const content = section.content as string;
+      130 |
+      131 |             expect(content).toContain('currently receiving treatment from');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:128:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › includes medication management details
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      137 |
+      138 |         it('includes medication management details', async () => {
+    > 139 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      140 |             const content = section.content as string;
+      141 |
+      142 |             expect(content).toContain('medication regimen includes');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:139:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › synthesizes injury history narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      148 |
+      149 |         it('synthesizes injury history narrative', async () => {
+    > 150 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      151 |             const content = section.content as string;
+      152 |
+      153 |             expect(content).toContain('sustained a workplace injury');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:150:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › integrates medical background appropriately
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      158 |
+      159 |         it('integrates medical background appropriately', async () => {
+    > 160 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      161 |             const content = section.content as string;
+      162 |
+      163 |             expect(content).toContain('medical history includes');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:160:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › describes treatment progression
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      168 |
+      169 |         it('describes treatment progression', async () => {
+    > 170 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      171 |             const content = section.content as string;
+      172 |
+      173 |             expect(content).toContain('treatment progression');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:170:56)
+
+  ● MedicalHistoryAgent › Edge Cases › handles incomplete medication information
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      201 |             });
+      202 |
+    > 203 |             const section = await agent.generateSection(incompleteData);
+          |                                         ^
+      204 |             expect(section.valid).toBe(true);
+      205 |             expect(section.content).toContain('Ibuprofen');
+      206 |             expect(section.content).not.toContain('undefined');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:203:41)
+
+  ● MedicalHistoryAgent › Edge Cases › manages conflicting treatment information
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      239 |             });
+      240 |
+    > 241 |             const section = await agent.generateSection(conflictingData);
+          |                                         ^
+      242 |             expect(section.valid).toBe(true);
+      243 |             expect(section.content).toContain('mixed treatment responses');
+      244 |         });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:241:41)
+
+  ● MedicalHistoryAgent › Edge Cases › handles mode switching with complex data
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      247 |             // Standard mode
+      248 |             const { agent: standardAgent } = createTestSuite(MedicalHistoryAgent);
+    > 249 |             const standardSection = await standardAgent.generateSection(testData);
+          |                                                         ^
+      250 |             expect(standardSection.valid).toBe(true);
+      251 |
+      252 |             // Narrative mode
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:249:57)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts
+  DemographicsAgent
+    Standard Mode
+      × processes demographic data correctly
+      × formats content at different detail levels
+      × handles missing data gracefully
+      × correctly identifies caregivers
+      × generates appropriate recommendations
+    Narrative Mode
+      × generates narrative content with personal details
+      × includes caregiver information in narrative
+      × handles professional context in narrative (1 ms)
+      × generates appropriate narrative without employment
+      × includes living situation in narrative when available
+    Edge Cases
+      × validates data structure
+      × handles mode switching gracefully
+      × gracefully handles malformed dates
+
+  ● DemographicsAgent › Standard Mode › processes demographic data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      29 |
+      30 |     it('processes demographic data correctly', async () => {
+    > 31 |       const result = await agent.processData(testData);
+         |                                  ^
+      32 |       expect(result.valid).toBe(true);
+      33 |       expect(result.data).toMatchObject({
+      34 |         name: 'John Doe',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:31:34)
+
+  ● DemographicsAgent › Standard Mode › formats content at different detail levels
+
+    TypeError: (0 , setup_1.runStandardTests) is not a function
+
+      40 |
+      41 |     it('formats content at different detail levels', async () => {
+    > 42 |       const { brief, standard, detailed } = await runStandardTests({
+         |                                                                   ^
+      43 |         agent,
+      44 |         context,
+      45 |         testData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:42:67)
+
+  ● DemographicsAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      70 |       };
+      71 |
+    > 72 |       const result = await agent.processData(minimalData);
+         |                                  ^
+      73 |       expect(result.valid).toBe(true);
+      74 |
+      75 |       const section = await agent.generateSection(minimalData);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:72:34)
+
+  ● DemographicsAgent › Standard Mode › correctly identifies caregivers
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      79 |
+      80 |     it('correctly identifies caregivers', async () => {
+    > 81 |       const result = await agent.processData(testData);
+         |                                  ^
+      82 |       expect(result.data.caregivers).toBeDefined();
+      83 |       expect(result.data.caregivers).toContainEqual({
+      84 |         name: 'Jane Doe',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:81:34)
+
+  ● DemographicsAgent › Standard Mode › generates appropriate recommendations
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      89 |
+      90 |     it('generates appropriate recommendations', async () => {
+    > 91 |       const result = await agent.processData(testData);
+         |                                  ^
+      92 |       expect(result.data.recommendations).toBeDefined();
+      93 |       expect(Array.isArray(result.data.recommendations)).toBe(true);
+      94 |     });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:91:34)
+
+  ● DemographicsAgent › Narrative Mode › generates narrative content with personal details
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      103 |
+      104 |     it('generates narrative content with personal details', async () => {
+    > 105 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      106 |       const content = section.content as string;
+      107 |
+      108 |       expect(content).toContain('John Doe');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:105:50)
+
+  ● DemographicsAgent › Narrative Mode › includes caregiver information in narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      113 |
+      114 |     it('includes caregiver information in narrative', async () => {
+    > 115 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      116 |       const content = section.content as string;
+      117 |
+      118 |       expect(content).toContain('Jane Doe');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:115:50)
+
+  ● DemographicsAgent › Narrative Mode › handles professional context in narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      122 |
+      123 |     it('handles professional context in narrative', async () => {
+    > 124 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      125 |       const content = section.content as string;
+      126 |
+      127 |       expect(content).toContain('employed as');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:124:50)
+
+  ● DemographicsAgent › Narrative Mode › generates appropriate narrative without employment
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      140 |       };
+      141 |
+    > 142 |       const { section } = await runNarrativeTests({
+          |                                                  ^
+      143 |         agent,
+      144 |         context,
+      145 |         testData: unemployedData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:142:50)
+
+  ● DemographicsAgent › Narrative Mode › includes living situation in narrative when available
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      172 |       };
+      173 |
+    > 174 |       const { section } = await runNarrativeTests({
+          |                                                  ^
+      175 |         agent,
+      176 |         context,
+      177 |         testData: dataWithLiving
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:174:50)
+
+  ● DemographicsAgent › Edge Cases › validates data structure
+
+    ReferenceError: agent is not defined
+
+      195 |       };
+      196 |
+    > 197 |       const result = await agent.processData(invalidData as any);
+          |                      ^
+      198 |       expect(result.valid).toBe(true); // Should still be valid but with defaults
+      199 |       expect(result.data.name).toBe('Unknown');
+      200 |     });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:197:22)
+
+  ● DemographicsAgent › Edge Cases › handles mode switching gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      203 |       // Start with standard mode
+      204 |       const { agent: standardAgent } = createTestSuite(DemographicsAgent);
+    > 205 |       const standardSection = await standardAgent.generateSection(testData);
+          |                                                   ^
+      206 |       expect(standardSection.valid).toBe(true);
+      207 |
+      208 |       // Switch to narrative mode
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:205:51)
+
+  ● DemographicsAgent › Edge Cases › gracefully handles malformed dates
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      230 |       });
+      231 |
+    > 232 |       const section = await agent.generateSection(badDateData);
+          |                                   ^
+      233 |       expect(section.valid).toBe(true);
+      234 |       expect(section.content).not.toContain('NaN');
+      235 |       expect(section.content).not.toContain('undefined');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:232:35)
+
+--------------------------------------------------|---------|----------|---------|---------|----------------------------------------
+File                                              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+--------------------------------------------------|---------|----------|---------|---------|----------------------------------------
+All files                                         |    39.7 |    31.56 |   42.06 |   40.58 |
+ components/ReportGeneration                      |   30.76 |      100 |       0 |   30.76 |
+  generateReport.ts                               |   30.76 |      100 |       0 |   30.76 | 10-23,31-32
+ components/ReportGeneration/agents               |   29.56 |       20 |   31.32 |   29.85 |
+  AgentOrchestrator.ts                            |      25 |        0 |       0 |   25.92 | 15-72
+  BaseAgent.ts                                    |      50 |       30 |   77.77 |      50 | 56,81,97-119,133,149-166
+  DemographicsAgent.ts                            |    6.38 |        0 |       0 |    6.38 | 54-148
+  DocumentationAgent.ts                           |    42.3 |    36.17 |   45.83 |   48.31 | ...110,117-121,127-129,135-136,143-192
+  MedicalHistoryAgent.ts                          |    5.08 |        0 |       0 |    5.08 | 8-139
+  MobilityAgent.ts                                |    12.5 |        0 |   15.38 |   13.11 | 18-115
+  utils.ts                                        |   91.66 |       75 |     100 |     100 | 4,38
+ components/ReportGeneration/agents/RangeOfMotion |   66.33 |    53.33 |   69.76 |   66.84 |
+  RangeOfMotionAgent.ts                           |      25 |    19.23 |   33.33 |   26.47 | 43,59-72,83-102,113-157
+  analysis.ts                                     |   92.85 |       85 |     100 |    92.3 | 54,70
+  formatting.ts                                   |   88.11 |    59.09 |   86.95 |   88.42 | 107,113,123-125,161-163,168-170
+  normalROM.ts                                    |     100 |      100 |     100 |     100 |
+ components/ReportGeneration/agents/adl           |   31.94 |       20 |   32.72 |   32.85 |
+  ADLAgent.ts                                     |    4.34 |        0 |       0 |    4.34 | 8-155
+  ADLTypes.ts                                     |     100 |      100 |     100 |     100 |
+  BasicADLAgent.ts                                |   44.44 |    27.77 |   52.94 |   45.97 | 59,77,87,102,120,128-140,161,175-242
+  IADLAgent.ts                                    |    41.5 |    15.38 |   52.94 |      44 | 46,78-126
+  types.ts                                        |     100 |      100 |     100 |     100 |
+ components/ReportGeneration/agents/core          |    4.76 |        0 |       0 |    5.55 |
+  BaseAgent.ts                                    |    4.76 |        0 |       0 |    5.55 | 9-60
+ components/ReportGeneration/agents/demographics  |    9.67 |        0 |       0 |      10 |
+  DemographicsAgent.ts                            |    9.67 |        0 |       0 |      10 | 7-104
+ components/ReportGeneration/agents/narrative     |    70.4 |       68 |      65 |   73.62 |
+  TransfersAgent.ts                               |    70.4 |       68 |      65 |   73.62 | 76,83-87,126,130,155,165,213-241
+ components/ReportGeneration/agents/symptoms      |   18.28 |     12.5 |   27.77 |   19.42 |
+  CognitiveSymptomAgent.ts                        |     8.1 |        0 |       0 |     8.1 | 21-88
+  EmotionalSymptomAgent.ts                        |   25.49 |    22.22 |   41.66 |      26 | 36,52-110
+  PhysicalSymptomsAgent.ts                        |   13.33 |        0 |   18.18 |   13.33 | 18-102
+  SymptomIntegrationAgent.ts                      |    21.1 |    13.88 |   36.36 |   24.21 | 83-86,92-96,133-142,149-238
+ components/ReportGeneration/formatting           |    3.33 |        0 |       0 |    3.44 |
+  reportFormatter.ts                              |    3.33 |        0 |       0 |    3.44 | 7-66
+ components/ReportGeneration/narrative            |      50 |     36.7 |   56.15 |   51.41 |
+  ADLAnalyzer.ts                                  |   15.62 |        0 |      25 |   17.04 | 50-51,66,83-230,236-240,252-255
+  MedicationAnalyzer.ts                           |    3.27 |        0 |       0 |    3.38 | 37-151
+  NarrativeEngine.ts                              |   75.15 |    58.58 |   81.08 |   76.31 | ...233,237,254,259,265,270,283-300,306
+  SymptomAnalyzer.ts                              |      75 |    51.92 |   88.23 |   76.52 | ...157,179-192,237,239,274-277,288-291
+  TemporalAnalyzer.ts                             |   31.48 |     6.45 |   33.33 |   33.33 | 34,44-46,62,68-84,92-103,109,126-129
+ types                                            |   83.33 |        0 |       0 |     100 |
+  report.ts                                       |   83.33 |        0 |       0 |     100 | 56-60
+ types/features                                   |     100 |      100 |     100 |     100 |
+  index.ts                                        |     100 |      100 |     100 |     100 |
+--------------------------------------------------|---------|----------|---------|---------|----------------------------------------
+Summary of all failing tests
+ FAIL  src/components/ReportGeneration/testing/TestableAgent.test.ts
+  ● Test suite failed to run
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+       6 |     describe('Core Functionality', () => {
+       7 |         const context = createMockContext();
+    >  8 |         const agent = new TestAgent(context);
+         |                       ^
+       9 |
+      10 |         it('initializes with correct metadata', () => {
+      11 |             const metadata = agent.getMetadata();
+
+      at src/components/ReportGeneration/testing/TestableAgent.test.ts:8:23
+      at src/components/ReportGeneration/testing/TestableAgent.test.ts:6:5
+      at Object.<anonymous> (src/components/ReportGeneration/testing/TestableAgent.test.ts:5:1)
+
+ FAIL  src/components/ReportGeneration/testing/narrative-test-utils.test.ts
+  ● Narrative Test Utilities › validateNarrativeOutput › validates content inclusions
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to include context indicators"
+
+          166 |         const hasContext = /\b(due to|because of|related to|in context of)\b/i.test(content);
+          167 |         if (!hasContext) {
+        > 168 |             throw new Error('Expected content to include context indicators');
+              |                   ^
+          169 |         }
+          170 |     }
+          171 |
+
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:168:19)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:46:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:51:21)
+
+      49 |                     includes: ['John Doe', 'lower back', 'Ibuprofen']
+      50 |                 }
+    > 51 |             })).not.toThrow();
+         |                     ^
+      52 |         });
+      53 |
+      54 |         it('validates content exclusions', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:51:21)
+
+  ● Narrative Test Utilities › validateNarrativeOutput › validates content exclusions
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to include context indicators"
+
+          166 |         const hasContext = /\b(due to|because of|related to|in context of)\b/i.test(content);
+          167 |         if (!hasContext) {
+        > 168 |             throw new Error('Expected content to include context indicators');
+              |                   ^
+          169 |         }
+          170 |     }
+          171 |
+
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:168:19)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:55:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:61:21)
+
+      59 |                     excludes: ['bad', 'normal', 'problems']
+      60 |                 }
+    > 61 |             })).not.toThrow();
+         |                     ^
+      62 |         });
+      63 |
+      64 |         it('validates temporal patterns', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:61:21)
+
+  ● Narrative Test Utilities › validateNarrativeOutput › validates temporal patterns
+
+    expect(received).not.toThrow()
+
+    Error name:    "Error"
+    Error message: "Expected content to match pattern /initially.*subsequently.*current/i but it did not"
+
+          151 |     expectations.content.patterns?.forEach(pattern => {
+          152 |         if (!pattern.test(content)) {
+        > 153 |             throw new Error(`Expected content to match pattern ${pattern} but it did not`);
+              |                   ^
+          154 |         }
+          155 |     });
+          156 |
+
+          at src/components/ReportGeneration/testing/narrative-test-utils.ts:153:19
+              at Array.forEach (<anonymous>)
+          at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:151:36)
+          at src/components/ReportGeneration/testing/narrative-test-utils.test.ts:65:49
+          at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+          at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+          at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:71:21)
+
+      69 |                     patterns: [/initially.*subsequently.*current/i]
+      70 |                 }
+    > 71 |             })).not.toThrow();
+         |                     ^
+      72 |         });
+      73 |
+      74 |         it('throws on missing required content', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/testing/narrative-test-utils.test.ts:71:21)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts
+  ● BaseAgent › Standard Mode › initializes with correct parameters
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › processes data correctly
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › generates sections with correct structure
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › formats content correctly for different detail levels
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › validates data correctly
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › generates appropriate error messages
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles constructor errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles processData errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles formatContent errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Standard Mode › handles invalid detail levels gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      10 |
+      11 |         beforeEach(() => {
+    > 12 |             agent = new TestAgent(context);
+         |                     ^
+      13 |         });
+      14 |
+      15 |         it('initializes with correct parameters', () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:12:21)
+
+  ● BaseAgent › Narrative Mode › initializes with narrative engine when enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      121 |
+      122 |         it('initializes with narrative engine when enabled', () => {
+    > 123 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      124 |             expect(agent.hasNarrativeEngine()).toBe(true);
+      125 |         });
+      126 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:123:27)
+
+  ● BaseAgent › Narrative Mode › generates narrative content when enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      126 |
+      127 |         it('generates narrative content when enabled', async () => {
+    > 128 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      129 |             const section = await agent.generateSection({
+      130 |                 raw: mockAssessmentData
+      131 |             });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:128:27)
+
+  ● BaseAgent › Narrative Mode › falls back to standard formatting if narrative generation fails
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      136 |
+      137 |         it('falls back to standard formatting if narrative generation fails', async () => {
+    > 138 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      139 |             const invalidData = {
+      140 |                 raw: null
+      141 |             } as any;
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:138:27)
+
+  ● BaseAgent › Narrative Mode › includes context in narrative when contextual analysis is enabled
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      148 |
+      149 |         it('includes context in narrative when contextual analysis is enabled', async () => {
+    > 150 |             const contextualAgent = new TestAgent(createMockContext({
+          |                                     ^
+      151 |                 features: {
+      152 |                     enableNarrative: true,
+      153 |                     enableContextualAnalysis: true
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:150:37)
+
+  ● BaseAgent › Narrative Mode › handles narrative engine initialization errors
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      166 |                 features: null
+      167 |             };
+    > 168 |             const agent = new TestAgent(errorContext);
+          |                           ^
+      169 |             expect(agent.hasNarrativeEngine()).toBe(false);
+      170 |         });
+      171 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:168:27)
+
+  ● BaseAgent › Narrative Mode › handles narrative generation errors gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      171 |
+      172 |         it('handles narrative generation errors gracefully', async () => {
+    > 173 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      174 |             jest.spyOn(agent as any, 'generateNarrativeContent').mockRejectedValue(new Error('Narrative error'));
+      175 |
+      176 |             const section = await agent.generateSection({
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:173:27)
+
+  ● BaseAgent › Narrative Mode › handles missing narrative engine gracefully
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      181 |
+      182 |         it('handles missing narrative engine gracefully', async () => {
+    > 183 |             const agent = new TestAgent(narrativeContext);
+          |                           ^
+      184 |             (agent as any).narrativeEngine = null;
+      185 |
+      186 |             const section = await agent.generateSection({
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:183:27)
+
+  ● BaseAgent › Error Boundaries › recovers from catastrophic errors
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      193 |     describe('Error Boundaries', () => {
+      194 |         it('recovers from catastrophic errors', async () => {
+    > 195 |             const agent = new TestAgent(createMockContext());
+          |                           ^
+      196 |
+      197 |             // Create a failing version of processData
+      198 |             jest.spyOn(agent as any, 'processData').mockImplementation(() => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:195:27)
+
+  ● BaseAgent › Error Boundaries › handles null context values
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      216 |             } as any;
+      217 |
+    > 218 |             const agent = new TestAgent(nullContext);
+          |                           ^
+      219 |             expect(agent).toBeDefined();
+      220 |         });
+      221 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:218:27)
+
+  ● BaseAgent › Error Boundaries › handles corrupted process data
+
+    TypeError: TestableAgent_1.TestAgent is not a constructor
+
+      221 |
+      222 |         it('handles corrupted process data', async () => {
+    > 223 |             const agent = new TestAgent(createMockContext());
+          |                           ^
+      224 |             const corruptedData = {
+      225 |                 raw: {
+      226 |                     ...mockAssessmentData,
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/BaseAgent.test.ts:223:27)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts
+  ● MobilityAgent › processData › processes mobility data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:14:34)
+
+  ● MobilityAgent › processData › analyzes balance data
+
+    TypeError: Cannot read properties of undefined (reading 'functionalAssessment')
+
+      23 |         ...mockMobilityData,
+      24 |         functionalAssessment: {
+    > 25 |           ...mockMobilityData.functionalAssessment,
+         |                               ^
+      26 |           bergBalance: {
+      27 |             totalScore: 35,
+      28 |             items: {}
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:25:31)
+
+  ● MobilityAgent › processData › generates appropriate recommendations
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:40:34)
+
+  ● MobilityAgent › formatting › formats at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'assessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                     ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.assessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:21)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:48:34)
+
+  ● MobilityAgent › formatting › handles minimal data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'functionalAssessment')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.functionalAssessment;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(assessment: any): string {
+
+      at MobilityAgent.functionalAssessment [as processData] (src/components/ReportGeneration/agents/MobilityAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MobilityAgent.test.ts:71:34)
+
+ FAIL  src/components/ReportGeneration/agents/adl/__tests__/BasicADLAgent.test.ts
+  ● BasicADLAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "ADL Status"
+    Received object: {}
+
+      63 |
+      64 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 65 |     expect(brief).toContain('ADL Status');
+         |                   ^
+      66 |     expect(brief).toContain('feeding: Independent');
+      67 |
+      68 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/adl/__tests__/BasicADLAgent.test.ts:65:19)
+
+ FAIL  src/components/ReportGeneration/__tests__/anderson.test.ts
+  ● Anderson Report Generation › should generate a complete assessment report
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+  ● Anderson Report Generation › handles missing data gracefully
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+  ● Anderson Report Generation › includes all required sections
+
+    SyntaxError: Unexpected token 'm', "mock file content" is not valid JSON
+        at JSON.parse (<anonymous>)
+
+       9 |   beforeAll(async () => {
+      10 |     const response = await window.fs.readFile('delilah_assessment_2025-01-14 (16).json', { encoding: 'utf8' });
+    > 11 |     assessmentData = JSON.parse(response);
+         |                           ^
+      12 |   });
+      13 |
+      14 |   it('should generate a complete assessment report', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/anderson.test.ts:11:27)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts
+  ● Test suite failed to run
+
+    Cannot find module '../ADLAgent' from 'src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts'
+
+    > 1 | import { ADLAgent } from '../ADLAgent';
+        | ^
+      2 | import { mockAssessmentData } from '../testing/mockData';
+      3 | import { AgentContext } from '../../types';
+      4 |
+
+      at Resolver._throwModNotFoundError (node_modules/jest-resolve/build/resolver.js:427:11)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/ADLAgent.test.ts:1:1)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/SymptomIntegrationAgent.test.ts
+  ● SymptomIntegrationAgent › formats integrated report correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Physical Symptoms"
+    Received string:    "Standard: Error formatting baseagent content"
+
+      16 |     const section = await agent.generateSection(sampleSymptomData);
+      17 |     expect(section.valid).toBe(true);
+    > 18 |     expect(section.content).toContain('Physical Symptoms');
+         |                             ^
+      19 |     expect(section.content).toContain('Lower Back');
+      20 |     expect(section.content).toContain('Memory issues');
+      21 |     expect(section.content).toContain('Anxiety');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/SymptomIntegrationAgent.test.ts:18:29)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts
+  ● EmotionalSymptomAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Anxiety"
+    Received object: {}
+
+      36 |
+      37 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 38 |     expect(brief).toContain('Anxiety');
+         |                   ^
+      39 |     expect(brief).toContain('Moderate');
+      40 |
+      41 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts:38:19)
+
+  ● EmotionalSymptomAgent › handles empty data gracefully
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "No emotional symptoms reported"
+    Received object: {}
+
+      56 |
+      57 |     const formatted = agent.getFormattedContent(processed, 'standard');
+    > 58 |     expect(formatted).toContain('No emotional symptoms reported');
+         |                       ^
+      59 |     expect(formatted).not.toContain('undefined');
+      60 |   });
+      61 | });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/EmotionalSymptomAgent.test.ts:58:23)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts
+  ● PhysicalSymptomsAgent › processes symptom data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:34:32)
+
+  ● PhysicalSymptomsAgent › formats content at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:41:35)
+
+  ● PhysicalSymptomsAgent › handles empty symptoms gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'symptoms')
+
+      12 |
+      13 |     async processData(data: Assessment): Promise<any> {
+    > 14 |         return data.assessment.symptoms;
+         |                                ^
+      15 |     }
+      16 |
+      17 |     protected formatBrief(symptoms: any): string {
+
+      at PhysicalSymptomsAgent.symptoms [as processData] (src/components/ReportGeneration/agents/symptoms/PhysicalSymptomsAgent.ts:14:32)
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/PhysicalSymptomsAgent.test.ts:66:35)
+
+ FAIL  src/components/ReportGeneration/agents/adl/__tests__/IADLAgent.test.ts
+  ● IADLAgent › formats output at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "IADL Status"
+    Received object: {}
+
+      42 |
+      43 |     const brief = agent.getFormattedContent(processed, 'brief');
+    > 44 |     expect(brief).toContain('IADL Status');
+         |                   ^
+      45 |     expect(brief).toContain('Meal Prep: Modified Independent');
+      46 |
+      47 |     const standard = agent.getFormattedContent(processed, 'standard');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/adl/__tests__/IADLAgent.test.ts:44:19)
+
+ FAIL  src/components/ReportGeneration/agents/narrative/__tests__/TransfersAgent.test.ts
+  ● NarrativeTransfersAgent › formatting › formats at different detail levels
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: "Patient demonstrates modified independent transfer abilities. bed mobility is modified independent, and sit-to-stand transfers are independent, and toilet transfers are modified independent using grab_bars and toilet_riser, and shower transfers are modified independent using shower_chair and grab_bars. Balance testing indicates moderate fall risk."
+    Received: {}
+
+      61 |
+      62 |       const brief = agent.getFormattedContent(result, 'brief');
+    > 63 |       expect(brief).toBe(result.narrative);
+         |                     ^
+      64 |
+      65 |       const standard = agent.getFormattedContent(result, 'standard');
+      66 |       expect(standard).toContain(result.narrative);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/narrative/__tests__/TransfersAgent.test.ts:63:21)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts
+  ● DocumentationAgent › formatting › formats at different detail levels
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Documentation Summary"
+    Received object: {}
+
+      82 |
+      83 |       const brief = agent.getFormattedContent(result, 'brief');
+    > 84 |       expect(brief).toContain('Documentation Summary');
+         |                     ^
+      85 |       expect(brief).toContain('Medical Documentation: 1');
+      86 |
+      87 |       const detailed = agent.getFormattedContent(result, 'detailed');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts:84:21)
+
+  ● DocumentationAgent › formatting › handles minimal data gracefully
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value:  "Medical Report"
+    Received object: {}
+
+      110 |       const result = await agent.processData(minimalData);
+      111 |       const formatted = agent.getFormattedContent(result, 'standard');
+    > 112 |       expect(formatted).toContain('Medical Report');
+          |                         ^
+      113 |       expect(formatted).not.toContain('undefined');
+      114 |     });
+      115 |   });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DocumentationAgent.test.ts:112:25)
+
+ FAIL  src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts
+  ● RangeOfMotionAgent › processes data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      35 |     const result = await agent.processData(testData);
+      36 |     expect(result.valid).toBe(true);
+    > 37 |     expect(result.data.patterns).toBeDefined();
+         |                        ^
+      38 |   });
+      39 |
+      40 |   it('identifies unilateral patterns', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:37:24)
+
+  ● RangeOfMotionAgent › identifies unilateral patterns
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      40 |   it('identifies unilateral patterns', async () => {
+      41 |     const result = await agent.processData(testData);
+    > 42 |     expect(result.data.patterns.unilateral).toBeDefined();
+         |                        ^
+      43 |     expect(result.data.patterns.unilateral).toContainEqual({
+      44 |       joint: 'shoulder',
+      45 |       side: 'right'
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:42:24)
+
+  ● RangeOfMotionAgent › identifies painful movements
+
+    TypeError: Cannot read properties of undefined (reading 'patterns')
+
+      49 |   it('identifies painful movements', async () => {
+      50 |     const result = await agent.processData(testData);
+    > 51 |     expect(result.data.patterns.painful).toBeDefined();
+         |                        ^
+      52 |     expect(result.data.patterns.painful).toContainEqual({
+      53 |       joint: 'shoulder',
+      54 |       movement: 'flexion',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:51:24)
+
+  ● RangeOfMotionAgent › formats brief content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Range of Motion Summary"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      60 |     const result = await agent.processData(testData);
+      61 |     const briefFormat = await (agent as any).getFormattedContent(result, 'brief');
+    > 62 |     expect(briefFormat).toContain('Range of Motion Summary');
+         |                         ^
+      63 |     expect(briefFormat).toContain('shoulder');
+      64 |   });
+      65 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:62:25)
+
+  ● RangeOfMotionAgent › formats standard content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Shoulder"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      68 |     const standardFormat = await (agent as any).getFormattedContent(result, 'standard');
+      69 |     expect(standardFormat).toContain('Range of Motion Assessment');
+    > 70 |     expect(standardFormat).toContain('Shoulder');
+         |                            ^
+      71 |   });
+      72 |
+      73 |   it('formats detailed content correctly', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:70:28)
+
+  ● RangeOfMotionAgent › formats detailed content correctly
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "Detailed Range of Motion Assessment"
+    Received string:    "Range of Motion Assessment
+    No ROM measurements available."
+
+      74 |     const result = await agent.processData(testData);
+      75 |     const detailedFormat = await (agent as any).getFormattedContent(result, 'detailed');
+    > 76 |     expect(detailedFormat).toContain('Detailed Range of Motion Assessment');
+         |                            ^
+      77 |     expect(detailedFormat).toContain('Pain Patterns');
+      78 |   });
+      79 | });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/RangeOfMotion/__tests__/RangeOfMotionAgent.test.ts:76:28)
+
+ FAIL  src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts
+  ● NarrativeEngine › Core Functionality › generates basic narrative content
+
+    Expected content to include "lower back" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:13:36)
+
+  ● NarrativeEngine › Core Functionality › includes temporal information
+
+    Expected content to include "initially" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:28:36)
+
+  ● NarrativeEngine › Error Handling › handles corrupt or malformed data
+
+    ReferenceError: rawAssessment is not defined
+
+      56 |
+      57 |         it('handles corrupt or malformed data', async () => {
+    > 58 |             const corruptData = {
+         |                                 ^
+      59 |                 ...rawAssessment,
+      60 |                 demographics: null,
+      61 |                 symptoms: undefined
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:58:33)
+
+  ● NarrativeEngine › Section Generation › generates medication narrative
+
+    Expected content to match pattern /\b(medication|treatment)\b/i but it did not
+
+      151 |     expectations.content.patterns?.forEach(pattern => {
+      152 |         if (!pattern.test(content)) {
+    > 153 |             throw new Error(`Expected content to match pattern ${pattern} but it did not`);
+          |                   ^
+      154 |         }
+      155 |     });
+      156 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:153:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:151:36)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:75:36)
+
+  ● NarrativeEngine › Section Generation › generates symptoms narrative
+
+    Expected content to include timeframe indicators
+
+      159 |         const hasTimeframe = /\b(initially|subsequently|currently|now)\b/i.test(content);
+      160 |         if (!hasTimeframe) {
+    > 161 |             throw new Error('Expected content to include timeframe indicators');
+          |                   ^
+      162 |         }
+      163 |     }
+      164 |
+
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:161:19)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:91:36)
+
+  ● NarrativeEngine › Section Generation › generates functional narrative
+
+    Expected content to include "long-handled devices" but it did not
+
+      139 |     expectations.content.includes.forEach(text => {
+      140 |         if (!content.includes(text)) {
+    > 141 |             throw new Error(`Expected content to include "${text}" but it did not`);
+          |                   ^
+      142 |         }
+      143 |     });
+      144 |
+
+      at src/components/ReportGeneration/testing/narrative-test-utils.ts:141:19
+          at Array.forEach (<anonymous>)
+      at validateNarrativeOutput (src/components/ReportGeneration/testing/narrative-test-utils.ts:139:35)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:107:36)
+
+  ● NarrativeEngine › Context Integration › integrates temporal context
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /initially.*subsequently.*currently/i
+    Received string:  "John Doe presents with no significant symptoms. Currently managed with Ibuprofen for symptom management, baseline functional status. Symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      125 |         it('integrates temporal context', async () => {
+      126 |             const narrative = await engine.generateNarrative(rawAssessment, 'overview');
+    > 127 |             expect(narrative).toMatch(/initially.*subsequently.*currently/i);
+          |                               ^
+      128 |         });
+      129 |
+      130 |         it('links symptoms to function', async () => {
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:127:31)
+
+  ● NarrativeEngine › Context Integration › connects medications to management
+
+    expect(received).toMatch(expected)
+
+    Expected pattern: /managed.*with.*medication/i
+    Received string:  "John Doe presents with no significant symptoms. Currently managed with Ibuprofen for symptom management, baseline functional status. Symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      135 |         it('connects medications to management', async () => {
+      136 |             const narrative = await engine.generateNarrative(rawAssessment, 'overview');
+    > 137 |             expect(narrative).toMatch(/managed.*with.*medication/i);
+          |                               ^
+      138 |         });
+      139 |     });
+      140 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:137:31)
+
+  ● NarrativeEngine › Clinical Accuracy › uses appropriate clinical terminology
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "independence"
+    Received string:    "john doe presents with no significant symptoms. currently managed with ibuprofen for symptom management, baseline functional status. symptoms impact function through minimal functional limitations, requiring modified approaches to daily activities."
+
+      154 |
+      155 |             clinicalTerms.forEach(term => {
+    > 156 |                 expect(narrative.toLowerCase()).toContain(term.toLowerCase());
+          |                                                 ^
+      157 |             });
+      158 |         });
+      159 |
+
+      at src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:156:49
+          at Array.forEach (<anonymous>)
+      at Object.<anonymous> (src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts:155:27)
+
+ FAIL  src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts
+  ● Test suite failed to run
+
+    TypeError: a.getOrderNumber is not a function
+
+      39 |
+      40 |     // Sort by order number
+    > 41 |     this.agents.sort((a, b) => a.getOrderNumber() - b.getOrderNumber());
+         |                                  ^
+      42 |   }
+      43 |
+      44 |   async generateReport(data: AssessmentData | null | undefined): Promise<ReportSection[]> {
+
+      at getOrderNumber (src/components/ReportGeneration/AgentOrchestrator.ts:41:34)
+          at Array.sort (<anonymous>)
+      at new sort (src/components/ReportGeneration/AgentOrchestrator.ts:41:17)
+      at src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts:9:24
+      at Object.<anonymous> (src/components/ReportGeneration/__tests__/AgentOrchestrator.test.ts:7:1)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts
+  ● Test suite failed to run
+
+    TypeError: (0 , narrative_1.createNarrativeTestData) is not a function
+
+      12 | describe('TransfersAgent', () => {
+      13 |     const mockTransferData: AssessmentData = {
+    > 14 |         ...createNarrativeTestData(),
+         |                                   ^
+      15 |         functionalAssessment: {
+      16 |             transfers: {
+      17 |                 bedMobility: 'Modified Independent',
+
+      at src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts:14:35
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/TransfersAgent.test.ts:12:1)
+
+ FAIL  src/components/ReportGeneration/test.ts
+  ● Test suite failed to run
+
+    TypeError: Cannot read properties of undefined (reading 'context')
+
+       7 |
+       8 |     constructor(config: AgentConfig) {
+    >  9 |         this.context = config.context;
+         |                               ^
+      10 |         this.config = config;
+      11 |     }
+      12 |
+
+      at new context (src/components/ReportGeneration/agents/core/BaseAgent.ts:9:31)
+      at new TypicalDayAgent (src/components/ReportGeneration/agents/TypicalDayAgent.ts:17:1)
+      at new AgentOrchestrator (src/components/ReportGeneration/AgentOrchestrator.ts:36:7)
+      at src/components/ReportGeneration/test.ts:5:24
+      at Object.<anonymous> (src/components/ReportGeneration/test.ts:4:1)
+
+ FAIL  src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts
+  ● CognitiveSymptomAgent › processes symptom data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      28 |
+      29 |   it('processes symptom data correctly', async () => {
+    > 30 |     const result = await agent.processData(testData);
+         |                                ^
+      31 |     expect(result.valid).toBe(true);
+      32 |     expect(result.data.symptoms).toBeDefined();
+      33 |     expect(result.data.symptoms.length).toBe(1);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:30:32)
+
+  ● CognitiveSymptomAgent › formats content at different detail levels
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      36 |
+      37 |   it('formats content at different detail levels', async () => {
+    > 38 |     const processed = await agent.processData(testData);
+         |                                   ^
+      39 |
+      40 |     const formats = await runStandardTests({ agent, context, testData });
+      41 |
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:38:35)
+
+  ● CognitiveSymptomAgent › handles empty symptoms gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      64 |     };
+      65 |
+    > 66 |     const processed = await agent.processData(emptyData);
+         |                                   ^
+      67 |     const formatted = await (agent as any).getFormattedContent(processed, 'standard');
+      68 |     expect(formatted).toContain('No cognitive symptoms reported');
+      69 |   });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:66:35)
+
+  ● CognitiveSymptomAgent › correctly identifies patterns in symptoms
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      70 |
+      71 |   it('correctly identifies patterns in symptoms', async () => {
+    > 72 |     const result = await agent.processData(testData);
+         |                                ^
+      73 |     expect(result.data.patterns).toBeDefined();
+      74 |     expect(result.data.patterns.triggers).toContain('Stress');
+      75 |     expect(result.data.patterns.triggers).toContain('Fatigue');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/symptoms/__tests__/CognitiveSymptomAgent.test.ts:72:32)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts
+  ● MedicalHistoryAgent › Standard Mode › processes medical history data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      63 |
+      64 |         it('processes medical history data correctly', async () => {
+    > 65 |             const result = await agent.processData(testData);
+         |                                        ^
+      66 |             expect(result.valid).toBe(true);
+      67 |             expect(result.data.currentTreatment).toHaveLength(2);
+      68 |             expect(result.data.medications).toHaveLength(2);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:65:40)
+
+  ● MedicalHistoryAgent › Standard Mode › formats content at different detail levels
+
+    TypeError: (0 , setup_1.runStandardTests) is not a function
+
+      70 |
+      71 |         it('formats content at different detail levels', async () => {
+    > 72 |             const { brief, standard, detailed } = await runStandardTests({
+         |                                                                         ^
+      73 |                 agent,
+      74 |                 context,
+      75 |                 testData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:72:73)
+
+  ● MedicalHistoryAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      109 |             };
+      110 |
+    > 111 |             const result = await agent.processData(minimalData);
+          |                                        ^
+      112 |             expect(result.valid).toBe(true);
+      113 |
+      114 |             const section = await agent.generateSection(minimalData);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:111:40)
+
+  ● MedicalHistoryAgent › Narrative Mode › generates comprehensive treatment narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      126 |
+      127 |         it('generates comprehensive treatment narrative', async () => {
+    > 128 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      129 |             const content = section.content as string;
+      130 |
+      131 |             expect(content).toContain('currently receiving treatment from');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:128:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › includes medication management details
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      137 |
+      138 |         it('includes medication management details', async () => {
+    > 139 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      140 |             const content = section.content as string;
+      141 |
+      142 |             expect(content).toContain('medication regimen includes');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:139:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › synthesizes injury history narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      148 |
+      149 |         it('synthesizes injury history narrative', async () => {
+    > 150 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      151 |             const content = section.content as string;
+      152 |
+      153 |             expect(content).toContain('sustained a workplace injury');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:150:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › integrates medical background appropriately
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      158 |
+      159 |         it('integrates medical background appropriately', async () => {
+    > 160 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      161 |             const content = section.content as string;
+      162 |
+      163 |             expect(content).toContain('medical history includes');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:160:56)
+
+  ● MedicalHistoryAgent › Narrative Mode › describes treatment progression
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      168 |
+      169 |         it('describes treatment progression', async () => {
+    > 170 |             const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                        ^
+      171 |             const content = section.content as string;
+      172 |
+      173 |             expect(content).toContain('treatment progression');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:170:56)
+
+  ● MedicalHistoryAgent › Edge Cases › handles incomplete medication information
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      201 |             });
+      202 |
+    > 203 |             const section = await agent.generateSection(incompleteData);
+          |                                         ^
+      204 |             expect(section.valid).toBe(true);
+      205 |             expect(section.content).toContain('Ibuprofen');
+      206 |             expect(section.content).not.toContain('undefined');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:203:41)
+
+  ● MedicalHistoryAgent › Edge Cases › manages conflicting treatment information
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      239 |             });
+      240 |
+    > 241 |             const section = await agent.generateSection(conflictingData);
+          |                                         ^
+      242 |             expect(section.valid).toBe(true);
+      243 |             expect(section.content).toContain('mixed treatment responses');
+      244 |         });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:241:41)
+
+  ● MedicalHistoryAgent › Edge Cases › handles mode switching with complex data
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      247 |             // Standard mode
+      248 |             const { agent: standardAgent } = createTestSuite(MedicalHistoryAgent);
+    > 249 |             const standardSection = await standardAgent.generateSection(testData);
+          |                                                         ^
+      250 |             expect(standardSection.valid).toBe(true);
+      251 |
+      252 |             // Narrative mode
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/MedicalHistoryAgent.test.ts:249:57)
+
+ FAIL  src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts
+  ● DemographicsAgent › Standard Mode › processes demographic data correctly
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      29 |
+      30 |     it('processes demographic data correctly', async () => {
+    > 31 |       const result = await agent.processData(testData);
+         |                                  ^
+      32 |       expect(result.valid).toBe(true);
+      33 |       expect(result.data).toMatchObject({
+      34 |         name: 'John Doe',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:31:34)
+
+  ● DemographicsAgent › Standard Mode › formats content at different detail levels
+
+    TypeError: (0 , setup_1.runStandardTests) is not a function
+
+      40 |
+      41 |     it('formats content at different detail levels', async () => {
+    > 42 |       const { brief, standard, detailed } = await runStandardTests({
+         |                                                                   ^
+      43 |         agent,
+      44 |         context,
+      45 |         testData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:42:67)
+
+  ● DemographicsAgent › Standard Mode › handles missing data gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      70 |       };
+      71 |
+    > 72 |       const result = await agent.processData(minimalData);
+         |                                  ^
+      73 |       expect(result.valid).toBe(true);
+      74 |
+      75 |       const section = await agent.generateSection(minimalData);
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:72:34)
+
+  ● DemographicsAgent › Standard Mode › correctly identifies caregivers
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      79 |
+      80 |     it('correctly identifies caregivers', async () => {
+    > 81 |       const result = await agent.processData(testData);
+         |                                  ^
+      82 |       expect(result.data.caregivers).toBeDefined();
+      83 |       expect(result.data.caregivers).toContainEqual({
+      84 |         name: 'Jane Doe',
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:81:34)
+
+  ● DemographicsAgent › Standard Mode › generates appropriate recommendations
+
+    TypeError: Cannot read properties of undefined (reading 'processData')
+
+      89 |
+      90 |     it('generates appropriate recommendations', async () => {
+    > 91 |       const result = await agent.processData(testData);
+         |                                  ^
+      92 |       expect(result.data.recommendations).toBeDefined();
+      93 |       expect(Array.isArray(result.data.recommendations)).toBe(true);
+      94 |     });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:91:34)
+
+  ● DemographicsAgent › Narrative Mode › generates narrative content with personal details
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      103 |
+      104 |     it('generates narrative content with personal details', async () => {
+    > 105 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      106 |       const content = section.content as string;
+      107 |
+      108 |       expect(content).toContain('John Doe');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:105:50)
+
+  ● DemographicsAgent › Narrative Mode › includes caregiver information in narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      113 |
+      114 |     it('includes caregiver information in narrative', async () => {
+    > 115 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      116 |       const content = section.content as string;
+      117 |
+      118 |       expect(content).toContain('Jane Doe');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:115:50)
+
+  ● DemographicsAgent › Narrative Mode › handles professional context in narrative
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      122 |
+      123 |     it('handles professional context in narrative', async () => {
+    > 124 |       const { section } = await runNarrativeTests({ agent, context, testData });
+          |                                                  ^
+      125 |       const content = section.content as string;
+      126 |
+      127 |       expect(content).toContain('employed as');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:124:50)
+
+  ● DemographicsAgent › Narrative Mode › generates appropriate narrative without employment
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      140 |       };
+      141 |
+    > 142 |       const { section } = await runNarrativeTests({
+          |                                                  ^
+      143 |         agent,
+      144 |         context,
+      145 |         testData: unemployedData
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:142:50)
+
+  ● DemographicsAgent › Narrative Mode › includes living situation in narrative when available
+
+    TypeError: (0 , setup_1.runNarrativeTests) is not a function
+
+      172 |       };
+      173 |
+    > 174 |       const { section } = await runNarrativeTests({
+          |                                                  ^
+      175 |         agent,
+      176 |         context,
+      177 |         testData: dataWithLiving
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:174:50)
+
+  ● DemographicsAgent › Edge Cases › validates data structure
+
+    ReferenceError: agent is not defined
+
+      195 |       };
+      196 |
+    > 197 |       const result = await agent.processData(invalidData as any);
+          |                      ^
+      198 |       expect(result.valid).toBe(true); // Should still be valid but with defaults
+      199 |       expect(result.data.name).toBe('Unknown');
+      200 |     });
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:197:22)
+
+  ● DemographicsAgent › Edge Cases › handles mode switching gracefully
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      203 |       // Start with standard mode
+      204 |       const { agent: standardAgent } = createTestSuite(DemographicsAgent);
+    > 205 |       const standardSection = await standardAgent.generateSection(testData);
+          |                                                   ^
+      206 |       expect(standardSection.valid).toBe(true);
+      207 |
+      208 |       // Switch to narrative mode
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:205:51)
+
+  ● DemographicsAgent › Edge Cases › gracefully handles malformed dates
+
+    TypeError: Cannot read properties of undefined (reading 'generateSection')
+
+      230 |       });
+      231 |
+    > 232 |       const section = await agent.generateSection(badDateData);
+          |                                   ^
+      233 |       expect(section.valid).toBe(true);
+      234 |       expect(section.content).not.toContain('NaN');
+      235 |       expect(section.content).not.toContain('undefined');
+
+      at Object.<anonymous> (src/components/ReportGeneration/agents/__tests__/DemographicsAgent.test.ts:232:35)
+
+
+Test Suites: 21 failed, 6 passed, 27 total
+Tests:       86 failed, 45 passed, 131 total
+Snapshots:   0 total
+Time:        8.004 s
+Ran all test suites matching /src\\components\\ReportGeneration\\narrative\\__tests__\\NarrativeEngine.test.tsnpm|test|src\\components\\ReportGeneration\\narrative\\__tests__\\NarrativeEngine.test.ts/i.
+
+D:\delilah>

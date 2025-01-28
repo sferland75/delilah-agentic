@@ -1,0 +1,11 @@
+# Remove IHAs directory
+regex:IHAs/.*
+
+# Remove specific files
+regex:.*\.exe$
+regex:.*\.dll$
+regex:.*\.bin$
+regex:.*\.dat$
+regex:.*\.pak$
+regex:.*\.pdf$
+regex:.*\.docx$
