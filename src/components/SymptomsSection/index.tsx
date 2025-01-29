@@ -5,6 +5,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BodyMap } from '../BodyMap';
 import { CognitiveSymptoms } from './CognitiveSymptoms';
 import { EmotionalSymptoms } from './EmotionalSymptoms';
+import { AbnormalFindingsTable } from './AbnormalFindingsTable';
+import { PainFindingsTable } from './PainFindingsTable';
 import { generalSymptoms } from './constants';
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -19,42 +21,53 @@ const PhysicalSymptoms: React.FC<PhysicalSymptomsProps> = ({ bodyMapData }) => {
   const { control } = useFormContext();
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div className="w-full">
-        <BodyMap 
-          onUpdate={(painData) => {
-            // Keep track of pain data updates
-            console.log("Pain data updated:", painData);
-          }}
-        />
-      </div>
-
+    <div className="space-y-8">
+      {/* Body Map Section */}
       <div className="space-y-4">
-        <div className="space-y-2">
-          <FormField
-            control={control}
-            name="symptoms.physical.notes"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Physical Symptoms Notes</Label>
-                <FormControl>
-                  <Textarea 
-                    {...field}
-                    value={field.value || ''}
-                    placeholder="Enter any additional physical symptoms or notes..."
-                    className="min-h-[200px]"
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="w-full">
+            <BodyMap 
+              onUpdate={(painData) => {
+                console.log("Pain data updated:", painData);
+              }}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <FormField
+              control={control}
+              name="symptoms.physical.notes"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Physical Symptoms Notes</Label>
+                  <FormControl>
+                    <Textarea 
+                      {...field}
+                      value={field.value || ''}
+                      placeholder="Enter any additional physical symptoms or notes..."
+                      className="min-h-[200px]"
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+
+        {/* Pain Findings Table */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-lg font-medium text-slate-800">Pain Assessment Findings</h3>
+            <div className="h-px flex-1 bg-slate-200"></div>
+          </div>
+          <PainFindingsTable />
         </div>
       </div>
     </div>
   );
 };
 
-export function SymptomsSection() {
+export default function SymptomsSection() {
   const { control } = useFormContext();
   const formContext = useFormContext();
   const painData = formContext.watch('symptoms.pain') || {};

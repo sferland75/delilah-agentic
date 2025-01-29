@@ -132,4 +132,4 @@ export function CostSummary({ form }: CostSummaryProps) {
       </CardContent>
     </Card>
   );
-};
+}

@@ -24,17 +24,17 @@ const COMMON_ROOMS = [
 ] as const;
 
 export function PropertyOverview() {
-  const { control } = useFormContext<Assessment>();
+  const methods = useFormContext<Assessment>();
+  const { control } = methods;
 
   // Initialize room counts
   React.useEffect(() => {
-    const methods = useFormContext<Assessment>();
     COMMON_ROOMS.forEach(room => {
       methods.setValue(`environmental.propertyOverview.rooms.${room.type}.count`, '0', { 
         shouldDirty: false 
       });
     });
-  }, []);
+  }, [methods]);
 
   return (
     <div className="space-y-8">

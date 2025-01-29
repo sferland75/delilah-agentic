@@ -31,13 +31,14 @@ export const BodyMap: React.FC<BodyMapProps> = ({ onUpdate }) => {
     const newPainData = {
       ...painData,
       [data.region]: {
-        painLevel: data.painLevel,
+        severity: data.severity,
         qualifiers: data.qualifiers,
-        notes: data.notes,
+        comments: data.comments,
         timestamp: new Date().toISOString()
       }
     };
     
+    console.log('Setting new pain data:', newPainData);
     setValue('symptoms.pain', newPainData, { shouldDirty: true });
     if (onUpdate) {
       onUpdate(newPainData);
@@ -46,7 +47,7 @@ export const BodyMap: React.FC<BodyMapProps> = ({ onUpdate }) => {
   };
 
   const getRegionColor = (regionId: string) => {
-    const regionPain = painData[regionId]?.painLevel || 0;
+    const regionPain = painData[regionId]?.severity || 0;
     if (regionPain === 0) return "fill-gray-100";
     if (regionPain <= 3) return "fill-yellow-100";
     if (regionPain <= 6) return "fill-orange-100";

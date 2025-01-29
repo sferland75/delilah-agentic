@@ -17,19 +17,24 @@ interface PainAssessmentProps {
     id: string;
     label: string;
   };
-  initialData?: {
-    painLevel: number;
-    qualifiers: string[];
-    notes: string;
-  };
+  initialData?: any;
   onSave: (data: any) => void;
 }
 
 export function PainAssessment({ region, initialData, onSave }: PainAssessmentProps) {
   const { setValue } = useFormContext();
-  const [painLevel, setPainLevel] = React.useState(initialData?.painLevel || 0);
-  const [notes, setNotes] = React.useState(initialData?.notes || '');
-  const [selectedQualifiers, setSelectedQualifiers] = React.useState<string[]>(initialData?.qualifiers || []);
+  
+  // Initialize state from initialData or defaults
+  const [painLevel, setPainLevel] = React.useState(initialData?.severity || 0);
+  const [notes, setNotes] = React.useState(initialData?.comments || '');
+  
+  // Initialize selected qualifiers from initialData
+  const initialQualifiers = initialData?.qualifiers || {};
+  const [selectedQualifiers, setSelectedQualifiers] = React.useState(
+    Object.entries(initialQualifiers)
+      .filter(([_, isSelected]) => isSelected)
+      .map(([qualifier]) => qualifier)
+  );
 
   const qualifiers = getQualifiersForRegion(region.id);
 
@@ -42,23 +47,20 @@ export function PainAssessment({ region, initialData, onSave }: PainAssessmentPr
   };
 
   const handleSave = () => {
+    // Convert selected qualifiers array to object
+    const qualifiersObj = qualifiers.reduce((acc, qualifier) => ({
+      ...acc,
+      [qualifier]: selectedQualifiers.includes(qualifier)
+    }), {});
+
     const data = {
       region: region.id,
-      painLevel,
-      qualifiers: selectedQualifiers,
-      notes
+      severity: painLevel,
+      qualifiers: qualifiersObj,
+      comments: notes
     };
 
-    // Update the form context directly
-    setValue(`symptoms.physical.regions.${region.id}`, {
-      label: region.label,
-      painLevel,
-      qualifiers: selectedQualifiers,
-      notes,
-      timestamp: new Date().toISOString()
-    }, { shouldDirty: true });
-
-    // Call the original onSave for bodymap update
+    console.log('Saving pain data:', data);
     onSave(data);
   };
 

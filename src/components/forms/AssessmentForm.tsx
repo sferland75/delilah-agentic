@@ -18,7 +18,7 @@ import { CareRequirements } from '@/components/forms/sections-next/care';
 import { EnvironmentalSectionConsolidated } from '@/components/EnvironmentalSection';
 import { ADLSection } from '@/components/ADLSection';
 import { FunctionalAssessment } from '@/components/FunctionalAssessment';
-import { SymptomsSection } from '@/components/SymptomsSection';
+import SymptomsSection from '@/components/SymptomsSection'; // Changed to default import
 
 const AssessmentForm = () => {
   const [activeTab, setActiveTab] = useState('initial');

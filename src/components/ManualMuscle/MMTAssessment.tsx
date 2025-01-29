@@ -30,7 +30,7 @@ interface MMTAssessmentProps {
 }
 
 export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
-  const { setValue } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const [openSections, setOpenSections] = React.useState<string[]>([]);
   const [modifiedSections, setModifiedSections] = React.useState<string[]>([]);
 
@@ -42,15 +42,34 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
     );
   };
 
-  // Set initial values to normal (Grade 5)
+  // Set initial values to normal (Grade 5) with debug logging
   React.useEffect(() => {
-    CORE_MUSCLE_GROUPS.forEach((section) => {
-      section.groups.forEach((group) => {
-        setValue(`${prefix}.${section.region}.${group.name}.left`, "5", { shouldDirty: false });
-        setValue(`${prefix}.${section.region}.${group.name}.right`, "5", { shouldDirty: false });
+    console.log('Setting initial MMT values with prefix:', prefix);
+    try {
+      CORE_MUSCLE_GROUPS.forEach((section) => {
+        section.groups.forEach((group) => {
+          const leftPath = `${prefix}.${section.region}.${group.name}.left`;
+          const rightPath = `${prefix}.${section.region}.${group.name}.right`;
+          
+          console.log('Setting values for paths:', leftPath, rightPath);
+          setValue(leftPath, "5", { shouldDirty: false });
+          setValue(rightPath, "5", { shouldDirty: false });
+        });
       });
-    });
-  }, [setValue, prefix]);
+      
+      // Debug: check if values were set correctly
+      const currentValues = getValues(prefix);
+      console.log('Current MMT values after initialization:', currentValues);
+    } catch (error) {
+      console.error('Error setting initial MMT values:', error);
+    }
+  }, [setValue, prefix, getValues]);
+
+  // Debug logging when values change
+  React.useEffect(() => {
+    const currentValues = getValues(prefix);
+    console.log('MMT values updated:', currentValues);
+  }, [getValues, prefix]);
 
   return (
     <div className="space-y-6">
@@ -82,6 +101,7 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={(checked) => {
+                      console.log(`Setting ${section.region} affected:`, checked);
                       field.onChange(checked);
                       if (checked) {
                         setOpenSections(prev => [...prev, section.region]);
@@ -125,6 +145,7 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
                               <FormControl>
                                 <RadioGroup
                                   onValueChange={(value) => {
+                                    console.log(`Setting ${group.name} left value:`, value);
                                     field.onChange(value);
                                     if (value !== "5") {
                                       setModifiedSections(prev => 
@@ -162,6 +183,7 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
                               <FormControl>
                                 <RadioGroup
                                   onValueChange={(value) => {
+                                    console.log(`Setting ${group.name} right value:`, value);
                                     field.onChange(value);
                                     if (value !== "5") {
                                       setModifiedSections(prev => 
@@ -224,7 +246,6 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
         </Collapsible>
       ))}
 
-      {/* General Notes - Only shown if any sections are modified */}
       {modifiedSections.length > 0 && (
         <div className="bg-white rounded-lg border border-slate-200 shadow-sm p-4">
           <FormField
@@ -246,7 +267,6 @@ export function MMTAssessment({ control, prefix }: MMTAssessmentProps) {
         </div>
       )}
 
-      {/* MMT Scale Reference - Collapsed by default */}
       <Collapsible className="bg-slate-50 rounded-lg border border-slate-200">
         <CollapsibleTrigger className="flex items-center gap-2 w-full p-4 hover:bg-slate-100">
           <Info className="h-4 w-4 text-slate-600" />

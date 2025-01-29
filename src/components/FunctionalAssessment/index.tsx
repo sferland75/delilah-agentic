@@ -29,6 +29,7 @@ const MeasurementSummary: React.FC<MeasurementSummaryProps> = ({ data }) => {
   };
 
   const getMMTSeverity = (grade: number) => {
+    console.log('MMT Severity calculation for grade:', grade);
     if (grade >= 4) return "Good-Normal";
     if (grade === 3) return "Fair";
     if (grade === 2) return "Poor";
@@ -67,24 +68,29 @@ const MeasurementSummary: React.FC<MeasurementSummaryProps> = ({ data }) => {
         <div className="bg-white p-4 rounded-lg border">
           <h3 className="font-medium text-lg mb-3">MMT Deficits</h3>
           <div className="space-y-2">
-            {mmtDeficits.map(([muscle, data]: [string, any]) => (
-              <div key={muscle} className="flex justify-between items-start border-b pb-2">
-                <div>
-                  <span className="font-medium">{data.label || muscle}</span>
-                  <div className="text-sm text-slate-600">
-                    {getMMTSeverity(parseInt(data.grade))} (Grade {data.grade}/5)
+            {mmtDeficits.map(([muscle, data]: [string, any]) => {
+              const grade = typeof data.grade === 'string' ? parseInt(data.grade) : data.grade;
+              console.log('Processing MMT deficit:', muscle, 'Grade:', grade);
+              
+              return (
+                <div key={muscle} className="flex justify-between items-start border-b pb-2">
+                  <div>
+                    <span className="font-medium">{data.label || muscle}</span>
+                    <div className="text-sm text-slate-600">
+                      {getMMTSeverity(grade)} (Grade {grade}/5)
+                    </div>
+                    {data.observations && (
+                      <div className="text-sm text-slate-500 mt-1">{data.observations}</div>
+                    )}
                   </div>
-                  {data.observations && (
-                    <div className="text-sm text-slate-500 mt-1">{data.observations}</div>
+                  {data.painLevel > 0 && (
+                    <span className="text-sm bg-red-50 text-red-600 px-2 py-1 rounded">
+                      Pain: {data.painLevel}/10
+                    </span>
                   )}
                 </div>
-                {data.painLevel > 0 && (
-                  <span className="text-sm bg-red-50 text-red-600 px-2 py-1 rounded">
-                    Pain: {data.painLevel}/10
-                  </span>
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -93,7 +99,32 @@ const MeasurementSummary: React.FC<MeasurementSummaryProps> = ({ data }) => {
 };
 
 export function FunctionalAssessment() {
-  const { control, watch } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
+  
+  // Handlers for ROM and MMT assessment
+  const handleROMSelect = React.useCallback((areaId: string) => {
+    console.log('Initializing ROM area:', areaId);
+    // Just mark as affected, let the dialog handle the values
+    setValue(`rom.${areaId}`, {
+      affected: true,
+      timestamp: new Date().toISOString()
+    }, { 
+      shouldDirty: true,
+      shouldTouch: true 
+    });
+  }, [setValue]);
+
+  const handleMMTSelect = React.useCallback((areaId: string) => {
+    console.log('Initializing MMT area:', areaId);
+    // Just mark as affected, let the dialog handle the values
+    setValue(`mmt.${areaId}`, {
+      affected: true,
+      timestamp: new Date().toISOString()
+    }, { 
+      shouldDirty: true, 
+      shouldTouch: true 
+    });
+  }, [setValue]);
 
   return (
     <Card className="p-6 bg-slate-50">
@@ -140,7 +171,10 @@ export function FunctionalAssessment() {
 
         <TabsContent value="physical-map" className="space-y-6">
           <div className="border rounded-lg p-4 bg-white shadow-sm">
-            <AssessmentMapIntegration />
+            <AssessmentMapIntegration 
+              onROMSelect={handleROMSelect}
+              onMMTSelect={handleMMTSelect}
+            />
             <MeasurementSummary data={watch()} />
           </div>
         </TabsContent>
