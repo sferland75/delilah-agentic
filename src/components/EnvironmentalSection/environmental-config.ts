@@ -57,13 +57,5 @@ export const environmentalConfigs = {
     'Concrete',
     'Mixed',
     'Other'
-  ],
-  floorConditions: [
-    'Excellent',
-    'Good',
-    'Fair',
-    'Poor',
-    'Needs Repair',
-    'Trip Hazard Present'
   ]
 } as const;

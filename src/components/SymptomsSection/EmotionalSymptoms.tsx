@@ -12,58 +12,58 @@ import {
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
 
-// Same cognitiveSymptoms object...
-const cognitiveSymptoms = {
-  attention: {
-    title: "Attention and Concentration",
+// Same emotionalSymptoms object...
+const emotionalSymptoms = {
+  mood: {
+    title: "Mood Symptoms",
     symptoms: [
-      { id: "sustained_attention", label: "Difficulty maintaining attention" },
-      { id: "divided_attention", label: "Trouble multitasking" },
-      { id: "distractibility", label: "Easily distracted" },
-      { id: "mental_fatigue", label: "Mental fatigue with concentration" }
+      { id: "depression", label: "Depression" },
+      { id: "anxiety", label: "Anxiety" },
+      { id: "mood_swings", label: "Mood Swings" },
+      { id: "irritability", label: "Irritability" }
     ]
   },
-  memory: {
-    title: "Memory",
+  emotional_control: {
+    title: "Emotional Control",
     symptoms: [
-      { id: "short_term", label: "Short-term memory problems" },
-      { id: "working_memory", label: "Difficulty holding information while using it" },
-      { id: "recall", label: "Trouble recalling information" },
-      { id: "prospective", label: "Forgetting to do planned tasks" }
+      { id: "emotional_lability", label: "Emotional Lability" },
+      { id: "impulsivity", label: "Emotional Impulsivity" },
+      { id: "aggression", label: "Aggression/Agitation" },
+      { id: "emotional_numbness", label: "Emotional Numbness" }
     ]
   },
-  processing: {
-    title: "Processing Speed",
+  motivation: {
+    title: "Motivation and Drive",
     symptoms: [
-      { id: "processing_speed", label: "Slowed thinking" },
-      { id: "reaction_time", label: "Delayed reaction time" },
-      { id: "decision_making", label: "Difficulty making decisions" },
-      { id: "problem_solving", label: "Trouble solving problems" }
+      { id: "apathy", label: "Apathy" },
+      { id: "reduced_motivation", label: "Reduced Motivation" },
+      { id: "anhedonia", label: "Loss of Interest/Pleasure" },
+      { id: "initiative", label: "Reduced Initiative" }
     ]
   },
-  executive: {
-    title: "Executive Function",
+  social: {
+    title: "Social-Emotional",
     symptoms: [
-      { id: "planning", label: "Difficulty planning and organizing" },
-      { id: "initiation", label: "Trouble getting started on tasks" },
-      { id: "sequencing", label: "Problems with step-by-step tasks" },
-      { id: "mental_flexibility", label: "Difficulty switching between tasks" }
+      { id: "social_withdrawal", label: "Social Withdrawal" },
+      { id: "relationship_changes", label: "Changes in Relationships" },
+      { id: "empathy", label: "Changes in Empathy" },
+      { id: "social_anxiety", label: "Social Anxiety" }
     ]
   },
-  language: {
-    title: "Language and Communication",
+  self_awareness: {
+    title: "Self-Awareness and Regulation",
     symptoms: [
-      { id: "word_finding", label: "Word-finding difficulties" },
-      { id: "verbal_fluency", label: "Reduced verbal fluency" },
-      { id: "comprehension", label: "Trouble understanding complex information" },
-      { id: "expression", label: "Difficulty expressing thoughts clearly" }
+      { id: "self_monitoring", label: "Difficulty Monitoring Emotions" },
+      { id: "coping", label: "Poor Coping Skills" },
+      { id: "emotional_awareness", label: "Reduced Emotional Awareness" },
+      { id: "self_regulation", label: "Difficulty Self-Regulating" }
     ]
   }
 };
 
-export function CognitiveSymptoms() {
+export function EmotionalSymptoms() {
   const { register, watch, setValue } = useFormContext();
-  const watchSymptoms = watch('symptoms.cognitive') || {};
+  const watchSymptoms = watch('symptoms.emotional') || {};
   const [openSections, setOpenSections] = React.useState<string[]>([]);
 
   const toggleSection = (section: string) => {
@@ -75,14 +75,14 @@ export function CognitiveSymptoms() {
   };
 
   const handleSeverityChange = (symptomId: string, value: number[]) => {
-    setValue(`symptoms.cognitive.${symptomId}.severity`, value[0], { 
+    setValue(`symptoms.emotional.${symptomId}.severity`, value[0], { 
       shouldDirty: true 
     });
   };
 
   return (
     <div className="space-y-6">
-      {Object.entries(cognitiveSymptoms).map(([category, { title, symptoms }]) => (
+      {Object.entries(emotionalSymptoms).map(([category, { title, symptoms }]) => (
         <Card key={category}>
           <Collapsible
             open={openSections.includes(category)}
@@ -112,7 +112,7 @@ export function CognitiveSymptoms() {
                           <div className="flex items-center space-x-2">
                             <Checkbox
                               id={symptom.id}
-                              {...register(`symptoms.cognitive.${symptom.id}.present`)}
+                              {...register(`symptoms.emotional.${symptom.id}.present`)}
                             />
                             <Label htmlFor={symptom.id}>{symptom.label}</Label>
                           </div>
@@ -141,7 +141,7 @@ export function CognitiveSymptoms() {
                                 <Textarea
                                   placeholder="Provide specific examples or clinical observations..."
                                   className="h-20"
-                                  {...register(`symptoms.cognitive.${symptom.id}.notes`)}
+                                  {...register(`symptoms.emotional.${symptom.id}.notes`)}
                                 />
                               </div>
                             </div>
@@ -156,7 +156,7 @@ export function CognitiveSymptoms() {
                     <Textarea
                       placeholder={`Additional observations about ${title.toLowerCase()}...`}
                       className="h-24"
-                      {...register(`symptoms.cognitive.${category}_observations`)}
+                      {...register(`symptoms.emotional.${category}_observations`)}
                     />
                   </div>
                 </div>
@@ -168,13 +168,13 @@ export function CognitiveSymptoms() {
       
       <Card>
         <CardHeader>
-          <CardTitle>General Cognitive Function Notes</CardTitle>
+          <CardTitle>General Emotional/Behavioral Notes</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
-            placeholder="Overall observations about cognitive function, patterns noticed, or additional symptoms not covered above..."
+            placeholder="Overall observations about emotional and behavioral function, patterns noticed, or additional symptoms not covered above..."
             className="min-h-[100px]"
-            {...register('symptoms.cognitive.general_observations')}
+            {...register('symptoms.emotional.general_observations')}
           />
         </CardContent>
       </Card>

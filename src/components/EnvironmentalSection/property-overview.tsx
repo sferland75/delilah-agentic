@@ -1,10 +1,11 @@
-import { useFormContext } from 'react-hook-form';
+import React from 'react';
+import { useFormContext } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { environmentalConfigs } from './environmental-config';
 import type { Assessment } from '@/lib/validation/assessment-schema';
-import { Home, Footprints, DoorOpen, Grid } from 'lucide-react';
+import { Home, DoorOpen, Grid } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 
 const COMMON_ROOMS = [
@@ -23,7 +24,17 @@ const COMMON_ROOMS = [
 ] as const;
 
 export function PropertyOverview() {
-  const { control, setValue, getValues } = useFormContext<Assessment>();
+  const { control } = useFormContext<Assessment>();
+
+  // Initialize room counts
+  React.useEffect(() => {
+    const methods = useFormContext<Assessment>();
+    COMMON_ROOMS.forEach(room => {
+      methods.setValue(`environmental.propertyOverview.rooms.${room.type}.count`, '0', { 
+        shouldDirty: false 
+      });
+    });
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -46,7 +57,7 @@ export function PropertyOverview() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-700">Property Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
                   <FormControl>
                     <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Select property type" />
@@ -72,7 +83,7 @@ export function PropertyOverview() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-700">Number of Levels</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select onValueChange={field.onChange} value={field.value || ''}>
                   <FormControl>
                     <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Select number of levels" />
@@ -106,28 +117,28 @@ export function PropertyOverview() {
         <div className="grid gap-6">
           {COMMON_ROOMS.map((room) => (
             <div key={room.type} className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={control}
+                  name={`environmental.propertyOverview.rooms.${room.type}.count`}
+                  defaultValue="0"
+                  render={({ field }) => (
+                    <FormItem className="w-16">
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          value={field.value || '0'}
+                          onChange={e => field.onChange(e.target.value || '0')}
+                          placeholder="#"
+                          min={0}
+                          className="bg-white text-center h-8"
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
                 <FormLabel className="text-slate-700 font-medium">{room.label}</FormLabel>
-                
-                <div className="flex items-center gap-2">
-                  <FormField
-                    control={control}
-                    name={`environmental.propertyOverview.rooms.${room.type}.count`}
-                    render={({ field }) => (
-                      <FormItem className="w-20">
-                        <FormControl>
-                          <Input 
-                            type="number" 
-                            {...field} 
-                            placeholder="#"
-                            min={0}
-                            className="bg-white text-center"
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
 
               <FormField
@@ -135,41 +146,20 @@ export function PropertyOverview() {
                 name={`environmental.propertyOverview.rooms.${room.type}.flooring`}
                 render={({ field }) => (
                   <FormItem>
-                    <div className="grid grid-cols-2 gap-4">
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="bg-white">
-                            <SelectValue placeholder="Floor covering" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {environmentalConfigs.floorCoverings.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      <FormField
-                        control={control}
-                        name={`environmental.propertyOverview.rooms.${room.type}.condition`}
-                        render={({ field }) => (
-                          <Select onValueChange={field.onChange} value={field.value}>
-                            <FormControl>
-                              <SelectTrigger className="bg-white">
-                                <SelectValue placeholder="Floor condition" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {environmentalConfigs.floorConditions.map((condition) => (
-                                <SelectItem key={condition} value={condition}>{condition}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
+                    <Select onValueChange={field.onChange} value={field.value || ''}>
+                      <FormControl>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="Floor covering" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {environmentalConfigs.floorCoverings.map((type) => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription className="text-slate-500">
-                      Floor covering and condition
+                      Floor covering type
                     </FormDescription>
                   </FormItem>
                 )}
@@ -188,6 +178,7 @@ export function PropertyOverview() {
               <FormControl>
                 <Textarea 
                   {...field}
+                  value={field.value || ''}
                   placeholder="Note any additional rooms or spaces..."
                   className="min-h-[80px] bg-white"
                 />
@@ -213,6 +204,7 @@ export function PropertyOverview() {
               <FormControl>
                 <Textarea 
                   {...field}
+                  value={field.value || ''}
                   placeholder="Enter any general notes about the property layout, unique features, etc."
                   className="min-h-[100px] bg-white"
                 />
