@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Dialog,
@@ -19,21 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { ROMAssessment, MMTAssessment } from './types';
 
 interface ROMDialogProps {
   isOpen: boolean;
   onClose: () => void;
   joint: string;
-  onSave: (data: any) => void;
+  onSave: (data: ROMAssessment) => void;
 }
 
-export const ROMDialog: React.FC<ROMDialogProps> = ({
-  isOpen,
-  onClose,
-  joint,
-  onSave
-}) => {
-  const { control, handleSubmit } = useForm({
+export const ROMDialog = ({ isOpen, onClose, joint, onSave }: ROMDialogProps) => {
+  const { control, handleSubmit, reset } = useForm<ROMAssessment>({
     defaultValues: {
       percentage: "100",
       painLevel: "0",
@@ -42,7 +38,20 @@ export const ROMDialog: React.FC<ROMDialogProps> = ({
     }
   });
 
-  const onSubmit = (data: any) => {
+  // Reset form when dialog opens with a new joint
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        percentage: "100",
+        painLevel: "0",
+        restrictions: "",
+        notes: ""
+      });
+    }
+  }, [isOpen, joint, reset]);
+
+  const onSubmit = (data: ROMAssessment) => {
+    console.log('ROM Dialog submitting:', data);
     onSave(data);
     onClose();
   };
@@ -65,8 +74,12 @@ export const ROMDialog: React.FC<ROMDialogProps> = ({
               control={control}
               render={({ field }) => (
                 <RadioGroup
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    console.log('Selected ROM percentage:', value);
+                    field.onChange(value);
+                  }}
                   defaultValue={field.value}
+                  value={field.value}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="100" id="r100" />
@@ -98,6 +111,7 @@ export const ROMDialog: React.FC<ROMDialogProps> = ({
                 <Select 
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  value={field.value}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select pain level" />
@@ -155,16 +169,11 @@ interface MMTDialogProps {
   isOpen: boolean;
   onClose: () => void;
   muscleGroup: string;
-  onSave: (data: any) => void;
+  onSave: (data: MMTAssessment) => void;
 }
 
-export const MMTDialog: React.FC<MMTDialogProps> = ({
-  isOpen,
-  onClose,
-  muscleGroup,
-  onSave
-}) => {
-  const { control, handleSubmit } = useForm({
+export const MMTDialog = ({ isOpen, onClose, muscleGroup, onSave }: MMTDialogProps) => {
+  const { control, handleSubmit, reset } = useForm<MMTAssessment>({
     defaultValues: {
       grade: "5",
       painLevel: "0",
@@ -172,8 +181,28 @@ export const MMTDialog: React.FC<MMTDialogProps> = ({
     }
   });
 
-  const onSubmit = (data: any) => {
-    onSave(data);
+  // Reset form when dialog opens with a new muscle group
+  useEffect(() => {
+    if (isOpen) {
+      console.log('Resetting MMT form for new muscle group:', muscleGroup);
+      reset({
+        grade: "5",
+        painLevel: "0",
+        observations: ""
+      });
+    }
+  }, [isOpen, muscleGroup, reset]);
+
+  const onSubmit = (data: MMTAssessment) => {
+    const processedData = {
+      ...data,
+      grade: data.grade,
+      painLevel: data.painLevel,
+      observations: data.observations || ''
+    };
+
+    console.log('MMT Dialog submitting data:', processedData);
+    onSave(processedData);
     onClose();
   };
 
@@ -195,8 +224,12 @@ export const MMTDialog: React.FC<MMTDialogProps> = ({
               control={control}
               render={({ field }) => (
                 <RadioGroup
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    console.log('Selected MMT grade:', value);
+                    field.onChange(value);
+                  }}
                   defaultValue={field.value}
+                  value={field.value}
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="5" id="g5" />
@@ -236,6 +269,7 @@ export const MMTDialog: React.FC<MMTDialogProps> = ({
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  value={field.value}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select pain level" />
