@@ -1,0 +1,17 @@
+import React from 'react';
+
+export const Loader2 = ({ className }) => (
+  <span data-testid="progress-spinner" className={className}>
+    mock-loader
+  </span>
+);
+
+export const X = ({ className }) => (
+  <span className={className}>mock-x</span>
+);
+
+// Add other icons as needed
+export default {
+  Loader2,
+  X
+};

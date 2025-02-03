@@ -1,199 +1,199 @@
-// Anterior view segments
-export const anteriorSegments = {
-  // [Previous head through forearm segments remain the same]
-  head: {
-    path: "M 185,30 C 185,30 200,20 215,30 C 220,35 220,45 215,55 L 185,55 C 180,45 180,35 185,30 Z",
-    label: "Head"
+// Core measurements for more anatomically correct proportions
+const center = 200;
+const shoulderWidth = 160;  // Wider shoulders
+const waistWidth = 120;     // Narrower waist
+const hipWidth = 140;       // Medium hips
+
+interface Segment {
+  path: string;
+  label: string;
+}
+
+interface SegmentMap {
+  [key: string]: Segment;
+}
+
+// Anterior view segments (core muscles only)
+const anteriorSegments: SegmentMap = {
+  // Upper body
+  rightNeck: {
+    path: `M ${center-30},80 L ${center},80 L ${center},120 L ${center-35},120 Z`,
+    label: "Right SCM"
   },
-  neck: {
-    path: "M 185,55 L 215,55 L 210,75 L 190,75 Z",
-    label: "Neck"
+  leftNeck: {
+    path: `M ${center},80 L ${center+30},80 L ${center+35},120 L ${center},120 Z`,
+    label: "Left SCM"
   },
+  
+  // Chest and shoulders
+  rightPectoralis: {
+    path: `M ${center-shoulderWidth/2},120 L ${center},120 L ${center},170 L ${center-waistWidth/2},170 Z`,
+    label: "Right Pectoralis"
+  },
+  leftPectoralis: {
+    path: `M ${center},120 L ${center+shoulderWidth/2},120 L ${center+waistWidth/2},170 L ${center},170 Z`,
+    label: "Left Pectoralis"
+  },
+
+  // Arms
   rightUpperArm: {
-    path: "M 170,75 L 150,80 L 145,140 L 165,140 Z",
-    label: "Right Upper Arm (Biceps)"
+    path: `M ${center-shoulderWidth/2},120 L ${center-shoulderWidth/2-30},120 L ${center-shoulderWidth/2-30},180 L ${center-shoulderWidth/2},180 Z`,
+    label: "Right Upper Arm"
   },
   leftUpperArm: {
-    path: "M 230,75 L 250,80 L 255,140 L 235,140 Z",
-    label: "Left Upper Arm (Biceps)"
+    path: `M ${center+shoulderWidth/2},120 L ${center+shoulderWidth/2+30},120 L ${center+shoulderWidth/2+30},180 L ${center+shoulderWidth/2},180 Z`,
+    label: "Left Upper Arm"
   },
   rightForearm: {
-    path: "M 145,140 L 165,140 L 160,180 L 140,180 Z",
-    label: "Right Forearm (Anterior)"
+    path: `M ${center-shoulderWidth/2-30},180 L ${center-shoulderWidth/2},180 L ${center-shoulderWidth/2},240 L ${center-shoulderWidth/2-30},240 Z`,
+    label: "Right Forearm"
   },
   leftForearm: {
-    path: "M 235,140 L 255,140 L 260,180 L 240,180 Z",
-    label: "Left Forearm (Anterior)"
+    path: `M ${center+shoulderWidth/2+30},180 L ${center+shoulderWidth/2},180 L ${center+shoulderWidth/2},240 L ${center+shoulderWidth/2+30},240 Z`,
+    label: "Left Forearm"
   },
-  // Add wrist and hand segments
-  rightWrist: {
-    path: "M 140,180 L 160,180 L 158,190 L 138,190 Z",
-    label: "Right Wrist"
+
+  // Core
+  upperAbdominals: {
+    path: `M ${center-waistWidth/2},170 L ${center+waistWidth/2},170 L ${center+waistWidth/2},220 L ${center-waistWidth/2},220 Z`,
+    label: "Upper Abdominals"
   },
-  leftWrist: {
-    path: "M 240,180 L 260,180 L 262,190 L 242,190 Z",
-    label: "Left Wrist"
+  lowerAbdominals: {
+    path: `M ${center-waistWidth/2},220 L ${center+waistWidth/2},220 L ${center+hipWidth/2},270 L ${center-hipWidth/2},270 Z`,
+    label: "Lower Abdominals"
   },
-  rightHand: {
-    path: "M 138,190 L 158,190 L 155,210 L 135,210 C 134,205 134,195 138,190 Z",
-    label: "Right Hand"
+
+  // Lower body
+  rightQuadriceps: {
+    path: `M ${center-hipWidth/2},270 L ${center},270 L ${center},380 L ${center-hipWidth/2},380 Z`,
+    label: "Right Quadriceps"
   },
-  leftHand: {
-    path: "M 242,190 L 262,190 L 266,210 L 246,210 C 245,205 245,195 242,190 Z",
-    label: "Left Hand"
-  },
-  rightChest: {
-    path: "M 190,75 L 170,75 L 165,140 L 185,140 Z",
-    label: "Right Chest"
-  },
-  leftChest: {
-    path: "M 210,75 L 230,75 L 235,140 L 215,140 Z",
-    label: "Left Chest"
-  },
-  sternum: {
-    path: "M 185,75 L 215,75 L 215,140 L 185,140 Z",
-    label: "Sternum"
-  },
-  abdomen: {
-    path: "M 165,140 L 235,140 L 240,200 L 160,200 Z",
-    label: "Abdomen"
-  },
-  rightThigh: {
-    path: "M 160,200 L 200,200 L 195,300 L 155,300 Z",
-    label: "Right Thigh/Quadriceps"
-  },
-  leftThigh: {
-    path: "M 200,200 L 240,200 L 245,300 L 205,300 Z",
-    label: "Left Thigh/Quadriceps"
+  leftQuadriceps: {
+    path: `M ${center},270 L ${center+hipWidth/2},270 L ${center+hipWidth/2},380 L ${center},380 Z`,
+    label: "Left Quadriceps"
   },
   rightLeg: {
-    path: "M 155,300 L 195,300 L 190,370 L 150,370 Z",
+    path: `M ${center-hipWidth/2},380 L ${center},380 L ${center},480 L ${center-hipWidth/2},480 Z`,
     label: "Right Lower Leg"
   },
   leftLeg: {
-    path: "M 205,300 L 245,300 L 250,370 L 210,370 Z",
+    path: `M ${center},380 L ${center+hipWidth/2},380 L ${center+hipWidth/2},480 L ${center},480 Z`,
     label: "Left Lower Leg"
-  },
-  // Add ankle and foot segments
-  rightAnkle: {
-    path: "M 150,370 L 190,370 L 188,385 L 148,385 Z",
-    label: "Right Ankle"
-  },
-  leftAnkle: {
-    path: "M 210,370 L 250,370 L 252,385 L 212,385 Z",
-    label: "Left Ankle"
-  },
-  rightFoot: {
-    path: "M 148,385 L 188,385 L 190,395 L 146,395 C 145,390 145,387 148,385 Z",
-    label: "Right Foot"
-  },
-  leftFoot: {
-    path: "M 212,385 L 252,385 L 254,395 L 210,395 C 209,390 209,387 212,385 Z",
-    label: "Left Foot"
   }
 };
 
 // Posterior view segments
-export const posteriorSegments = {
-  // [Previous head through spine segments remain the same]
-  head: {
-    path: "M 185,30 C 185,30 200,20 215,30 C 220,35 220,45 215,55 L 185,55 C 180,45 180,35 185,30 Z",
-    label: "Head"
+const posteriorSegments: SegmentMap = {
+  // Upper back
+  cervicalParaspinals: {
+    path: `M ${center-20},80 L ${center+20},80 L ${center+20},120 L ${center-20},120 Z`,
+    label: "Cervical Paraspinals"
   },
-  cervicalSpine: {
-    path: "M 192,55 L 208,55 L 208,95 L 192,95 Z",
-    label: "Cervical Spine (C1-C7)"
+  rightUpperTrap: {
+    path: `M ${center-shoulderWidth/2},120 L ${center-20},120 L ${center-20},160 L ${center-shoulderWidth/2},160 Z`,
+    label: "Right Upper Trapezius"
   },
-  rightUpperArmPost: {
-    path: "M 170,75 L 150,80 L 145,140 L 165,140 Z",
-    label: "Right Upper Arm (Triceps)"
+  leftUpperTrap: {
+    path: `M ${center+20},120 L ${center+shoulderWidth/2},120 L ${center+shoulderWidth/2},160 L ${center+20},160 Z`,
+    label: "Left Upper Trapezius"
   },
-  leftUpperArmPost: {
-    path: "M 230,75 L 250,80 L 255,140 L 235,140 Z",
-    label: "Left Upper Arm (Triceps)"
+
+  // Arms
+  rightPosteriorArm: {
+    path: `M ${center-shoulderWidth/2},120 L ${center-shoulderWidth/2-30},120 L ${center-shoulderWidth/2-30},180 L ${center-shoulderWidth/2},180 Z`,
+    label: "Right Triceps"
   },
-  rightForearmPost: {
-    path: "M 145,140 L 165,140 L 160,180 L 140,180 Z",
-    label: "Right Forearm (Posterior)"
+  leftPosteriorArm: {
+    path: `M ${center+shoulderWidth/2},120 L ${center+shoulderWidth/2+30},120 L ${center+shoulderWidth/2+30},180 L ${center+shoulderWidth/2},180 Z`,
+    label: "Left Triceps"
   },
-  leftForearmPost: {
-    path: "M 235,140 L 255,140 L 260,180 L 240,180 Z",
-    label: "Left Forearm (Posterior)"
+  rightPosteriorForearm: {
+    path: `M ${center-shoulderWidth/2-30},180 L ${center-shoulderWidth/2},180 L ${center-shoulderWidth/2},240 L ${center-shoulderWidth/2-30},240 Z`,
+    label: "Right Posterior Forearm"
   },
-  rightWristPost: {
-    path: "M 140,180 L 160,180 L 158,190 L 138,190 Z",
-    label: "Right Wrist (Posterior)"
+  leftPosteriorForearm: {
+    path: `M ${center+shoulderWidth/2+30},180 L ${center+shoulderWidth/2},180 L ${center+shoulderWidth/2},240 L ${center+shoulderWidth/2+30},240 Z`,
+    label: "Left Posterior Forearm"
   },
-  leftWristPost: {
-    path: "M 240,180 L 260,180 L 262,190 L 242,190 Z",
-    label: "Left Wrist (Posterior)"
+
+  // Mid back
+  rightRhomboid: {
+    path: `M ${center-shoulderWidth/2},160 L ${center-20},160 L ${center-20},200 L ${center-waistWidth/2},200 Z`,
+    label: "Right Rhomboid"
   },
-  rightHandPost: {
-    path: "M 138,190 L 158,190 L 155,210 L 135,210 C 134,205 134,195 138,190 Z",
-    label: "Right Hand (Posterior)"
+  leftRhomboid: {
+    path: `M ${center+20},160 L ${center+shoulderWidth/2},160 L ${center+waistWidth/2},200 L ${center+20},200 Z`,
+    label: "Left Rhomboid"
   },
-  leftHandPost: {
-    path: "M 242,190 L 262,190 L 266,210 L 246,210 C 245,205 245,195 242,190 Z",
-    label: "Left Hand (Posterior)"
+  thoracicSpine: {
+    path: `M ${center-20},120 L ${center+20},120 L ${center+20},200 L ${center-20},200 Z`,
+    label: "Thoracic Paraspinals"
   },
-  upperThoracic: {
-    path: "M 192,95 L 208,95 L 208,135 L 192,135 Z",
-    label: "Upper Thoracic (T1-T6)"
+
+  // Lower back
+  rightLumbar: {
+    path: `M ${center-waistWidth/2},200 L ${center-20},200 L ${center-20},270 L ${center-hipWidth/2},270 Z`,
+    label: "Right Lumbar"
   },
-  lowerThoracic: {
-    path: "M 192,135 L 208,135 L 208,175 L 192,175 Z",
-    label: "Lower Thoracic (T7-T12)"
+  leftLumbar: {
+    path: `M ${center+20},200 L ${center+waistWidth/2},200 L ${center+hipWidth/2},270 L ${center+20},270 Z`,
+    label: "Left Lumbar"
   },
-  lumbar: {
-    path: "M 192,175 L 208,175 L 208,200 L 192,200 Z",
-    label: "Lumbar Spine (L1-L5)"
+  lumbarSpine: {
+    path: `M ${center-20},200 L ${center+20},200 L ${center+20},270 L ${center-20},270 Z`,
+    label: "Lumbar Paraspinals"
   },
-  rightScapula: {
-    path: "M 165,95 L 192,95 L 192,135 L 165,135 Z",
-    label: "Right Scapula"
+
+  // Hips and legs
+  rightGluteal: {
+    path: `M ${center-hipWidth/2},270 L ${center},270 L ${center},320 L ${center-hipWidth/2},320 Z`,
+    label: "Right Gluteal"
   },
-  leftScapula: {
-    path: "M 208,95 L 235,95 L 235,135 L 208,135 Z",
-    label: "Left Scapula"
-  },
-  rightLatissimus: {
-    path: "M 165,135 L 192,135 L 192,200 L 160,200 Z",
-    label: "Right Latissimus"
-  },
-  leftLatissimus: {
-    path: "M 208,135 L 235,135 L 240,200 L 208,200 Z",
-    label: "Left Latissimus"
+  leftGluteal: {
+    path: `M ${center},270 L ${center+hipWidth/2},270 L ${center+hipWidth/2},320 L ${center},320 Z`,
+    label: "Left Gluteal"
   },
   rightHamstring: {
-    path: "M 160,200 L 200,200 L 195,300 L 155,300 Z",
+    path: `M ${center-hipWidth/2},320 L ${center},320 L ${center},380 L ${center-hipWidth/2},380 Z`,
     label: "Right Hamstring"
   },
   leftHamstring: {
-    path: "M 200,200 L 240,200 L 245,300 L 205,300 Z",
+    path: `M ${center},320 L ${center+hipWidth/2},320 L ${center+hipWidth/2},380 L ${center},380 Z`,
     label: "Left Hamstring"
   },
-  rightGastrocnemius: {
-    path: "M 155,300 L 195,300 L 190,370 L 150,370 Z",
-    label: "Right Gastrocnemius"
+  rightCalf: {
+    path: `M ${center-hipWidth/2},380 L ${center},380 L ${center},480 L ${center-hipWidth/2},480 Z`,
+    label: "Right Calf"
   },
-  leftGastrocnemius: {
-    path: "M 205,300 L 245,300 L 250,370 L 210,370 Z",
-    label: "Left Gastrocnemius"
-  },
-  rightAnklePost: {
-    path: "M 150,370 L 190,370 L 188,385 L 148,385 Z",
-    label: "Right Ankle (Posterior)"
-  },
-  leftAnklePost: {
-    path: "M 210,370 L 250,370 L 252,385 L 212,385 Z",
-    label: "Left Ankle (Posterior)"
-  },
-  rightFootPost: {
-    path: "M 148,385 L 188,385 L 190,395 L 146,395 C 145,390 145,387 148,385 Z",
-    label: "Right Foot (Posterior)"
-  },
-  leftFootPost: {
-    path: "M 212,385 L 252,385 L 254,395 L 210,395 C 209,390 209,387 212,385 Z",
-    label: "Left Foot (Posterior)"
+  leftCalf: {
+    path: `M ${center},380 L ${center+hipWidth/2},380 L ${center+hipWidth/2},480 L ${center},480 Z`,
+    label: "Left Calf"
   }
 };
+
+// Location to segment mapping
+const locationToSegmentMap: Record<string, string[]> = {
+  'Neck': ['rightNeck', 'leftNeck', 'cervicalParaspinals'],
+  'Upper Back': ['rightUpperTrap', 'leftUpperTrap', 'thoracicSpine'],
+  'Mid Back': ['rightRhomboid', 'leftRhomboid'],
+  'Lower Back': ['rightLumbar', 'leftLumbar', 'lumbarSpine'],
+  'Chest': ['rightPectoralis', 'leftPectoralis'],
+  'Abdomen': ['upperAbdominals', 'lowerAbdominals'],
+  'Hip': ['rightGluteal', 'leftGluteal'],
+  'Right Hip': ['rightGluteal'],
+  'Left Hip': ['leftGluteal'],
+  'Right Knee': ['rightQuadriceps', 'rightLeg'],
+  'Left Knee': ['leftQuadriceps', 'leftLeg'],
+  'Right Thigh': ['rightQuadriceps', 'rightHamstring'],
+  'Left Thigh': ['leftQuadriceps', 'leftHamstring'],
+  'Right Lower Leg': ['rightLeg', 'rightCalf'],
+  'Left Lower Leg': ['leftLeg', 'leftCalf'],
+  'Right Shoulder': ['rightUpperTrap', 'rightPectoralis'],
+  'Left Shoulder': ['leftUpperTrap', 'leftPectoralis'],
+  'Right Upper Arm': ['rightUpperArm', 'rightPosteriorArm'],
+  'Left Upper Arm': ['leftUpperArm', 'leftPosteriorArm'],
+  'Right Forearm': ['rightForearm', 'rightPosteriorForearm'],
+  'Left Forearm': ['leftForearm', 'leftPosteriorForearm']
+};
+
+export { anteriorSegments, posteriorSegments, locationToSegmentMap };

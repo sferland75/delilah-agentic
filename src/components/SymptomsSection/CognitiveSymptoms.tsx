@@ -11,8 +11,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { cognitiveSymptomCategories } from '@/lib/validation/symptom-schema';
 
-// Same cognitiveSymptoms object...
 const cognitiveSymptoms = {
   attention: {
     title: "Attention and Concentration",
@@ -62,7 +62,7 @@ const cognitiveSymptoms = {
 };
 
 export function CognitiveSymptoms() {
-  const { register, watch, setValue } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const watchSymptoms = watch('symptoms.cognitive') || {};
   const [openSections, setOpenSections] = React.useState<string[]>([]);
 
@@ -74,9 +74,26 @@ export function CognitiveSymptoms() {
     );
   };
 
+  const handleSymptomChange = (symptomId: string, checked: boolean) => {
+    setValue(`symptoms.cognitive.${symptomId}`, {
+      present: checked,
+      severity: checked ? 5 : 0, // Default to middle severity when checked
+      notes: watchSymptoms[symptomId]?.notes || ""
+    }, { 
+      shouldDirty: true,
+      shouldValidate: true
+    });
+  };
+
   const handleSeverityChange = (symptomId: string, value: number[]) => {
     setValue(`symptoms.cognitive.${symptomId}.severity`, value[0], { 
       shouldDirty: true 
+    });
+  };
+
+  const handleNotesChange = (symptomId: string, notes: string) => {
+    setValue(`symptoms.cognitive.${symptomId}.notes`, notes, {
+      shouldDirty: true
     });
   };
 
@@ -106,28 +123,31 @@ export function CognitiveSymptoms() {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     {symptoms.map((symptom) => {
-                      const symptomValue = watchSymptoms[symptom.id];
+                      const symptomValue = watchSymptoms[symptom.id] || { present: false, severity: 0, notes: "" };
                       return (
                         <div key={symptom.id} className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <Checkbox
                               id={symptom.id}
-                              {...register(`symptoms.cognitive.${symptom.id}.present`)}
+                              checked={symptomValue.present === true}
+                              onCheckedChange={(checked) => {
+                                handleSymptomChange(symptom.id, checked === true);
+                              }}
                             />
                             <Label htmlFor={symptom.id}>{symptom.label}</Label>
                           </div>
                           
-                          {symptomValue?.present && (
+                          {symptomValue.present && (
                             <div className="ml-6 space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-sm">
-                                  Severity: {watchSymptoms[symptom.id]?.severity || 0}
+                                  Severity: {symptomValue.severity || 0}
                                 </Label>
                                 <Slider
                                   min={0}
                                   max={10}
                                   step={1}
-                                  value={[watchSymptoms[symptom.id]?.severity || 0]}
+                                  value={[symptomValue.severity || 0]}
                                   onValueChange={(value) => handleSeverityChange(symptom.id, value)}
                                 />
                                 <div className="flex justify-between text-xs text-gray-500">
@@ -141,7 +161,8 @@ export function CognitiveSymptoms() {
                                 <Textarea
                                   placeholder="Provide specific examples or clinical observations..."
                                   className="h-20"
-                                  {...register(`symptoms.cognitive.${symptom.id}.notes`)}
+                                  value={symptomValue.notes || ""}
+                                  onChange={(e) => handleNotesChange(symptom.id, e.target.value)}
                                 />
                               </div>
                             </div>
@@ -156,7 +177,12 @@ export function CognitiveSymptoms() {
                     <Textarea
                       placeholder={`Additional observations about ${title.toLowerCase()}...`}
                       className="h-24"
-                      {...register(`symptoms.cognitive.${category}_observations`)}
+                      value={watchSymptoms[`${category}_observations`] || ""}
+                      onChange={(e) => setValue(
+                        `symptoms.cognitive.${category}_observations`,
+                        e.target.value,
+                        { shouldDirty: true }
+                      )}
                     />
                   </div>
                 </div>
@@ -170,12 +196,20 @@ export function CognitiveSymptoms() {
         <CardHeader>
           <CardTitle>General Cognitive Function Notes</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Textarea
-            placeholder="Overall observations about cognitive function, patterns noticed, or additional symptoms not covered above..."
-            className="min-h-[100px]"
-            {...register('symptoms.cognitive.general_observations')}
-          />
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>General Observations</Label>
+            <Textarea
+              placeholder="Overall observations about cognitive function, patterns noticed, or additional symptoms not covered above..."
+              className="min-h-[100px]"
+              value={watchSymptoms.general_observations || ""}
+              onChange={(e) => setValue(
+                'symptoms.cognitive.general_observations',
+                e.target.value,
+                { shouldDirty: true }
+              )}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

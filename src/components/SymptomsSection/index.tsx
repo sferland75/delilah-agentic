@@ -1,34 +1,52 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BodyMap } from '../BodyMap';
 import { CognitiveSymptoms } from './CognitiveSymptoms';
 import { EmotionalSymptoms } from './EmotionalSymptoms';
-import { AbnormalFindingsTable } from './AbnormalFindingsTable';
 import { PainFindingsTable } from './PainFindingsTable';
 import { generalSymptoms } from './constants';
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormField, FormItem, FormControl } from '@/components/ui/form';
+import { useForm as useDelilahForm } from '@/context/FormContext';
 
 interface PhysicalSymptomsProps {
   bodyMapData: any;
 }
 
 const PhysicalSymptoms: React.FC<PhysicalSymptomsProps> = ({ bodyMapData }) => {
-  const { control } = useFormContext();
+  const { control, watch } = useFormContext();
+  const { updateFormData } = useDelilahForm();
+
+  // Watch for physical symptom changes
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name?.startsWith('symptoms.physical')) {
+        console.log('Physical symptoms updated:', value.symptoms?.physical);
+        updateFormData({ symptoms: value.symptoms });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, updateFormData]);
 
   return (
     <div className="space-y-8">
-      {/* Body Map Section */}
       <div className="space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="w-full">
             <BodyMap 
               onUpdate={(painData) => {
                 console.log("Pain data updated:", painData);
+                updateFormData({
+                  symptoms: {
+                    ...watch('symptoms'),
+                    pain: painData
+                  }
+                });
               }}
             />
           </div>
@@ -54,7 +72,6 @@ const PhysicalSymptoms: React.FC<PhysicalSymptomsProps> = ({ bodyMapData }) => {
           </div>
         </div>
 
-        {/* Pain Findings Table */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <h3 className="text-lg font-medium text-slate-800">Pain Assessment Findings</h3>
@@ -68,9 +85,21 @@ const PhysicalSymptoms: React.FC<PhysicalSymptomsProps> = ({ bodyMapData }) => {
 };
 
 export default function SymptomsSection() {
-  const { control } = useFormContext();
-  const formContext = useFormContext();
-  const painData = formContext.watch('symptoms.pain') || {};
+  const { control, watch } = useFormContext();
+  const { updateFormData } = useDelilahForm();
+  const painData = watch('symptoms.pain') || {};
+
+  // Watch for general symptom changes
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name?.startsWith('symptoms.general')) {
+        console.log('General symptoms updated:', value.symptoms?.general);
+        updateFormData({ symptoms: value.symptoms });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, updateFormData]);
 
   return (
     <Card>

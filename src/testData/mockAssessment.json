@@ -1,0 +1,271 @@
+{
+  "personal": {
+    "firstName": "John",
+    "lastName": "Smith",
+    "dateOfBirth": "1975-03-15",
+    "phone": "555-0123",
+    "email": "john.smith@email.com"
+  },
+  "medical": {
+    "injury": {
+      "circumstance": "Workplace accident - fell from ladder",
+      "date": "2024-01-10",
+      "description": "Patient fell approximately 8 feet from ladder while at work, resulting in injuries to lower back and left knee",
+      "notes": "Impact primarily to lower back with secondary injury to left knee from landing"
+    },
+    "symptoms": [
+      {
+        "location": "Lower Back",
+        "type": "Pain",
+        "severity": "7/10",
+        "frequency": "Constant",
+        "aggravating": ["Prolonged sitting", "Bending", "Lifting"],
+        "relieving": ["Rest", "Ice", "Pain medication"],
+        "description": "Sharp, constant pain in lower back, worse with movement",
+        "additional": "Pain radiates down left leg at times"
+      },
+      {
+        "location": "Left Knee",
+        "type": "Pain and Stiffness",
+        "severity": "5/10",
+        "frequency": "Intermittent",
+        "aggravating": ["Walking", "Stairs", "Standing from seated position"],
+        "relieving": ["Rest", "Elevation", "Ice"],
+        "description": "Dull ache with occasional sharp pain during movement",
+        "additional": "Swelling by end of day"
+      }
+    ],
+    "treatments": [
+      "Physiotherapy - 2x weekly",
+      "Pain Management",
+      "Occupational Therapy",
+      "Chiropractic Care"
+    ],
+    "medications": [
+      {
+        "name": "Naproxen",
+        "dosage": "500mg",
+        "frequency": "Twice daily",
+        "purpose": "Pain and inflammation"
+      },
+      {
+        "name": "Cyclobenzaprine",
+        "dosage": "10mg",
+        "frequency": "At bedtime",
+        "purpose": "Muscle spasm"
+      }
+    ],
+    "imaging": [
+      {
+        "type": "X-ray",
+        "date": "2024-01-10",
+        "region": "Lumbar Spine",
+        "findings": "No acute fracture. Mild degenerative changes L4-L5"
+      },
+      {
+        "type": "MRI",
+        "date": "2024-01-15",
+        "region": "Left Knee",
+        "findings": "Grade 2 MCL sprain. No meniscal tear"
+      }
+    ]
+  },
+  "typicalDay": {
+    "preAccident": {
+      "daily": {
+        "sleepSchedule": {
+          "wakeTime": "06:00",
+          "bedTime": "22:00"
+        },
+        "routines": {
+          "morning": {
+            "activities": "6:00 AM - Wake up, shower, and get dressed\n6:30 AM - Prepare and eat breakfast\n7:00 AM - Commute to work\n8:00 AM - Start work day"
+          },
+          "afternoon": {
+            "activities": "12:00 PM - Lunch break, often including a 15-minute walk\n1:00 PM - Resume work tasks\n3:00 PM - Gym session or physical activity"
+          },
+          "evening": {
+            "activities": "5:00 PM - Commute home\n6:00 PM - Prepare and eat dinner\n7:00 PM - House chores or errands\n9:00 PM - Evening relaxation\n10:00 PM - Bedtime routine"
+          }
+        }
+      },
+      "weekly": {
+        "weekdaySchedule": "8:00 AM - 5:00 PM standard work hours Monday through Friday. Regular gym sessions Tuesday, Thursday, and Saturday mornings.",
+        "weekendSchedule": "More flexible schedule, focused on household tasks, family time, and recreational activities. Usually includes longer gym sessions and social events.",
+        "regularActivities": "Gym 3x/week\nWeekly family dinner on Sundays\nBi-weekly social outings\nMonthly home maintenance",
+        "notes": "Maintained consistent work-life balance with regular exercise and social activities"
+      }
+    },
+    "current": {
+      "daily": {
+        "sleepSchedule": {
+          "wakeTime": "07:00",
+          "bedTime": "21:30"
+        },
+        "routines": {
+          "morning": {
+            "activities": "7:00 AM - Wake up, requires assistance with dressing\n7:45 AM - Light breakfast\n8:30 AM - Modified work from home"
+          },
+          "afternoon": {
+            "activities": "12:00 PM - Rest break and lunch\n1:30 PM - Continue modified work\n3:00 PM - Physiotherapy exercises"
+          },
+          "evening": {
+            "activities": "5:00 PM - Rest period\n6:00 PM - Light meal prep with assistance\n7:00 PM - Limited household tasks\n8:30 PM - Evening routine\n9:30 PM - Bed rest"
+          }
+        }
+      },
+      "weekly": {
+        "weekdaySchedule": "Modified work schedule from home, 4-hour shifts on Monday, Wednesday, and Friday. Physiotherapy appointments Tuesday and Thursday mornings.",
+        "weekendSchedule": "Rest focused with minimal activities. Light exercises and family visits when energy permits.",
+        "regularActivities": "Physiotherapy 2x/week\nMedical appointments\nModified home exercise program\nWeekly grocery delivery",
+        "notes": "Significantly modified schedule to accommodate pain levels and medical appointments"
+      }
+    }
+  },
+  "functionalAssessment": {
+    "tolerances": {
+      "Standing": {
+        "painLevel": 7,
+        "limitations": "Limited to 15 minutes at a time. Increased pain with prolonged standing, favors right leg",
+        "adaptations": "Regular position changes, use of anti-fatigue mat, ability to lean on counters/supports"
+      },
+      "Walking": {
+        "painLevel": 6,
+        "limitations": "Limited to 10 minutes continuous. Antalgic gait pattern, reduced weight bearing on left leg",
+        "adaptations": "Use of walking stick for longer distances, frequent rest breaks"
+      },
+      "Sitting": {
+        "painLevel": 6,
+        "limitations": "Limited to 30 minutes continuous. Requires frequent position changes",
+        "adaptations": "Ergonomic chair with lumbar support, regular standing breaks"
+      },
+      "Lifting": {
+        "painLevel": 8,
+        "limitations": "Unable to lift more than 10 lbs from floor level. Pain with bending and lifting motions",
+        "adaptations": "Two-person lift for heavier items, use of mechanical aids, lift from waist height only"
+      },
+      "Carrying": {
+        "painLevel": 7,
+        "limitations": "Limited to light items only. Difficulty with items over 5 lbs for distances over 10 meters",
+        "adaptations": "Use of cart/trolley for transport, breaking tasks into smaller loads"
+      },
+      "Pushing/Pulling": {
+        "painLevel": 6,
+        "limitations": "Difficulty with heavy doors and equipment. Limited by back pain and knee instability",
+        "adaptations": "Use automatic doors where available, two-handed techniques, pushing preferred over pulling"
+      },
+      "Climbing": {
+        "painLevel": 8,
+        "limitations": "Significant difficulty with stairs, especially descending. Limited by knee pain and instability",
+        "adaptations": "Use elevator when available, one step at a time with handrail support"
+      },
+      "Balancing": {
+        "painLevel": 5,
+        "limitations": "Mild difficulty on uneven surfaces. Increased instability with left knee",
+        "adaptations": "Use of handrails where available, supportive footwear, careful attention to surface conditions"
+      },
+      "Stooping": {
+        "painLevel": 7,
+        "limitations": "Significant difficulty bending forward. Limited by low back pain",
+        "adaptations": "Use of grabber tool, knee bend instead of waist bend when possible, raise work height"
+      },
+      "Kneeling": {
+        "painLevel": 8,
+        "limitations": "Unable to kneel on left knee, limited on right. Pain in both knees with pressure",
+        "adaptations": "Use of kneeling pad when necessary, alternative positions such as squatting or sitting"
+      },
+      "Crouching": {
+        "painLevel": 7,
+        "limitations": "Limited ability to maintain squatting position. Pain in knees and low back",
+        "adaptations": "Use of low stool or chair instead of crouching, reorganize work areas to avoid low positions"
+      },
+      "Reaching": {
+        "painLevel": 5,
+        "limitations": "Overhead reaching increases back pain. Difficulty with sustained reaching",
+        "adaptations": "Use of step stool to bring items closer, rearrangement of commonly used items to waist height"
+      },
+      "Handling": {
+        "painLevel": 4,
+        "limitations": "Mild difficulty with larger objects. Some limitation with grip strength",
+        "adaptations": "Two-handed techniques for heavier items, use of grip aids when needed"
+      },
+      "Fingering": {
+        "painLevel": 2,
+        "limitations": "Minimal limitations with fine motor tasks. Occasional stiffness",
+        "adaptations": "Regular stretching breaks, ergonomic tools when available"
+      },
+      "Feeling": {
+        "painLevel": 2,
+        "limitations": "Minimal limitations with tactile tasks. No significant impairment",
+        "adaptations": "No specific adaptations required"
+      }
+    },
+    "rangeOfMotion": {
+      "Trunk_Flexion": {
+        "score": "1/2",
+        "notes": "Limited with pain throughout range",
+        "type": "ROM",
+        "label": "Trunk Flexion"
+      },
+      "Trunk_Extension": {
+        "score": "1/4",
+        "notes": "Severely limited with pain",
+        "type": "ROM",
+        "label": "Trunk Extension"
+      },
+      "Knee_Flexion": {
+        "score": "3/4",
+        "notes": "Left knee limited by pain",
+        "type": "ROM",
+        "label": "Knee Flexion"
+      },
+      "Knee_Extension": {
+        "score": "3/4",
+        "notes": "Left knee lacks full extension",
+        "type": "ROM",
+        "label": "Knee Extension"
+      }
+    },
+    "manualMuscleTesting": {
+      "Trunk_Flexion": {
+        "score": "3",
+        "pain": true,
+        "notes": "Weakness with pain",
+        "type": "MMT",
+        "label": "Trunk Flexion"
+      },
+      "Trunk_Extension": {
+        "score": "3",
+        "pain": true,
+        "notes": "Weakness with pain",
+        "type": "MMT",
+        "label": "Trunk Extension"
+      },
+      "Knee_Flexion": {
+        "score": "4",
+        "pain": true,
+        "notes": "Left side weaker with pain",
+        "type": "MMT",
+        "label": "Knee Flexion"
+      },
+      "Knee_Extension": {
+        "score": "3",
+        "pain": true,
+        "notes": "Left side significantly weaker",
+        "type": "MMT",
+        "label": "Knee Extension"
+      }
+    },
+    "overallNotes": "Patient demonstrates significant functional limitations in most physical activities, particularly those involving the lower back and left knee. Work and home modifications are currently required for most activities of daily living.",
+    "recommendations": [
+      "Implement regular position changes every 30 minutes",
+      "Use ergonomic equipment at workstation",
+      "Avoid stairs when possible",
+      "No lifting over 10 lbs",
+      "Use assistive devices for prolonged walking",
+      "Consider workplace modifications for essential tasks"
+    ],
+    "followUpNeeded": true,
+    "followUpNotes": "Monitor progress with physiotherapy and reassess work tolerances"
+  }
+}

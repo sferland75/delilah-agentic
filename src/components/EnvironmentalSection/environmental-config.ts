@@ -5,22 +5,6 @@ export const environmentalConfigs = {
     'Townhouse',
     'Condominium',
     'Mobile Home',
-    'Multi-Level Home',
-    'Split-Level Home',
-    'Other'
-  ],
-  groundTypes: [
-    'Level',
-    'Sloped',
-    'Terraced',
-    'Multi-level',
-    'Other'
-  ],
-  groundConditions: [
-    'Well maintained',
-    'Moderate maintenance needed',
-    'Poor condition',
-    'Hazardous',
     'Other'
   ],
   accessTypes: [
@@ -31,31 +15,22 @@ export const environmentalConfigs = {
     'Other'
   ],
   roomTypes: [
-    'Living Room',
-    'Dining Room',
-    'Kitchen',
-    'Primary Bedroom',
-    'Secondary Bedroom',
-    'Bathroom',
-    'Ensuite Bathroom',
-    'Laundry Room',
-    'Basement',
-    'Garage',
-    'Office/Study',
-    'Family Room',
-    'Sunroom',
-    'Other'
+    "Living Room",
+    "Kitchen",
+    "Primary Bedroom",
+    "Bathroom",
+    "Additional Rooms"
   ],
-  floorCoverings: [
-    'Hardwood',
-    'Laminate',
-    'Tile',
-    'Vinyl',
-    'Carpet',
-    'Area Rugs',
-    'Cork',
-    'Concrete',
-    'Mixed',
-    'Other'
+  commonHazards: [
+    'Uneven Surfaces',
+    'Poor Lighting',
+    'Loose Rugs',
+    'Cluttered Pathways',
+    'Unstable Furniture',
+    'Missing Handrails',
+    'Electrical Hazards',
+    'Slippery Surfaces',
+    'Poor Ventilation',
+    'Limited Accessibility'
   ]
 } as const;

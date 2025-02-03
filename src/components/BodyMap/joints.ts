@@ -1,92 +1,102 @@
+// Constants for anatomical landmarks
+const center = 200;
+const shoulderLevel = 120;
+const waistLevel = 220;
+const hipLevel = 270;
+const kneeLevel = 380;
+const ankleLevel = 480;
+
 // Define joint positions and movements for body map
 export const joints = {
-  // Cervical spine in anterior view
+  // Cervical (neck)
   cervical: { 
-    cx: 200, cy: 65, r: 6,
+    cx: center, cy: 100, r: 6,
     label: "Cervical Spine",
     movements: ["flexion", "extension", "rotation", "lateral flexion"],
-    view: "front"
+    view: "both"
   },
 
-  // Base joints remain the same
+  // Shoulders
   rightShoulder: { 
-    cx: 165, cy: 90, r: 8,
+    cx: center-80, cy: shoulderLevel, r: 7,  // Wider shoulder position
     label: "Right Shoulder",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
   leftShoulder: { 
-    cx: 235, cy: 90, r: 8,
+    cx: center+80, cy: shoulderLevel, r: 7,  // Wider shoulder position
     label: "Left Shoulder",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
+
+  // Elbows
   rightElbow: { 
-    cx: 150, cy: 150, r: 6,
+    cx: center-75, cy: 180, r: 6,
     label: "Right Elbow",
-    movements: ["flexion", "extension", "supination", "pronation"],
+    movements: ["flexion", "extension"],
     view: "both"
   },
   leftElbow: { 
-    cx: 250, cy: 150, r: 6,
+    cx: center+75, cy: 180, r: 6,
     label: "Left Elbow",
-    movements: ["flexion", "extension", "supination", "pronation"],
+    movements: ["flexion", "extension"],
     view: "both"
   },
-  rightWrist: { 
-    cx: 140, cy: 200, r: 6,
-    label: "Right Wrist",
-    movements: ["flexion", "extension", "radial deviation", "ulnar deviation"],
-    view: "both"
-  },
-  leftWrist: { 
-    cx: 260, cy: 200, r: 6,
-    label: "Left Wrist",
-    movements: ["flexion", "extension", "radial deviation", "ulnar deviation"],
-    view: "both"
-  },
+
+  // Hips
   rightHip: { 
-    cx: 180, cy: 220, r: 8,
+    cx: center-70, cy: hipLevel, r: 7,
     label: "Right Hip",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
   leftHip: { 
-    cx: 220, cy: 220, r: 8,
+    cx: center+70, cy: hipLevel, r: 7,
     label: "Left Hip",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
+
+  // Knees
   rightKnee: { 
-    cx: 175, cy: 320, r: 7,
+    cx: center-70, cy: kneeLevel, r: 6,
     label: "Right Knee",
     movements: ["flexion", "extension"],
     view: "both"
   },
   leftKnee: { 
-    cx: 225, cy: 320, r: 7,
+    cx: center+70, cy: kneeLevel, r: 6,
     label: "Left Knee",
     movements: ["flexion", "extension"],
     view: "both"
   },
+
+  // Ankles
   rightAnkle: { 
-    cx: 170, cy: 420, r: 6,
+    cx: center-70, cy: ankleLevel, r: 5,
     label: "Right Ankle",
     movements: ["dorsiflexion", "plantarflexion", "inversion", "eversion"],
     view: "both"
   },
   leftAnkle: { 
-    cx: 230, cy: 420, r: 6,
+    cx: center+70, cy: ankleLevel, r: 5,
     label: "Left Ankle",
     movements: ["dorsiflexion", "plantarflexion", "inversion", "eversion"],
     view: "both"
   },
 
-  // Single trunk assessment point (posterior view only)
-  trunk: {
-    cx: 200, cy: 140, r: 8,
-    label: "Trunk",
-    movements: ["flexion", "reaching forward", "reaching down", "reaching overhead"],
+  // Spine levels (posterior view only)
+  thoracic: {
+    cx: center, cy: 160, r: 6,
+    label: "Thoracic Spine",
+    movements: ["flexion", "extension", "rotation"],
+    view: "back"
+  },
+  lumbar: {
+    cx: center, cy: 220, r: 6,
+    label: "Lumbar Spine",
+    movements: ["flexion", "extension", "rotation"],
     view: "back"
   }
 };

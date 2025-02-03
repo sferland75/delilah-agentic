@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Download, Upload, FileX } from 'lucide-react';
+import { Save, Download, Upload, FileX, Bug } from 'lucide-react';
 import { useForm } from '../context/FormContext';
 import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationDialog } from './dialogs/ConfirmationDialog';
@@ -85,6 +85,27 @@ export const Header: React.FC = () => {
         title: "Save Failed",
         description: "There was an error saving your work. Please try again."
       });
+    }
+  };
+
+  const showDebugState = () => {
+    try {
+      // Get current localStorage state
+      const mainDraft = localStorage.getItem('form_draft');
+      const backupDraft = localStorage.getItem('form_draft_backup');
+
+      console.log('=== DEBUG INFO ===');
+      console.log('Current Form Data:', formData);
+      console.log('Last Saved:', lastSaved);
+      console.log('Local Storage - Main Draft:', mainDraft ? JSON.parse(mainDraft) : null);
+      console.log('Local Storage - Backup Draft:', backupDraft ? JSON.parse(backupDraft) : null);
+      
+      toast({
+        title: "Debug Info",
+        description: "Check browser console for current form state"
+      });
+    } catch (error) {
+      console.error('Error showing debug info:', error);
     }
   };
 
@@ -175,6 +196,16 @@ export const Header: React.FC = () => {
           <span className="text-sm text-slate-500 ml-4">
             {lastSaved ? `Last saved: ${new Date(lastSaved).toLocaleTimeString()}` : 'No saved draft'}
           </span>
+
+          <Button
+            onClick={showDebugState}
+            variant="outline"
+            size="sm"
+            className="ml-4"
+          >
+            <Bug className="h-4 w-4 mr-1" />
+            Show State
+          </Button>
         </div>
 
         <div className="flex items-center gap-2">

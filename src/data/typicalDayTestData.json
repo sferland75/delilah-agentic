@@ -1,0 +1,72 @@
+{
+  "typicalDay": {
+    "preAccident": {
+      "daily": {
+        "hasIrregularSchedule": false,
+        "sleepSchedule": {
+          "wakeTime": "06:00",
+          "bedTime": "22:00"
+        },
+        "routines": {
+          "morning": {
+            "activities": "6:00 AM - Wake up, shower, and get dressed\n6:30 AM - Prepare and eat breakfast\n7:00 AM - Commute to work\n8:00 AM - Start work day, including regular meetings and computer work\n11:00 AM - Short walk during break",
+            "challenges": "No significant challenges during morning routine pre-accident"
+          },
+          "afternoon": {
+            "activities": "12:00 PM - Lunch break, often including a 15-minute walk\n1:00 PM - Resume work tasks\n3:00 PM - Gym session or physical activity\n4:00 PM - Complete work day",
+            "challenges": "Managed all activities independently with no limitations"
+          },
+          "evening": {
+            "activities": "5:00 PM - Commute home\n6:00 PM - Prepare and eat dinner\n7:00 PM - House chores or errands\n8:00 PM - Social activities or hobbies\n9:00 PM - Light exercise or stretching",
+            "challenges": "Maintained active evening routine with regular exercise and social activities"
+          },
+          "night": {
+            "activities": "10:00 PM - Evening routine and preparation for bed\n10:30 PM - Reading or relaxation\n11:00 PM - Sleep through the night with minimal interruptions",
+            "challenges": "Generally good sleep quality with 7-8 hours per night"
+          }
+        },
+        "generalNotes": "Prior to the accident, maintained an active lifestyle with regular exercise, social activities, and full work schedule. Good energy levels throughout the day and consistent sleep patterns."
+      },
+      "weekly": {
+        "weekdaySchedule": "Monday to Friday: Full-time work schedule with regular exercise\nWednesday evenings: Team sports or group fitness classes\nRegular social activities and errands during weekday evenings",
+        "weekendSchedule": "Saturday: Morning exercise, household chores, social activities\nSunday: Meal prep, light exercise, family time, preparation for work week",
+        "regularActivities": "- Gym sessions 4-5 times per week\n- Team sports once per week\n- Social gatherings 2-3 times per week\n- Regular household maintenance\n- Shopping and errands as needed",
+        "notes": "Maintained balanced schedule between work, exercise, and social activities. Regular physical activity was a key part of weekly routine."
+      }
+    },
+    "current": {
+      "daily": {
+        "hasIrregularSchedule": true,
+        "irregularSchedule": {
+          "description": "Sleep patterns are disrupted due to pain and discomfort. Often wake up multiple times during the night. Morning wake time varies depending on sleep quality.",
+          "factors": "Lower back pain significantly affects sleep position and duration. Knee pain increases with daily activities, impacting evening routine and sleep preparation."
+        },
+        "routines": {
+          "morning": {
+            "activities": "Variable wake time (6:30-8:00 AM) depending on sleep quality\nNeed extra time for morning routine due to stiffness\nModified shower routine to accommodate limitations\nSimplified breakfast preparation\nLonger commute time due to movement limitations",
+            "challenges": "Morning stiffness in lower back requires 30-45 minutes to loosen up\nDifficulty with prolonged standing during preparation activities\nNeed to allow extra time for all morning tasks"
+          },
+          "afternoon": {
+            "activities": "Modified work station with ergonomic adjustments\nFrequent position changes required\nShort walks during breaks when possible\nPhysical therapy exercises as prescribed",
+            "challenges": "Sitting tolerance limited to 30-40 minutes\nNeed to alternate between sitting and standing\nReduced capacity for physical activity\nFatigue increases throughout the day"
+          },
+          "evening": {
+            "activities": "Modified commute routine to avoid peak traffic\nSimplified dinner preparation\nGentle stretching exercises\nIce/heat therapy for pain management\nEarly evening rest periods",
+            "challenges": "Limited ability to perform household tasks\nNeed assistance with some activities\nReduced social participation due to pain and fatigue\nDifficulty with prolonged standing during meal preparation"
+          },
+          "night": {
+            "activities": "Modified bedtime routine to include pain management\nUse of supportive pillows and positioning\nFrequent position changes during night\nOccasional need to get up and move due to stiffness",
+            "challenges": "Difficulty finding comfortable sleep position\nFrequent sleep interruptions due to pain\nMorning stiffness affecting sleep quality\nNeed for pain medication during night"
+          }
+        },
+        "generalNotes": "Current daily routine significantly modified due to ongoing pain and limitations. Requires more time for basic activities and regular breaks. Pain management is a constant consideration throughout the day. Social and recreational activities have been reduced."
+      },
+      "weekly": {
+        "weekdaySchedule": "Monday to Friday: Modified work schedule with accommodations\nPhysical therapy appointments 2-3 times per week\nReduced evening activities due to fatigue\nRegular medical appointments as needed",
+        "weekendSchedule": "Saturday: Rest and recovery focus, minimal activities\nSunday: Gentle activities and preparation for week\nAssistance needed for household tasks",
+        "regularActivities": "- Physical therapy exercises daily\n- Medical and therapy appointments\n- Modified work duties\n- Essential household tasks with assistance\n- Limited social activities as tolerance permits",
+        "notes": "Weekly schedule now revolves around pain management and medical care. Significant reduction in physical and social activities. Need to carefully pace activities throughout the week."
+      }
+    }
+  }
+}

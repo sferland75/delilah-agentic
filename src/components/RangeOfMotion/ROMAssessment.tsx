@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Control, useFormContext } from 'react-hook-form';
 import {
   FormField,
@@ -22,7 +22,7 @@ interface ROMAssessmentProps {
 }
 
 export function ROMAssessment({ control, prefix }: ROMAssessmentProps) {
-  const { setValue } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const [openSections, setOpenSections] = React.useState<string[]>([]);
   const [modifiedSections, setModifiedSections] = React.useState<string[]>([]);
 
@@ -34,16 +34,76 @@ export function ROMAssessment({ control, prefix }: ROMAssessmentProps) {
     );
   };
 
-  // Set initial values to normal (100%)
-  React.useEffect(() => {
-    CORE_JOINTS.forEach((joint) => {
-      joint.movements.forEach((movement) => {
-        setValue(`${prefix}.${joint.joint}.${movement.name}.left`, "100", { shouldDirty: false });
-        setValue(`${prefix}.${joint.joint}.${movement.name}.right`, "100", { shouldDirty: false });
+  // Handle form resets
+  useEffect(() => {
+    const handleFormReset = () => {
+      console.log('ROM Assessment: Handling form reset');
+      // Reset state
+      setOpenSections([]);
+      setModifiedSections([]);
+      
+      // Reset all ROM values to default (100%)
+      CORE_JOINTS.forEach((joint) => {
+        joint.movements.forEach((movement) => {
+          setValue(`${prefix}.${joint.joint}.${movement.name}.left`, "100", { shouldDirty: false });
+          setValue(`${prefix}.${joint.joint}.${movement.name}.right`, "100", { shouldDirty: false });
+          setValue(`${prefix}.${joint.joint}.${movement.name}.observations`, "", { shouldDirty: false });
+          setValue(`${prefix}.${joint.joint}.isAffected`, false, { shouldDirty: false });
+        });
       });
-    });
+      setValue(`${prefix}.generalNotes`, "", { shouldDirty: false });
+    };
+
+    window.addEventListener('formReset', handleFormReset);
+    return () => window.removeEventListener('formReset', handleFormReset);
   }, [setValue, prefix]);
 
+  // Set initial values
+  useEffect(() => {
+    console.log('Setting initial ROM values with prefix:', prefix);
+    try {
+      const currentValues = getValues(prefix);
+      // Only set initial values if they don't exist
+      if (!currentValues || Object.keys(currentValues).length === 0) {
+        CORE_JOINTS.forEach((joint) => {
+          joint.movements.forEach((movement) => {
+            setValue(`${prefix}.${joint.joint}.${movement.name}.left`, "100", { shouldDirty: false });
+            setValue(`${prefix}.${joint.joint}.${movement.name}.right`, "100", { shouldDirty: false });
+          });
+        });
+        console.log('Initial ROM values set');
+      } else {
+        console.log('Using existing ROM values:', currentValues);
+        // Restore modified sections if any values are not at 100%
+        CORE_JOINTS.forEach((joint) => {
+          let isModified = false;
+          joint.movements.forEach((movement) => {
+            const leftValue = getValues(`${prefix}.${joint.joint}.${movement.name}.left`);
+            const rightValue = getValues(`${prefix}.${joint.joint}.${movement.name}.right`);
+            const observations = getValues(`${prefix}.${joint.joint}.${movement.name}.observations`);
+            
+            if (leftValue !== "100" || rightValue !== "100" || observations) {
+              isModified = true;
+            }
+          });
+          if (isModified) {
+            setModifiedSections(prev => [...prev, joint.joint]);
+            setOpenSections(prev => [...prev, joint.joint]);
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error handling ROM values:', error);
+    }
+  }, [setValue, prefix, getValues]);
+
+  // Debug logging when values change
+  useEffect(() => {
+    const currentValues = getValues(prefix);
+    console.log('ROM values updated:', currentValues);
+  }, [getValues, prefix]);
+
+  // Rest of the component remains the same...
   return (
     <div className="space-y-6">
       {CORE_JOINTS.map((joint) => (

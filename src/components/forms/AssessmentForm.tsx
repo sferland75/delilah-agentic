@@ -1,111 +1,87 @@
 import React, { useState, useEffect } from 'react';
-import { useForm as useHookForm, FormProvider } from 'react-hook-form';
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
 import { useForm as useFormContext } from '@/context/FormContext';
-
-import { assessmentSchema, type Assessment } from '../../lib/validation/assessment-schema';
-import { BERG_ITEMS } from '@/components/BergBalance/berg-items';
-
-// Import all sections
-import { InitialInformationSection } from '@/components/InitialInformation';
-import { MedicalHistorySection } from '@/components/MedicalHistory';
+import { useForm } from 'react-hook-form';
+import { FormProvider } from 'react-hook-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InitialSection } from './sections/InitialSection';
+import { MedicalSection } from './sections/MedicalSection';
+import { SymptomsSection } from './sections/SymptomsSection';
+import { Card, CardContent } from "@/components/ui/card";
 import { TypicalDaySection } from '@/components/TypicalDay';
-import { AMAGuidesSection } from '@/components/AMAGuides';
-import { CareRequirements } from '@/components/forms/sections-next/care';
-import { EnvironmentalSectionConsolidated } from '@/components/EnvironmentalSection';
-import { ADLSection } from '@/components/ADLSection';
 import { FunctionalAssessment } from '@/components/FunctionalAssessment';
-import SymptomsSection from '@/components/SymptomsSection'; // Changed to default import
+import { EnvironmentalSection } from '@/components/EnvironmentalSection';
+import { ADLSection } from '@/components/ADLSection';
 
 const AssessmentForm = () => {
   const [activeTab, setActiveTab] = useState('initial');
-  const { toast } = useToast();
-  const { formData, updateFormData } = useFormContext();
+  const { formData } = useFormContext();
 
-  // Initialize react-hook-form
-  const methods = useHookForm<Assessment>({
-    resolver: zodResolver(assessmentSchema),
-    defaultValues: formData || {}
+  // Initialize form with data
+  const methods = useForm({
+    defaultValues: formData
   });
 
-  // Reset form when formData changes
+  // Update form when data changes
   useEffect(() => {
-    console.log('Resetting form with data:', formData);
-    if (formData && Object.keys(formData).length > 0) {
+    console.log('AssessmentForm - Updating form with data:', formData);
+    if (formData) {
       methods.reset(formData);
     }
-  }, [formData, methods]);
-
-  const onSubmit = methods.handleSubmit(async (data: Assessment) => {
-    try {
-      updateFormData(data);
-      toast({
-        title: "Success",
-        description: "Assessment saved successfully."
-      });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      toast({
-        title: "Error",
-        description: "Failed to save assessment.",
-        variant: "destructive"
-      });
-    }
-  });
+  }, [formData]);
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={onSubmit} className="space-y-8">
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-9">
-              <TabsTrigger value="initial">Initial</TabsTrigger>
-              <TabsTrigger value="medical">Medical</TabsTrigger>
-              <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
-              <TabsTrigger value="typical-day">Typical Day</TabsTrigger>
-              <TabsTrigger value="functional">Functional</TabsTrigger>
-              <TabsTrigger value="environmental">Environmental</TabsTrigger>
-              <TabsTrigger value="adl">ADL</TabsTrigger>
-              <TabsTrigger value="care">Care</TabsTrigger>
-              <TabsTrigger value="ama">AMA</TabsTrigger>
-            </TabsList>
+    <Card className="mt-4">
+      <FormProvider {...methods}>
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="w-full grid grid-cols-9">
+            <TabsTrigger value="initial">Initial</TabsTrigger>
+            <TabsTrigger value="medical">Medical</TabsTrigger>
+            <TabsTrigger value="symptoms">Symptoms</TabsTrigger>
+            <TabsTrigger value="typical-day">Typical Day</TabsTrigger>
+            <TabsTrigger value="functional">Functional</TabsTrigger>
+            <TabsTrigger value="environmental">Environmental</TabsTrigger>
+            <TabsTrigger value="adl">ADL</TabsTrigger>
+            <TabsTrigger value="care">Care</TabsTrigger>
+            <TabsTrigger value="ama">AMA</TabsTrigger>
+          </TabsList>
 
-            <div className="mt-6">
-              <TabsContent value="initial">
-                <InitialInformationSection />
-              </TabsContent>
-              <TabsContent value="medical">
-                <MedicalHistorySection />
-              </TabsContent>
-              <TabsContent value="symptoms">
-                <SymptomsSection />
-              </TabsContent>
-              <TabsContent value="typical-day">
-                <TypicalDaySection />
-              </TabsContent>
-              <TabsContent value="functional">
-                <FunctionalAssessment />
-              </TabsContent>
-              <TabsContent value="environmental">
-                <EnvironmentalSectionConsolidated />
-              </TabsContent>
-              <TabsContent value="adl">
-                <ADLSection />
-              </TabsContent>
-              <TabsContent value="care">
-                <CareRequirements />
-              </TabsContent>
-              <TabsContent value="ama">
-                <AMAGuidesSection />
-              </TabsContent>
-            </div>
-          </Tabs>
-        </ScrollArea>
-      </form>
-    </FormProvider>
+          <CardContent>
+            <TabsContent value="initial" className="mt-4">
+              <h3 className="text-xl font-semibold mb-4">Initial Information</h3>
+              <InitialSection />
+            </TabsContent>
+
+            <TabsContent value="medical" className="mt-4">
+              <h3 className="text-xl font-semibold mb-4">Medical History</h3>
+              <MedicalSection />
+            </TabsContent>
+
+            <TabsContent value="symptoms" className="mt-4">
+              <h3 className="text-xl font-semibold mb-4">Symptoms Assessment</h3>
+              <SymptomsSection />
+            </TabsContent>
+
+            <TabsContent value="typical-day" className="mt-4">
+              <h3 className="text-xl font-semibold mb-4">Typical Day Assessment</h3>
+              <TypicalDaySection />
+            </TabsContent>
+
+            <TabsContent value="functional" className="mt-4">
+              <h3 className="text-xl font-semibold mb-4">Functional Assessment</h3>
+              <FunctionalAssessment />
+            </TabsContent>
+
+            <TabsContent value="environmental" className="mt-4">
+              <EnvironmentalSection />
+            </TabsContent>
+
+            <TabsContent value="adl" className="mt-4">
+              <ADLSection />
+            </TabsContent>
+          </CardContent>
+        </Tabs>
+      </FormProvider>
+    </Card>
   );
 };
 

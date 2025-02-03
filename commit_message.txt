@@ -1,0 +1,15 @@
+feat(functional): Complete ROM, MMT and functional capacity sections
+
+- Add ROM/MMT visualization with body map coloring
+- Fix functional capacity tolerances data structure
+- Update mock data with comprehensive assessment values
+- Add documentation for completed sections
+- Improve error handling and data validation
+- Add debug logging for ROM/MMT matching
+
+This completes the functional assessment section including:
+- ROM visualization with body map
+- MMT visualization with body map
+- Activity tolerances with pain levels
+- Detailed limitations and adaptations
+- Summary findings display

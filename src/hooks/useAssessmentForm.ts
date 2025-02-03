@@ -1,28 +1,41 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type AssessmentForm, AssessmentSchema } from '@/types/form';
+import { type AssessmentForm, assessmentSchema } from '@/lib/validation/assessment-schema';
 
-const DEFAULT_VALUES: AssessmentForm = {
-  id: crypto.randomUUID(),
-  medicalHistory: {
-    preAccidentHistory: '',
-    mechanismOfInjury: '',
-    natureOfInjury: '',
-    currentTreatments: [],
-    medications: []
-  },
-  rangeOfMotion: [],
+const defaultValues: Partial<AssessmentForm> = {
   environmental: {
-    spaces: []
+    rooms: [],
+    exterior: [],
+    propertyOverview: {
+      recommendedModifications: [],
+      identifiedHazards: []
+    },
+    safety: {
+      hazards: [],
+      recommendations: []
+    }
+  },
+  medical: {
+    injury: {
+      date: '',
+      circumstance: '',
+      description: ''
+    },
+    symptoms: [],
+    treatments: []
+  },
+  functional: {
+    adl: [],
+    iadl: [],
+    mobility: [],
+    restrictions: []
   }
 };
 
-export function useAssessmentForm(defaultValues: Partial<AssessmentForm> = {}) {
+export function useAssessmentForm() {
   return useForm<AssessmentForm>({
-    resolver: zodResolver(AssessmentSchema),
-    defaultValues: {
-      ...DEFAULT_VALUES,
-      ...defaultValues
-    }
+    resolver: zodResolver(assessmentSchema),
+    mode: 'onChange',
+    defaultValues
   });
 }

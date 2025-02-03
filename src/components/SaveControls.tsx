@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Save, Download } from 'lucide-react';
+import { Save, Download, Upload, FileDown } from 'lucide-react';
 import { useForm } from '../context/FormContext';
 import { validateAssessmentData } from '../utils/validation';
 import { useToast } from "@/components/ui/use-toast";
 import { ClearFormButton } from './ui/ClearFormButton';
+import { ReportGenerationButton } from './ReportGeneration/components/ReportGenerationButton';
+import { migrateLegacyData } from '../utils/migrateLegacyData';
+import { mockAssessment } from '../testData/mockAssessment';
 
 export const SaveControls: React.FC = () => {
-  const { formData } = useForm();
+  const { formData, setFormData } = useForm();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateAndSave = (data: any, exportType: 'current' | 'final'): boolean => {
     const validation = validateAssessmentData(data);
@@ -21,6 +25,77 @@ export const SaveControls: React.FC = () => {
       return false;
     }
     return true;
+  };
+
+  const loadMockAssessment = () => {
+    try {
+      console.log('Loading mock assessment data');
+      console.log('Mock data:', JSON.stringify(mockAssessment, null, 2));
+      
+      if (!mockAssessment.functionalAssessment) {
+        console.warn('No functional assessment data in mock data');
+      } else {
+        console.log('Functional assessment data found:', 
+          JSON.stringify(mockAssessment.functionalAssessment, null, 2));
+      }
+
+      setFormData(mockAssessment);
+      
+      // Verify data was set
+      setTimeout(() => {
+        console.log('Form data after setting:', formData);
+        console.log('Functional assessment in form:', formData?.functionalAssessment);
+      }, 100);
+
+      toast({
+        title: "Test Data Loaded",
+        description: "Mock assessment data has been loaded successfully."
+      });
+    } catch (error) {
+      console.error('Error loading mock data:', error);
+      toast({
+        variant: "destructive",
+        title: "Load Failed",
+        description: "Failed to load mock assessment data."
+      });
+    }
+  };
+
+  const handleFileLoad = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string;
+        const data = JSON.parse(content);
+        
+        // Migrate legacy data if needed
+        const migratedData = migrateLegacyData(data);
+        
+        // Set the form data
+        setFormData(migratedData);
+        
+        toast({
+          title: "Assessment Loaded",
+          description: "The assessment has been loaded successfully."
+        });
+      } catch (error) {
+        console.error('Error parsing assessment file:', error);
+        toast({
+          variant: "destructive",
+          title: "Load Failed",
+          description: "Failed to load the assessment file. Please check the file format."
+        });
+      }
+    };
+    reader.readAsText(file);
+
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const saveLocal = () => {
@@ -91,9 +166,37 @@ export const SaveControls: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 flex gap-2 z-50">
-      <ClearFormButton />
+    <div className="flex gap-2">
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileLoad}
+        accept=".json"
+        className="hidden"
+      />
+
+      {process.env.NODE_ENV === 'development' && <ClearFormButton />}
       
+      <Button
+        onClick={() => fileInputRef.current?.click()}
+        variant="outline"
+        className="flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+      >
+        <Upload className="h-4 w-4" />
+        Load Assessment
+      </Button>
+
+      {process.env.NODE_ENV === 'development' && (
+        <Button
+          onClick={loadMockAssessment}
+          variant="outline"
+          className="flex items-center gap-2 border-purple-600 text-purple-600 hover:bg-purple-50"
+        >
+          <FileDown className="h-4 w-4" />
+          Load Test Data
+        </Button>
+      )}
+
       <Button
         onClick={saveLocal}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
@@ -110,6 +213,8 @@ export const SaveControls: React.FC = () => {
         <Download className="h-4 w-4" />
         Export Final JSON
       </Button>
+
+      <ReportGenerationButton />
     </div>
   );
 };

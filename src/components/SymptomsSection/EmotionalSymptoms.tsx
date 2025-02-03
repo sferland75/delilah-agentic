@@ -11,21 +11,17 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
+import { emotionalSymptomCategories } from '@/lib/validation/symptom-schema';
 
-// Same emotionalSymptoms object...
+// Define the static information about emotional symptoms
 const emotionalSymptoms = {
-  mood: {
-    title: "Mood Symptoms",
+  emotional_control: {
+    title: "Emotional Control",
     symptoms: [
       { id: "depression", label: "Depression" },
       { id: "anxiety", label: "Anxiety" },
       { id: "mood_swings", label: "Mood Swings" },
-      { id: "irritability", label: "Irritability" }
-    ]
-  },
-  emotional_control: {
-    title: "Emotional Control",
-    symptoms: [
+      { id: "irritability", label: "Irritability" },
       { id: "emotional_lability", label: "Emotional Lability" },
       { id: "impulsivity", label: "Emotional Impulsivity" },
       { id: "aggression", label: "Aggression/Agitation" },
@@ -50,7 +46,7 @@ const emotionalSymptoms = {
       { id: "social_anxiety", label: "Social Anxiety" }
     ]
   },
-  self_awareness: {
+  regulation: {
     title: "Self-Awareness and Regulation",
     symptoms: [
       { id: "self_monitoring", label: "Difficulty Monitoring Emotions" },
@@ -62,7 +58,7 @@ const emotionalSymptoms = {
 };
 
 export function EmotionalSymptoms() {
-  const { register, watch, setValue } = useFormContext();
+  const { setValue, watch } = useFormContext();
   const watchSymptoms = watch('symptoms.emotional') || {};
   const [openSections, setOpenSections] = React.useState<string[]>([]);
 
@@ -74,9 +70,26 @@ export function EmotionalSymptoms() {
     );
   };
 
+  const handleSymptomChange = (symptomId: string, checked: boolean) => {
+    setValue(`symptoms.emotional.${symptomId}`, {
+      present: checked,
+      severity: checked ? 5 : 0, // Default to middle severity when checked
+      notes: watchSymptoms[symptomId]?.notes || ""
+    }, { 
+      shouldDirty: true,
+      shouldValidate: true
+    });
+  };
+
   const handleSeverityChange = (symptomId: string, value: number[]) => {
     setValue(`symptoms.emotional.${symptomId}.severity`, value[0], { 
       shouldDirty: true 
+    });
+  };
+
+  const handleNotesChange = (symptomId: string, notes: string) => {
+    setValue(`symptoms.emotional.${symptomId}.notes`, notes, {
+      shouldDirty: true
     });
   };
 
@@ -106,28 +119,31 @@ export function EmotionalSymptoms() {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     {symptoms.map((symptom) => {
-                      const symptomValue = watchSymptoms[symptom.id];
+                      const symptomValue = watchSymptoms[symptom.id] || { present: false, severity: 0, notes: "" };
                       return (
                         <div key={symptom.id} className="space-y-2">
                           <div className="flex items-center space-x-2">
                             <Checkbox
                               id={symptom.id}
-                              {...register(`symptoms.emotional.${symptom.id}.present`)}
+                              checked={symptomValue.present === true}
+                              onCheckedChange={(checked) => {
+                                handleSymptomChange(symptom.id, checked === true);
+                              }}
                             />
                             <Label htmlFor={symptom.id}>{symptom.label}</Label>
                           </div>
                           
-                          {symptomValue?.present && (
+                          {symptomValue.present && (
                             <div className="ml-6 space-y-4">
                               <div className="space-y-2">
                                 <Label className="text-sm">
-                                  Severity: {watchSymptoms[symptom.id]?.severity || 0}
+                                  Severity: {symptomValue.severity || 0}
                                 </Label>
                                 <Slider
                                   min={0}
                                   max={10}
                                   step={1}
-                                  value={[watchSymptoms[symptom.id]?.severity || 0]}
+                                  value={[symptomValue.severity || 0]}
                                   onValueChange={(value) => handleSeverityChange(symptom.id, value)}
                                 />
                                 <div className="flex justify-between text-xs text-gray-500">
@@ -141,7 +157,8 @@ export function EmotionalSymptoms() {
                                 <Textarea
                                   placeholder="Provide specific examples or clinical observations..."
                                   className="h-20"
-                                  {...register(`symptoms.emotional.${symptom.id}.notes`)}
+                                  value={symptomValue.notes || ""}
+                                  onChange={(e) => handleNotesChange(symptom.id, e.target.value)}
                                 />
                               </div>
                             </div>
@@ -156,7 +173,12 @@ export function EmotionalSymptoms() {
                     <Textarea
                       placeholder={`Additional observations about ${title.toLowerCase()}...`}
                       className="h-24"
-                      {...register(`symptoms.emotional.${category}_observations`)}
+                      value={watchSymptoms[`${category}_observations`] || ""}
+                      onChange={(e) => setValue(
+                        `symptoms.emotional.${category}_observations`,
+                        e.target.value,
+                        { shouldDirty: true }
+                      )}
                     />
                   </div>
                 </div>
@@ -170,12 +192,33 @@ export function EmotionalSymptoms() {
         <CardHeader>
           <CardTitle>General Emotional/Behavioral Notes</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Textarea
-            placeholder="Overall observations about emotional and behavioral function, patterns noticed, or additional symptoms not covered above..."
-            className="min-h-[100px]"
-            {...register('symptoms.emotional.general_observations')}
-          />
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Mood Observations</Label>
+            <Textarea
+              placeholder="Overall observations about emotional and mood patterns..."
+              className="min-h-[100px]"
+              value={watchSymptoms.mood_observations || ""}
+              onChange={(e) => setValue(
+                'symptoms.emotional.mood_observations',
+                e.target.value,
+                { shouldDirty: true }
+              )}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>General Observations</Label>
+            <Textarea
+              placeholder="Overall observations about emotional and behavioral function, patterns noticed, or additional symptoms not covered above..."
+              className="min-h-[100px]"
+              value={watchSymptoms.general_observations || ""}
+              onChange={(e) => setValue(
+                'symptoms.emotional.general_observations',
+                e.target.value,
+                { shouldDirty: true }
+              )}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

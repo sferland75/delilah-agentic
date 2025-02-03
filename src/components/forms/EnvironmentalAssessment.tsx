@@ -1,11 +1,14 @@
 import React from 'react';
-import { useFormContext } from "react-hook-form";
+import { FormProvider, useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PropertyOverview } from '../EnvironmentalSection/property-overview';
 import { SafetyAssessment } from '../EnvironmentalSection/safety-assessment';
+import { RoomAssessment } from '../EnvironmentalSection/room-assessment';
+import { useForm as useDelilahForm } from '@/context/FormContext';
 
 export function EnvironmentalAssessment() {
-  const { watch } = useFormContext();
+  // Get the form methods from the parent context
+  const methods = useFormContext();
 
   return (
     <div className="space-y-8">
@@ -14,8 +17,12 @@ export function EnvironmentalAssessment() {
           <CardTitle>Environmental Assessment</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <PropertyOverview />
-          <SafetyAssessment />
+          {/* Make sure child components have access to form context */}
+          <FormProvider {...methods}>
+            <PropertyOverview />
+            <RoomAssessment />
+            <SafetyAssessment />
+          </FormProvider>
         </CardContent>
       </Card>
     </div>

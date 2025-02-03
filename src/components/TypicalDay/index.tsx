@@ -3,17 +3,71 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyRoutine } from './DailyRoutine';
 import { WeeklySchedule } from './WeeklySchedule';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext } from '@/context/FormContext';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Calendar, Clock, CalendarClock, AlarmClock } from 'lucide-react';
 
 export function TypicalDaySection() {
-  const { control } = useFormContext();
+  const { formData, updateFormData } = useFormContext();
+
+  console.log('TypicalDaySection rendering with formData:', JSON.stringify(formData, null, 2));
+  console.log('Pre-accident daily data:', JSON.stringify(formData?.typicalDay?.preAccident?.daily, null, 2));
+
+  // Handler for daily routine updates
+  const handleDailyUpdate = (section: string, value: any) => {
+    console.log('Handling daily update:', section, value);
+    const updatedTypicalDay = {
+      ...formData.typicalDay,
+      [section]: {
+        ...formData.typicalDay?.[section],
+        daily: value
+      }
+    };
+
+    updateFormData({
+      ...formData,
+      typicalDay: updatedTypicalDay
+    });
+  };
+
+  // Handler for weekly schedule updates
+  const handleWeeklyUpdate = (section: string, value: any) => {
+    console.log('Handling weekly update:', section, value);
+    const updatedTypicalDay = {
+      ...formData.typicalDay,
+      [section]: {
+        ...formData.typicalDay?.[section],
+        weekly: value
+      }
+    };
+
+    updateFormData({
+      ...formData,
+      typicalDay: updatedTypicalDay
+    });
+  };
+
+  // Debug display of current data
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Current form data structure:', {
+      preAccidentDaily: formData?.typicalDay?.preAccident?.daily || {},
+      currentDaily: formData?.typicalDay?.current?.daily || {},
+      preAccidentWeekly: formData?.typicalDay?.preAccident?.weekly || {},
+      currentWeekly: formData?.typicalDay?.current?.weekly || {}
+    });
+  }
 
   return (
     <Card className="p-6 bg-slate-50">
       <h2 className="text-2xl font-semibold mb-2 text-slate-800">Typical Day Assessment</h2>
       <p className="text-sm text-slate-600 mb-6">Compare pre-accident and current daily activities and routines</p>
+
+      {/* Debug display */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mb-4 p-2 bg-gray-100 rounded text-xs overflow-auto max-h-40">
+          <pre>{JSON.stringify(formData?.typicalDay, null, 2)}</pre>
+        </div>
+      )}
 
       <Alert className="mb-6 bg-blue-50 border-blue-200">
         <AlertDescription className="text-slate-700">
@@ -68,7 +122,8 @@ export function TypicalDaySection() {
         <TabsContent value="pre-accident-day">
           <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
             <DailyRoutine 
-              control={control} 
+              data={formData?.typicalDay?.preAccident?.daily || {}}
+              onChange={(value) => handleDailyUpdate('preAccident', value)}
               prefix="typicalDay.preAccident.daily"
               title="Pre-Accident Daily Routine"
               description="Document typical daily activities before the accident"
@@ -79,7 +134,8 @@ export function TypicalDaySection() {
         <TabsContent value="pre-accident-week">
           <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
             <WeeklySchedule 
-              control={control} 
+              data={formData?.typicalDay?.preAccident?.weekly || {}}
+              onChange={(value) => handleWeeklyUpdate('preAccident', value)}
               prefix="typicalDay.preAccident.weekly"
               title="Pre-Accident Weekly Schedule"
               description="Document regular weekly activities before the accident"
@@ -90,7 +146,8 @@ export function TypicalDaySection() {
         <TabsContent value="current-day">
           <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
             <DailyRoutine 
-              control={control} 
+              data={formData?.typicalDay?.current?.daily || {}}
+              onChange={(value) => handleDailyUpdate('current', value)}
               prefix="typicalDay.current.daily"
               title="Current Daily Routine"
               description="Document current daily activities and any changes or limitations"
@@ -101,7 +158,8 @@ export function TypicalDaySection() {
         <TabsContent value="current-week">
           <div className="border rounded-lg p-4 space-y-4 bg-white shadow-sm">
             <WeeklySchedule 
-              control={control} 
+              data={formData?.typicalDay?.current?.weekly || {}}
+              onChange={(value) => handleWeeklyUpdate('current', value)}
               prefix="typicalDay.current.weekly"
               title="Current Weekly Schedule"
               description="Document current weekly activities and any modifications needed"

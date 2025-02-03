@@ -1,55 +1,49 @@
 import { useFormContext } from 'react-hook-form';
+import { useForm as useDelilahForm } from '@/context/FormContext';
 import { Card, CardContent } from "@/components/ui/card";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import type { AssessmentForm } from '@/types/form';
-
-const COMMON_HAZARDS = [
-  'Uneven Surfaces',
-  'Poor Lighting',
-  'Loose Rugs',
-  'Cluttered Pathways',
-  'Unstable Furniture',
-  'Exposed Wiring',
-  'Steep Stairs',
-  'Slippery Surfaces',
-  'Missing Handrails',
-  'Poor Ventilation'
-] as const;
+import { environmentalConfigs } from './environmental-config';
+import { Shield } from 'lucide-react';
 
 export function SafetyAssessment() {
-  const { control, watch, setValue } = useFormContext<AssessmentForm>();
-  const currentHazards = watch('environmentalAssessment.safety.hazards') || [];
+  const methods = useFormContext();
+  const { control, watch, setValue } = methods;
+  const { formData } = useDelilahForm();
 
-  const addHazard = (hazard: string) => {
-    if (!currentHazards.includes(hazard)) {
-      setValue('environmentalAssessment.safety.hazards', [...currentHazards, hazard], {
-        shouldValidate: true
-      });
-    }
-  };
+  // Debug logging
+  console.log('SafetyAssessment - safety data:', formData?.environmental?.safety);
 
-  const removeHazard = (hazard: string) => {
-    setValue(
-      'environmentalAssessment.safety.hazards',
-      currentHazards.filter(h => h !== hazard),
-      { shouldValidate: true }
-    );
+  const currentHazards = watch('environmental.safety.hazards') || formData?.environmental?.safety?.hazards || [];
+
+  const toggleHazard = (hazard: string) => {
+    const newHazards = currentHazards.includes(hazard)
+      ? currentHazards.filter(h => h !== hazard)
+      : [...currentHazards, hazard];
+    setValue('environmental.safety.hazards', newHazards, {
+      shouldValidate: true
+    });
   };
 
   return (
-    <Card>
+    <Card className="mt-8">
       <CardContent className="space-y-6 pt-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Shield className="h-4 w-4 text-blue-600" />
+          <h4 className="font-medium text-slate-800">Safety Assessment</h4>
+        </div>
+
+        {/* Common Hazards */}
         <div className="space-y-4">
-          <h3 className="text-lg font-medium">Common Hazards</h3>
+          <FormLabel className="text-slate-700">Common Hazards</FormLabel>
           <div className="flex flex-wrap gap-2">
-            {COMMON_HAZARDS.map((hazard) => (
+            {environmentalConfigs.commonHazards.map((hazard) => (
               <Button
                 key={hazard}
                 variant={currentHazards.includes(hazard) ? "default" : "outline"}
                 size="sm"
-                onClick={() => currentHazards.includes(hazard) ? removeHazard(hazard) : addHazard(hazard)}
+                onClick={() => toggleHazard(hazard)}
                 type="button"
               >
                 {hazard}
@@ -58,55 +52,47 @@ export function SafetyAssessment() {
           </div>
         </div>
 
+        {/* Safety Concerns */}
         <FormField
           control={control}
-          name="environmentalAssessment.safety.concerns"
+          name="environmental.safety.concerns"
+          defaultValue={formData?.environmental?.safety?.concerns}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Safety Concerns</FormLabel>
+              <FormLabel className="text-slate-700">Safety Concerns</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="Describe any safety concerns"
-                  className="min-h-[100px]"
+                  placeholder="Describe any safety concerns in detail..."
+                  className="min-h-[100px] bg-white"
                 />
               </FormControl>
+              <FormDescription className="text-slate-500">
+                Document specific safety issues and risks
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Recommendations */}
         <FormField
           control={control}
-          name="environmentalAssessment.safety.features"
+          name="environmental.safety.recommendations"
+          defaultValue={formData?.environmental?.safety?.recommendations}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Existing Safety Features</FormLabel>
+              <FormLabel className="text-slate-700">Safety Recommendations</FormLabel>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="List existing safety features"
-                  className="min-h-[100px]"
+                  placeholder="List safety recommendations and suggested modifications..."
+                  className="min-h-[100px] bg-white"
                 />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="environmentalAssessment.safety.recommendations"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Safety Recommendations</FormLabel>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder="Enter safety recommendations"
-                  className="min-h-[100px]"
-                />
-              </FormControl>
+              <FormDescription className="text-slate-500">
+                Provide specific recommendations for improving safety
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

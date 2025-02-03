@@ -1,0 +1,21 @@
+const mockIcon = {
+  Loader2: () => {
+    return {
+      type: 'div',
+      props: {
+        'data-testid': 'progress-spinner',
+        className: 'w-4 h-4 animate-spin'
+      }
+    };
+  },
+  X: () => {
+    return {
+      type: 'div',
+      props: {
+        className: 'w-4 h-4'
+      }
+    };
+  }
+};
+
+module.exports = mockIcon;

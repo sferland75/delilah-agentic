@@ -1,9 +1,7 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -38,31 +36,30 @@ export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
   onSave,
   onCancel
 }) => {
-  const { register, handleSubmit, setValue, watch } = useForm({
-    defaultValues: initialData || {
-      segment: segment.id,
-      score: '',
-      notes: '',
-      pain: false
-    }
-  });
+  const [score, setScore] = useState(initialData?.score || '');
+  const [notes, setNotes] = useState(initialData?.notes || '');
+  const [pain, setPain] = useState(initialData?.pain || false);
 
-  const onSubmit = (data: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     onSave({
       segment: segment.id,
-      ...data
+      score,
+      notes,
+      pain,
+      label: segment.label
     });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-4">
         {/* MMT Score */}
         <div className="space-y-2">
           <Label>Manual Muscle Testing Grade</Label>
           <Select 
-            defaultValue={initialData?.score || undefined}
-            onValueChange={(value) => setValue('score', value)}
+            value={score}
+            onValueChange={setScore}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select MMT grade" />
@@ -88,8 +85,8 @@ export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
         <div className="flex items-center space-x-2">
           <Checkbox
             id="pain"
-            checked={watch('pain')}
-            onCheckedChange={(checked) => setValue('pain', checked)}
+            checked={pain}
+            onCheckedChange={(checked) => setPain(checked as boolean)}
           />
           <Label htmlFor="pain">Pain during testing</Label>
         </div>
@@ -99,7 +96,8 @@ export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
           <Label htmlFor="notes">Notes</Label>
           <Textarea
             id="notes"
-            {...register('notes')}
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder="Enter any additional observations, compensations, or notes..."
             className="min-h-[100px]"
           />

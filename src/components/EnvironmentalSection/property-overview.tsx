@@ -1,49 +1,47 @@
 import React from 'react';
+import { useForm as useDelilahForm } from '@/context/FormContext';
 import { useFormContext } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from '@/components/ui/form';
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { environmentalConfigs } from './environmental-config';
-import type { Assessment } from '@/lib/validation/assessment-schema';
-import { Home, DoorOpen, Grid } from 'lucide-react';
+import { Home, DoorOpen, Grid, Accessibility } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 
-const COMMON_ROOMS = [
-  { type: 'Living Room', label: 'Living Room(s)' },
-  { type: 'Kitchen', label: 'Kitchen' },
-  { type: 'Dining Room', label: 'Dining Room' },
-  { type: 'Primary Bedroom', label: 'Primary Bedroom' },
-  { type: 'Secondary Bedroom', label: 'Additional Bedrooms' },
-  { type: 'Bathroom', label: 'Bathroom(s)' },
-  { type: 'Ensuite', label: 'Ensuite(s)' },
-  { type: 'Laundry', label: 'Laundry Room' },
-  { type: 'Family Room', label: 'Family Room' },
-  { type: 'Office', label: 'Office/Study' },
-  { type: 'Basement', label: 'Basement' },
-  { type: 'Garage', label: 'Garage' },
-] as const;
-
 export function PropertyOverview() {
-  const methods = useFormContext<Assessment>();
+  const { formData } = useDelilahForm();
+  const methods = useFormContext();
   const { control } = methods;
 
-  // Initialize room counts
+  // Initialize values from formData
   React.useEffect(() => {
-    COMMON_ROOMS.forEach(room => {
-      methods.setValue(`environmental.propertyOverview.rooms.${room.type}.count`, '0', { 
-        shouldDirty: false 
-      });
-    });
-  }, [methods]);
+    if (formData?.environmental?.propertyOverview) {
+      const data = formData.environmental.propertyOverview;
+      methods.setValue('environmental.propertyOverview.type', data.type);
+      methods.setValue('environmental.propertyOverview.levels', data.levels);
+      methods.setValue('environmental.propertyOverview.exteriorAccess', data.exteriorAccess);
+      methods.setValue('environmental.propertyOverview.interiorAccess', data.interiorAccess);
+      methods.setValue('environmental.propertyOverview.generalNotes', data.generalNotes);
+      
+      // Set room values
+      if (data.rooms) {
+        Object.entries(data.rooms).forEach(([roomType, roomData]) => {
+          methods.setValue(`environmental.propertyOverview.rooms.${roomType}.count`, roomData.count);
+          methods.setValue(`environmental.propertyOverview.rooms.${roomType}.notes`, roomData.notes);
+        });
+      }
+    }
+  }, [formData]);
 
   return (
     <div className="space-y-8">
+      {/* Property Details Section */}
       <div>
         <h3 className="text-lg font-medium text-slate-800">Property Overview</h3>
-        <p className="text-sm text-slate-600 mb-4">Document property characteristics and layout</p>
+        <p className="text-sm text-slate-600 mb-4">Document property characteristics and accessibility features</p>
       </div>
 
-      {/* Property Characteristics */}
+      {/* Property Details */}
       <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
         <div className="flex items-center gap-2 mb-2">
           <Home className="h-4 w-4 text-blue-600" />
@@ -57,7 +55,7 @@ export function PropertyOverview() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-700">Property Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value || ''}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Select property type" />
@@ -69,10 +67,6 @@ export function PropertyOverview() {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormDescription className="text-slate-500">
-                  Type of dwelling
-                </FormDescription>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -83,7 +77,7 @@ export function PropertyOverview() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-700">Number of Levels</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value || ''}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger className="bg-white">
                       <SelectValue placeholder="Select number of levels" />
@@ -97,89 +91,46 @@ export function PropertyOverview() {
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-                <FormDescription className="text-slate-500">
-                  Number of floors in home
-                </FormDescription>
-                <FormMessage />
               </FormItem>
             )}
           />
         </div>
       </div>
 
-      {/* Room Types and Flooring */}
+      {/* Access Features */}
       <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
         <div className="flex items-center gap-2 mb-2">
-          <Grid className="h-4 w-4 text-blue-600" />
-          <h4 className="font-medium text-slate-800">Room Types & Flooring</h4>
+          <Accessibility className="h-4 w-4 text-blue-600" />
+          <h4 className="font-medium text-slate-800">Access Features</h4>
         </div>
 
-        <div className="grid gap-6">
-          {COMMON_ROOMS.map((room) => (
-            <div key={room.type} className="space-y-4">
-              <div className="flex items-center gap-2">
-                <FormField
-                  control={control}
-                  name={`environmental.propertyOverview.rooms.${room.type}.count`}
-                  defaultValue="0"
-                  render={({ field }) => (
-                    <FormItem className="w-16">
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field} 
-                          value={field.value || '0'}
-                          onChange={e => field.onChange(e.target.value || '0')}
-                          placeholder="#"
-                          min={0}
-                          className="bg-white text-center h-8"
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormLabel className="text-slate-700 font-medium">{room.label}</FormLabel>
-              </div>
-
-              <FormField
-                control={control}
-                name={`environmental.propertyOverview.rooms.${room.type}.flooring`}
-                render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={field.onChange} value={field.value || ''}>
-                      <FormControl>
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="Floor covering" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {environmentalConfigs.floorCoverings.map((type) => (
-                          <SelectItem key={type} value={type}>{type}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormDescription className="text-slate-500">
-                      Floor covering type
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Additional Rooms */}
         <FormField
           control={control}
-          name="environmental.propertyOverview.additionalRooms"
+          name="environmental.propertyOverview.exteriorAccess"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-700">Additional Rooms</FormLabel>
+              <FormLabel className="text-slate-700">Exterior Access</FormLabel>
               <FormControl>
                 <Textarea 
                   {...field}
-                  value={field.value || ''}
-                  placeholder="Note any additional rooms or spaces..."
+                  placeholder="Describe exterior access (steps, ramps, railings, etc.)"
+                  className="min-h-[80px] bg-white"
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="environmental.propertyOverview.interiorAccess"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-slate-700">Interior Access</FormLabel>
+              <FormControl>
+                <Textarea 
+                  {...field}
+                  placeholder="Describe interior accessibility features (grab bars, stairlifts, etc.)"
                   className="min-h-[80px] bg-white"
                 />
               </FormControl>
@@ -188,10 +139,66 @@ export function PropertyOverview() {
         />
       </div>
 
-      {/* General Notes */}
+      {/* Room Assessment */}
       <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
         <div className="flex items-center gap-2 mb-2">
           <DoorOpen className="h-4 w-4 text-blue-600" />
+          <h4 className="font-medium text-slate-800">Room Assessment</h4>
+        </div>
+
+        <div className="space-y-6">
+          {environmentalConfigs.roomTypes.map((roomType) => (
+            <div key={roomType} className="space-y-4">
+              <div className="flex items-center gap-2">
+                <FormField
+                  control={control}
+                  name={`environmental.propertyOverview.rooms.${roomType}.count`}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <FormItem className="w-16">
+                      <FormControl>
+                        <Input 
+                          type="number"
+                          {...field}
+                          value={value ?? 0}
+                          onChange={(e) => {
+                            const val = e.target.value === '' ? 0 : parseInt(e.target.value, 10);
+                            onChange(val);
+                          }}
+                          min={0}
+                          className="bg-white text-center h-8"
+                          onWheel={(e) => e.currentTarget.blur()}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormLabel className="text-slate-700 font-medium">{roomType}</FormLabel>
+              </div>
+
+              <FormField
+                control={control}
+                name={`environmental.propertyOverview.rooms.${roomType}.notes`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder={`Notes about ${roomType.toLowerCase()} (flooring, layout, access issues)`}
+                        className="min-h-[60px] bg-white"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* General Notes */}
+      <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Grid className="h-4 w-4 text-blue-600" />
           <h4 className="font-medium text-slate-800">Additional Information</h4>
         </div>
 
@@ -204,15 +211,10 @@ export function PropertyOverview() {
               <FormControl>
                 <Textarea 
                   {...field}
-                  value={field.value || ''}
                   placeholder="Enter any general notes about the property layout, unique features, etc."
                   className="min-h-[100px] bg-white"
                 />
               </FormControl>
-              <FormDescription className="text-slate-500">
-                Additional observations about property characteristics
-              </FormDescription>
-              <FormMessage />
             </FormItem>
           )}
         />
