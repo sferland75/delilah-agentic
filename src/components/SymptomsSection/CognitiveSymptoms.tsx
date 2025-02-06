@@ -11,57 +11,89 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { cognitiveSymptomCategories } from '@/lib/validation/symptom-schema';
 
 const cognitiveSymptoms = {
-  attention: {
+  attention_concentration: {
     title: "Attention and Concentration",
     symptoms: [
-      { id: "sustained_attention", label: "Difficulty maintaining attention" },
-      { id: "divided_attention", label: "Trouble multitasking" },
-      { id: "distractibility", label: "Easily distracted" },
-      { id: "mental_fatigue", label: "Mental fatigue with concentration" }
+      { id: "sustained_attention", label: "Difficulty maintaining attention on tasks" },
+      { id: "divided_attention", label: "Problems multitasking/handling multiple inputs" },
+      { id: "selective_attention", label: "Trouble filtering out distractions" },
+      { id: "attention_fatigue", label: "Mental fatigue with sustained attention" },
+      { id: "concentration", label: "Poor concentration during conversations" },
+      { id: "task_completion", label: "Difficulty completing tasks" },
+      { id: "distractibility", label: "Easily distracted by environment" },
+      { id: "attention_fluctuation", label: "Fluctuating attention throughout day" }
     ]
   },
   memory: {
-    title: "Memory",
+    title: "Memory Function",
     symptoms: [
-      { id: "short_term", label: "Short-term memory problems" },
-      { id: "working_memory", label: "Difficulty holding information while using it" },
-      { id: "recall", label: "Trouble recalling information" },
-      { id: "prospective", label: "Forgetting to do planned tasks" }
+      { id: "working_memory", label: "Poor working memory/holding information" },
+      { id: "short_term", label: "Short-term memory difficulties" },
+      { id: "episodic_memory", label: "Trouble remembering recent events" },
+      { id: "prospective", label: "Forgetting appointments/planned tasks" },
+      { id: "procedural", label: "Difficulty remembering learned procedures" },
+      { id: "names_faces", label: "Problems remembering names/faces" },
+      { id: "location_memory", label: "Getting lost/spatial memory issues" },
+      { id: "memory_retrieval", label: "Slow or difficult memory retrieval" }
     ]
   },
-  processing: {
+  processing_speed: {
     title: "Processing Speed",
     symptoms: [
-      { id: "processing_speed", label: "Slowed thinking" },
-      { id: "reaction_time", label: "Delayed reaction time" },
-      { id: "decision_making", label: "Difficulty making decisions" },
-      { id: "problem_solving", label: "Trouble solving problems" }
+      { id: "mental_speed", label: "Slowed thinking/mental processing" },
+      { id: "reaction_time", label: "Delayed reaction times" },
+      { id: "decision_speed", label: "Slow decision making" },
+      { id: "reading_speed", label: "Reduced reading speed/comprehension" },
+      { id: "conversation_pace", label: "Trouble keeping up with conversations" },
+      { id: "processing_overload", label: "Information processing overload" },
+      { id: "mental_fatigue", label: "Mental fatigue with complex tasks" },
+      { id: "processing_accuracy", label: "Errors in processing information" }
     ]
   },
-  executive: {
+  executive_function: {
     title: "Executive Function",
     symptoms: [
-      { id: "planning", label: "Difficulty planning and organizing" },
-      { id: "initiation", label: "Trouble getting started on tasks" },
-      { id: "sequencing", label: "Problems with step-by-step tasks" },
-      { id: "mental_flexibility", label: "Difficulty switching between tasks" }
+      { id: "planning", label: "Difficulty planning/organizing" },
+      { id: "initiation", label: "Problems initiating tasks" },
+      { id: "mental_flexibility", label: "Poor mental flexibility/adaptability" },
+      { id: "problem_solving", label: "Impaired problem-solving ability" },
+      { id: "sequencing", label: "Difficulty with step-by-step tasks" },
+      { id: "organization", label: "Poor organizational skills" },
+      { id: "time_management", label: "Time management difficulties" },
+      { id: "decision_making", label: "Impaired decision-making ability" }
     ]
   },
-  language: {
+  post_concussive: {
+    title: "Post-Concussive Symptoms",
+    symptoms: [
+      { id: "cognitive_fatigue", label: "Mental fatigue/cognitive exhaustion" },
+      { id: "mental_fog", label: "Brain fog/mental haziness" },
+      { id: "sensory_overload", label: "Sensory processing overload" },
+      { id: "light_sensitivity", label: "Cognitive impact of light sensitivity" },
+      { id: "noise_sensitivity", label: "Cognitive impact of noise sensitivity" },
+      { id: "visual_processing", label: "Visual processing difficulties" },
+      { id: "concentration_headache", label: "Headaches with mental effort" },
+      { id: "cognitive_stamina", label: "Reduced cognitive stamina" }
+    ]
+  },
+  language_communication: {
     title: "Language and Communication",
     symptoms: [
       { id: "word_finding", label: "Word-finding difficulties" },
       { id: "verbal_fluency", label: "Reduced verbal fluency" },
-      { id: "comprehension", label: "Trouble understanding complex information" },
-      { id: "expression", label: "Difficulty expressing thoughts clearly" }
+      { id: "comprehension", label: "Difficulty understanding complex info" },
+      { id: "expression", label: "Trouble expressing thoughts clearly" },
+      { id: "conversation", label: "Difficulty following conversations" },
+      { id: "reading", label: "Reading comprehension problems" },
+      { id: "writing", label: "Written expression difficulties" },
+      { id: "pragmatics", label: "Social communication problems" }
     ]
   }
 };
 
-export function CognitiveSymptoms() {
+const CognitiveSymptoms = () => {
   const { setValue, watch } = useFormContext();
   const watchSymptoms = watch('symptoms.cognitive') || {};
   const [openSections, setOpenSections] = React.useState<string[]>([]);
@@ -77,8 +109,11 @@ export function CognitiveSymptoms() {
   const handleSymptomChange = (symptomId: string, checked: boolean) => {
     setValue(`symptoms.cognitive.${symptomId}`, {
       present: checked,
-      severity: checked ? 5 : 0, // Default to middle severity when checked
-      notes: watchSymptoms[symptomId]?.notes || ""
+      severity: checked ? 5 : 0,
+      notes: watchSymptoms[symptomId]?.notes || "",
+      onset: watchSymptoms[symptomId]?.onset || "post_accident",
+      frequency: watchSymptoms[symptomId]?.frequency || "intermittent",
+      impact: watchSymptoms[symptomId]?.impact || ""
     }, { 
       shouldDirty: true,
       shouldValidate: true
@@ -123,7 +158,13 @@ export function CognitiveSymptoms() {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     {symptoms.map((symptom) => {
-                      const symptomValue = watchSymptoms[symptom.id] || { present: false, severity: 0, notes: "" };
+                      const symptomValue = watchSymptoms[symptom.id] || { 
+                        present: false, 
+                        severity: 0, 
+                        notes: "",
+                        onset: "post_accident",
+                        frequency: "intermittent"
+                      };
                       return (
                         <div key={symptom.id} className="space-y-2">
                           <div className="flex items-center space-x-2">
@@ -157,9 +198,9 @@ export function CognitiveSymptoms() {
                               </div>
                               
                               <div className="space-y-2">
-                                <Label className="text-sm">Examples/Observations</Label>
+                                <Label className="text-sm">Functional Impact</Label>
                                 <Textarea
-                                  placeholder="Provide specific examples or clinical observations..."
+                                  placeholder="Document impact on daily activities, work function, and independence..."
                                   className="h-20"
                                   value={symptomValue.notes || ""}
                                   onChange={(e) => handleNotesChange(symptom.id, e.target.value)}
@@ -173,9 +214,9 @@ export function CognitiveSymptoms() {
                   </div>
 
                   <div className="space-y-2 pt-4 border-t">
-                    <Label>Category Observations</Label>
+                    <Label>Impairment Summary</Label>
                     <Textarea
-                      placeholder={`Additional observations about ${title.toLowerCase()}...`}
+                      placeholder={`Document overall functional impact and level of impairment related to ${title.toLowerCase()}...`}
                       className="h-24"
                       value={watchSymptoms[`${category}_observations`] || ""}
                       onChange={(e) => setValue(
@@ -194,17 +235,17 @@ export function CognitiveSymptoms() {
       
       <Card>
         <CardHeader>
-          <CardTitle>General Cognitive Function Notes</CardTitle>
+          <CardTitle>Overall Cognitive Impairment Summary</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="space-y-2">
-            <Label>General Observations</Label>
+            <Label>Clinical Assessment & Functional Impact</Label>
             <Textarea
-              placeholder="Overall observations about cognitive function, patterns noticed, or additional symptoms not covered above..."
+              placeholder="Document overall cognitive impairment level and impact on function, including effects on work, daily activities, and independence..."
               className="min-h-[100px]"
-              value={watchSymptoms.general_observations || ""}
+              value={watchSymptoms.clinical_impression || ""}
               onChange={(e) => setValue(
-                'symptoms.cognitive.general_observations',
+                'symptoms.cognitive.clinical_impression',
                 e.target.value,
                 { shouldDirty: true }
               )}
@@ -214,4 +255,6 @@ export function CognitiveSymptoms() {
       </Card>
     </div>
   );
-}
+};
+
+export default CognitiveSymptoms;

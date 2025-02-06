@@ -1,42 +1,28 @@
-import React, { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { PropertyOverview } from './components/property-overview';
-import { SafetyAssessment } from './components/safety-assessment';
+import React, { memo } from 'react';
+import { Card, CardContent } from '../ui/card';
+import useEnvironmentalForm from '../../hooks/useEnvironmentalForm';
+import PropertyOverview from './property-overview';
+import RoomAssessment from './room-assessment';
+import SafetyAssessment from './safety-assessment';
 
-export function EnvironmentalSection() {
-  const { setValue, getValues } = useFormContext();
-  const currentValues = getValues('environmental');
-
-  useEffect(() => {
-    // Only set values if they don't exist
-    if (!currentValues) {
-      const initialValues = {
-        propertyOverview: {
-          type: '',
-          levels: '',
-          exteriorAccess: '',
-          interiorAccess: '',
-          rooms: {},
-          generalNotes: ''
-        },
-        safety: {
-          hazards: [],
-          concerns: '',
-          recommendations: ''
-        }
-      };
-      
-      setValue('environmental', initialValues, {
-        shouldDirty: false,
-        shouldTouch: false
-      });
-    }
-  }, []); // Empty dependency array as this should only run once
+export const EnvironmentalSection: React.FC = () => {
+  // Don't watch at this level since child components will watch their specific fields
+  const { data } = useEnvironmentalForm({ shouldWatch: false });
 
   return (
-    <div className="space-y-6">
-      <PropertyOverview />
-      <SafetyAssessment />
-    </div>
+    <Card className="w-full mt-4">
+      <CardContent className="p-6">
+        <h2 className="text-2xl font-bold mb-6">Environmental Assessment</h2>
+        
+        <div className="space-y-8">
+          <PropertyOverview />
+          <RoomAssessment />
+          <SafetyAssessment />
+        </div>
+      </CardContent>
+    </Card>
   );
-}
+};
+
+// Memoize the component
+export default memo(EnvironmentalSection);

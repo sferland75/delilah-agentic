@@ -1,150 +1,207 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2 } from 'lucide-react';
-
-const roomTypes = [
-  'Bedroom', 'Bathroom', 'Kitchen', 'Living Room', 'Dining Room',
-  'Laundry Room', 'Basement', 'Garage', 'Home Office', 'Other'
-];
+import { Checkbox } from '@/components/ui/checkbox';
+import { Separator } from '@/components/ui/separator';
 
 export function RoomAssessment() {
-  const { watch, setValue } = useFormContext();
-  const rooms = watch('environmental.propertyOverview.rooms') || {};
+  const { register, setValue, watch } = useFormContext();
+  const prefix = 'environmental.roomAssessment';
 
-  const addRoom = () => {
-    const roomId = `room_${Object.keys(rooms).length + 1}`;
-    setValue(`environmental.propertyOverview.rooms.${roomId}`, {
-      type: '',
-      name: '',
-      dimensions: '',
-      features: '',
-      hazards: '',
-      modifications: '',
-      notes: ''
-    });
-  };
-
-  const removeRoom = (roomId: string) => {
-    const updatedRooms = { ...rooms };
-    delete updatedRooms[roomId];
-    setValue('environmental.propertyOverview.rooms', updatedRooms);
-  };
-
-  return (
+  const renderFlooringSection = (roomPath: string) => (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="text-lg font-medium">Room Assessment</h4>
-        <Button 
-          onClick={addRoom}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Add Room
-        </Button>
+      <Label>Flooring</Label>
+      <div className="grid grid-cols-2 gap-4">
+        <Input {...register(`${roomPath}.flooring.type`)} placeholder="Floor type" />
+        <Input {...register(`${roomPath}.flooring.condition`)} placeholder="Condition" />
+        <div className="flex items-center space-x-2">
+          <Checkbox {...register(`${roomPath}.flooring.slipResistant`)} />
+          <Label>Slip Resistant</Label>
+        </div>
       </div>
+      <Textarea {...register(`${roomPath}.flooring.notes`)} placeholder="Additional flooring notes" />
+    </div>
+  );
 
-      <div className="space-y-4">
-        {Object.entries(rooms).map(([roomId, room]) => (
-          <Card key={roomId} className="p-4">
-            <div className="space-y-4">
-              <div className="flex justify-between items-start">
-                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Room Type</Label>
-                    <select
-                      className="w-full h-10 px-3 rounded-md border border-input bg-background"
-                      value={room.type}
-                      onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.type`, e.target.value)}
-                    >
-                      <option value="">Select Room Type</option>
-                      {roomTypes.map(type => (
-                        <option key={type} value={type}>{type}</option>
-                      ))}
-                    </select>
-                  </div>
+  const renderModificationsSection = (roomPath: string) => (
+    <div className="space-y-4">
+      <Label>Required Modifications</Label>
+      <Textarea 
+        {...register(`${roomPath}.modifications.required`)} 
+        placeholder="List required modifications"
+        className="h-20"
+      />
+    </div>
+  );
 
-                  <div className="space-y-2">
-                    <Label>Room Name/Location</Label>
-                    <Input
-                      value={room.name}
-                      onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.name`, e.target.value)}
-                      placeholder="e.g., Master Bedroom, Upstairs Bathroom"
-                    />
-                  </div>
+  const renderKitchenSection = () => (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>Kitchen Assessment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <Input {...register(`${prefix}.kitchen.layout`)} placeholder="Layout type (e.g., L-shaped)" />
+          <Input {...register(`${prefix}.kitchen.dimensions`)} placeholder="Dimensions" />
+        </div>
 
-                  <div className="space-y-2">
-                    <Label>Dimensions/Size</Label>
-                    <Input
-                      value={room.dimensions}
-                      onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.dimensions`, e.target.value)}
-                      placeholder="Room dimensions or approximate size"
-                    />
-                  </div>
+        {renderFlooringSection(`${prefix}.kitchen`)}
+        
+        <div className="space-y-4">
+          <Label>Storage</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Upper Cabinets</Label>
+              <Checkbox {...register(`${prefix}.kitchen.storage.upperCabinets.accessible`)} />
+              <Input {...register(`${prefix}.kitchen.storage.upperCabinets.height`)} placeholder="Height" />
+              <Textarea {...register(`${prefix}.kitchen.storage.upperCabinets.notes`)} placeholder="Notes" />
+            </div>
+            <div className="space-y-2">
+              <Label>Lower Cabinets</Label>
+              <Checkbox {...register(`${prefix}.kitchen.storage.lowerCabinets.accessible`)} />
+              <Input {...register(`${prefix}.kitchen.storage.lowerCabinets.type`)} placeholder="Type" />
+              <Textarea {...register(`${prefix}.kitchen.storage.lowerCabinets.notes`)} placeholder="Notes" />
+            </div>
+          </div>
+        </div>
 
-                  <div className="space-y-2">
-                    <Label>Features</Label>
-                    <Input
-                      value={room.features}
-                      onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.features`, e.target.value)}
-                      placeholder="Key features and fixtures"
-                    />
-                  </div>
-                </div>
-                
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-2"
-                  onClick={() => removeRoom(roomId)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </div>
+        <div className="space-y-4">
+          <Label>Appliances</Label>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Stove</Label>
+              <Input {...register(`${prefix}.kitchen.appliances.stove.type`)} placeholder="Type" />
+              <Input {...register(`${prefix}.kitchen.appliances.stove.controls`)} placeholder="Controls" />
+              <Checkbox {...register(`${prefix}.kitchen.appliances.stove.accessible`)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Refrigerator</Label>
+              <Input {...register(`${prefix}.kitchen.appliances.refrigerator.type`)} placeholder="Type" />
+              <Checkbox {...register(`${prefix}.kitchen.appliances.refrigerator.accessible`)} />
+              <Textarea {...register(`${prefix}.kitchen.appliances.refrigerator.notes`)} placeholder="Notes" />
+            </div>
+            <div className="space-y-2">
+              <Label>Microwave</Label>
+              <Input {...register(`${prefix}.kitchen.appliances.microwave.mounted`)} placeholder="Mounting" />
+              <Checkbox {...register(`${prefix}.kitchen.appliances.microwave.accessible`)} />
+              <Textarea {...register(`${prefix}.kitchen.appliances.microwave.notes`)} placeholder="Notes" />
+            </div>
+          </div>
+        </div>
 
-              <div className="space-y-2">
-                <Label>Hazards/Safety Concerns</Label>
-                <Input
-                  value={room.hazards}
-                  onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.hazards`, e.target.value)}
-                  placeholder="Identify any potential hazards or safety concerns"
-                />
-              </div>
+        {renderModificationsSection(`${prefix}.kitchen`)}
+      </CardContent>
+    </Card>
+  );
 
-              <div className="space-y-2">
-                <Label>Required Modifications</Label>
-                <Input
-                  value={room.modifications}
-                  onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.modifications`, e.target.value)}
-                  placeholder="Suggested modifications or adaptations"
-                />
-              </div>
+  const renderBathroomSection = () => (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>Bathroom Assessment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <Input {...register(`${prefix}.bathroom_main.layout`)} placeholder="Layout" />
+          <Input {...register(`${prefix}.bathroom_main.dimensions`)} placeholder="Dimensions" />
+        </div>
 
-              <div className="space-y-2">
-                <Label>Additional Notes</Label>
-                <Textarea
-                  value={room.notes}
-                  onChange={(e) => setValue(`environmental.propertyOverview.rooms.${roomId}.notes`, e.target.value)}
-                  placeholder="Any additional observations or notes"
-                  className="h-20"
-                />
+        {renderFlooringSection(`${prefix}.bathroom_main`)}
+
+        <div className="space-y-4">
+          <Label>Fixtures</Label>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Toilet</Label>
+              <Input {...register(`${prefix}.bathroom_main.fixtures.toilet.height`)} placeholder="Height" />
+              <Input {...register(`${prefix}.bathroom_main.fixtures.toilet.spaceAround`)} placeholder="Space around" />
+              <Checkbox {...register(`${prefix}.bathroom_main.fixtures.toilet.hasGrabBars`)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Shower</Label>
+              <Input {...register(`${prefix}.bathroom_main.fixtures.shower.type`)} placeholder="Type" />
+              <div className="flex flex-col gap-2">
+                <Checkbox {...register(`${prefix}.bathroom_main.fixtures.shower.hasGrabBars`)} />
+                <Checkbox {...register(`${prefix}.bathroom_main.fixtures.shower.hasSeat`)} />
+                <Checkbox {...register(`${prefix}.bathroom_main.fixtures.shower.hasHandheld`)} />
               </div>
             </div>
-          </Card>
-        ))}
-
-        {Object.keys(rooms).length === 0 && (
-          <div className="text-center p-8 border-2 border-dashed rounded-lg">
-            <p className="text-muted-foreground">No rooms added yet. Click "Add Room" to begin assessment.</p>
+            <div className="space-y-2">
+              <Label>Sink</Label>
+              <Input {...register(`${prefix}.bathroom_main.fixtures.sink.height`)} placeholder="Height" />
+              <Checkbox {...register(`${prefix}.bathroom_main.fixtures.sink.clearanceUnder`)} />
+              <Input {...register(`${prefix}.bathroom_main.fixtures.sink.faucetType`)} placeholder="Faucet type" />
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+
+        {renderModificationsSection(`${prefix}.bathroom_main`)}
+      </CardContent>
+    </Card>
+  );
+
+  const renderBedroomSection = () => (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>Bedroom Assessment</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <Input {...register(`${prefix}.bedroom_main.layout`)} placeholder="Layout" />
+          <Input {...register(`${prefix}.bedroom_main.dimensions`)} placeholder="Dimensions" />
+        </div>
+
+        {renderFlooringSection(`${prefix}.bedroom_main`)}
+
+        <div className="space-y-4">
+          <Label>Bed</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Input {...register(`${prefix}.bedroom_main.bed.type`)} placeholder="Type" />
+            <Input {...register(`${prefix}.bedroom_main.bed.height`)} placeholder="Height" />
+            <Input {...register(`${prefix}.bedroom_main.bed.accessibleFrom`)} placeholder="Accessible from" />
+            <Checkbox {...register(`${prefix}.bedroom_main.bed.transferDevices`)} />
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <Label>Storage</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Closet</Label>
+              <Input {...register(`${prefix}.bedroom_main.storage.closet.type`)} placeholder="Type" />
+              <Checkbox {...register(`${prefix}.bedroom_main.storage.closet.accessible`)} />
+              <Textarea {...register(`${prefix}.bedroom_main.storage.closet.notes`)} placeholder="Notes" />
+            </div>
+            <div className="space-y-2">
+              <Label>Dresser</Label>
+              <Input {...register(`${prefix}.bedroom_main.storage.dresser.height`)} placeholder="Height" />
+              <Checkbox {...register(`${prefix}.bedroom_main.storage.dresser.accessible`)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <Label>Lighting</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Checkbox {...register(`${prefix}.bedroom_main.lighting.adequate`)} />
+            <Input {...register(`${prefix}.bedroom_main.lighting.controls`)} placeholder="Controls" />
+          </div>
+          <Textarea {...register(`${prefix}.bedroom_main.lighting.notes`)} placeholder="Lighting notes" />
+        </div>
+
+        {renderModificationsSection(`${prefix}.bedroom_main`)}
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <div className="space-y-6">
+      {renderKitchenSection()}
+      {renderBathroomSection()}
+      {renderBedroomSection()}
     </div>
   );
 }

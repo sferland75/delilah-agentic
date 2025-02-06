@@ -1,0 +1,844 @@
+{
+  "personal": {
+    "firstName": "John",
+    "lastName": "Smith",
+    "dateOfBirth": "1975-03-15",
+    "phone": "555-0123",
+    "email": "john.smith@email.com"
+  },
+  "medical": {
+    "injury": {
+      "circumstance": "Workplace accident - fell from ladder",
+      "date": "2024-01-10",
+      "description": "Patient fell approximately 8 feet from ladder while at work, resulting in injuries to lower back and left knee",
+      "notes": "Impact primarily to lower back with secondary injury to left knee from landing"
+    },
+    "symptoms": [
+      {
+        "location": "Lower Back",
+        "type": "Pain",
+        "severity": "7/10",
+        "frequency": "Constant",
+        "aggravating": ["Prolonged sitting", "Bending", "Lifting"],
+        "relieving": ["Rest", "Ice", "Pain medication"],
+        "description": "Sharp, constant pain in lower back, worse with movement",
+        "additional": "Pain radiates down left leg at times"
+      },
+      {
+        "location": "Left Knee",
+        "type": "Pain and Stiffness",
+        "severity": "5/10",
+        "frequency": "Intermittent",
+        "aggravating": ["Walking", "Stairs", "Standing from seated position"],
+        "relieving": ["Rest", "Elevation", "Ice"],
+        "description": "Dull ache with occasional sharp pain during movement",
+        "additional": "Swelling by end of day"
+      }
+    ],
+    "treatments": [
+      "Physiotherapy - 2x weekly",
+      "Pain Management",
+      "Occupational Therapy",
+      "Chiropractic Care"
+    ],
+    "medications": [
+      {
+        "name": "Naproxen",
+        "dosage": "500mg",
+        "frequency": "Twice daily",
+        "purpose": "Pain and inflammation"
+      },
+      {
+        "name": "Cyclobenzaprine",
+        "dosage": "10mg",
+        "frequency": "At bedtime",
+        "purpose": "Muscle spasm"
+      }
+    ],
+    "imaging": [
+      {
+        "type": "X-ray",
+        "date": "2024-01-10",
+        "region": "Lumbar Spine",
+        "findings": "No acute fracture. Mild degenerative changes L4-L5"
+      },
+      {
+        "type": "MRI",
+        "date": "2024-01-15",
+        "region": "Left Knee",
+        "findings": "Grade 2 MCL sprain. No meniscal tear"
+      }
+    ]
+  },
+  "typicalDay": {
+    "preAccident": {
+      "daily": {
+        "sleepSchedule": {
+          "wakeTime": "06:00",
+          "bedTime": "22:00"
+        },
+        "routines": {
+          "morning": {
+            "activities": "6:00 AM - Wake up, shower, and get dressed\n6:30 AM - Prepare and eat breakfast\n7:00 AM - Commute to work\n8:00 AM - Start work day"
+          },
+          "afternoon": {
+            "activities": "12:00 PM - Lunch break, often including a 15-minute walk\n1:00 PM - Resume work tasks\n3:00 PM - Gym session or physical activity"
+          },
+          "evening": {
+            "activities": "5:00 PM - Commute home\n6:00 PM - Prepare and eat dinner\n7:00 PM - House chores or errands\n9:00 PM - Evening relaxation\n10:00 PM - Bedtime routine"
+          }
+        }
+      },
+      "weekly": {
+        "weekdaySchedule": "8:00 AM - 5:00 PM standard work hours Monday through Friday. Regular gym sessions Tuesday, Thursday, and Saturday mornings.",
+        "weekendSchedule": "More flexible schedule, focused on household tasks, family time, and recreational activities. Usually includes longer gym sessions and social events.",
+        "regularActivities": "Gym 3x/week\nWeekly family dinner on Sundays\nBi-weekly social outings\nMonthly home maintenance",
+        "notes": "Maintained consistent work-life balance with regular exercise and social activities"
+      }
+    },
+    "current": {
+      "daily": {
+        "sleepSchedule": {
+          "wakeTime": "07:00",
+          "bedTime": "21:30"
+        },
+        "routines": {
+          "morning": {
+            "activities": "7:00 AM - Wake up, requires assistance with dressing\n7:45 AM - Light breakfast\n8:30 AM - Modified work from home"
+          },
+          "afternoon": {
+            "activities": "12:00 PM - Rest break and lunch\n1:30 PM - Continue modified work\n3:00 PM - Physiotherapy exercises"
+          },
+          "evening": {
+            "activities": "5:00 PM - Rest period\n6:00 PM - Light meal prep with assistance\n7:00 PM - Limited household tasks\n8:30 PM - Evening routine\n9:30 PM - Bed rest"
+          }
+        }
+      },
+      "weekly": {
+        "weekdaySchedule": "Modified work schedule from home, 4-hour shifts on Monday, Wednesday, and Friday. Physiotherapy appointments Tuesday and Thursday mornings.",
+        "weekendSchedule": "Rest focused with minimal activities. Light exercises and family visits when energy permits.",
+        "regularActivities": "Physiotherapy 2x/week\nMedical appointments\nModified home exercise program\nWeekly grocery delivery",
+        "notes": "Significantly modified schedule to accommodate pain levels and medical appointments"
+      }
+    }
+  },
+  "functionalAssessment": {
+    "tolerances": {
+      "Standing": {
+        "painLevel": 7,
+        "limitations": "Limited to 15 minutes at a time. Increased pain with prolonged standing, favors right leg",
+        "adaptations": "Regular position changes, use of anti-fatigue mat, ability to lean on counters/supports"
+      },
+      "Walking": {
+        "painLevel": 6,
+        "limitations": "Limited to 10 minutes continuous. Antalgic gait pattern, reduced weight bearing on left leg",
+        "adaptations": "Use of walking stick for longer distances, frequent rest breaks"
+      },
+      "Sitting": {
+        "painLevel": 6,
+        "limitations": "Limited to 30 minutes continuous. Requires frequent position changes",
+        "adaptations": "Ergonomic chair with lumbar support, regular standing breaks"
+      },
+      "Lifting": {
+        "painLevel": 8,
+        "limitations": "Unable to lift more than 10 lbs from floor level. Pain with bending and lifting motions",
+        "adaptations": "Two-person lift for heavier items, use of mechanical aids, lift from waist height only"
+      },
+      "Carrying": {
+        "painLevel": 7,
+        "limitations": "Limited to light items only. Difficulty with items over 5 lbs for distances over 10 meters",
+        "adaptations": "Use of cart/trolley for transport, breaking tasks into smaller loads"
+      },
+      "Pushing/Pulling": {
+        "painLevel": 6,
+        "limitations": "Difficulty with heavy doors and equipment. Limited by back pain and knee instability",
+        "adaptations": "Use automatic doors where available, two-handed techniques, pushing preferred over pulling"
+      },
+      "Climbing": {
+        "painLevel": 8,
+        "limitations": "Significant difficulty with stairs, especially descending. Limited by knee pain and instability",
+        "adaptations": "Use elevator when available, one step at a time with handrail support"
+      },
+      "Balancing": {
+        "painLevel": 5,
+        "limitations": "Mild difficulty on uneven surfaces. Increased instability with left knee",
+        "adaptations": "Use of handrails where available, supportive footwear, careful attention to surface conditions"
+      },
+      "Stooping": {
+        "painLevel": 7,
+        "limitations": "Significant difficulty bending forward. Limited by low back pain",
+        "adaptations": "Use of grabber tool, knee bend instead of waist bend when possible, raise work height"
+      },
+      "Kneeling": {
+        "painLevel": 8,
+        "limitations": "Unable to kneel on left knee, limited on right. Pain in both knees with pressure",
+        "adaptations": "Use of kneeling pad when necessary, alternative positions such as squatting or sitting"
+      },
+      "Crouching": {
+        "painLevel": 7,
+        "limitations": "Limited ability to maintain squatting position. Pain in knees and low back",
+        "adaptations": "Use of low stool or chair instead of crouching, reorganize work areas to avoid low positions"
+      },
+      "Reaching": {
+        "painLevel": 5,
+        "limitations": "Overhead reaching increases back pain. Difficulty with sustained reaching",
+        "adaptations": "Use of step stool to bring items closer, rearrangement of commonly used items to waist height"
+      }
+    },
+    "rangeOfMotion": {
+      "Trunk_Flexion": {
+        "score": "1/2",
+        "notes": "Limited with pain throughout range",
+        "type": "ROM",
+        "label": "Trunk Flexion"
+      },
+      "Trunk_Extension": {
+        "score": "1/4",
+        "notes": "Severely limited with pain",
+        "type": "ROM",
+        "label": "Trunk Extension"
+      },
+      "Knee_Flexion": {
+        "score": "3/4",
+        "notes": "Left knee limited by pain",
+        "type": "ROM",
+        "label": "Knee Flexion"
+      },
+      "Knee_Extension": {
+        "score": "3/4",
+        "notes": "Left knee lacks full extension",
+        "type": "ROM",
+        "label": "Knee Extension"
+      }
+    },
+    "manualMuscleTesting": {
+      "Trunk_Flexion": {
+        "score": "3",
+        "pain": true,
+        "notes": "Weakness with pain",
+        "type": "MMT",
+        "label": "Trunk Flexion"
+      },
+      "Trunk_Extension": {
+        "score": "3",
+        "pain": true,
+        "notes": "Weakness with pain",
+        "type": "MMT",
+        "label": "Trunk Extension"
+      },
+      "Knee_Flexion": {
+        "score": "4",
+        "pain": true,
+        "notes": "Left side weaker with pain",
+        "type": "MMT",
+        "label": "Knee Flexion"
+      },
+      "Knee_Extension": {
+        "score": "3",
+        "pain": true,
+        "notes": "Left side significantly weaker",
+        "type": "MMT",
+        "label": "Knee Extension"
+      }
+    },
+    "overallNotes": "Patient demonstrates significant functional limitations in most physical activities, particularly those involving the lower back and left knee. Work and home modifications are currently required for most activities of daily living.",
+    "recommendations": [
+      "Implement regular position changes every 30 minutes",
+      "Use ergonomic equipment at workstation",
+      "Avoid stairs when possible",
+      "No lifting over 10 lbs",
+      "Use assistive devices for prolonged walking",
+      "Consider workplace modifications for essential tasks"
+    ],
+    "followUpNeeded": true,
+    "followUpNotes": "Monitor progress with physiotherapy and reassess work tolerances"
+  },
+  "adl": {
+    "basic": {
+      "bathing": {
+        "shower": {
+          "independence": "moderate_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Shower chair, grab bars, handheld shower head",
+          "frequency": "daily",
+          "timeTaken": "15_30min",
+          "notes": "Requires assistance with lower body washing due to limited trunk flexion and knee mobility. Uses shower chair for safety.",
+          "lastAssessed": "2025-01-14"
+        },
+        "grooming": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Long-handled hair brush, electric razor",
+          "frequency": "daily",
+          "notes": "Can complete most grooming tasks independently but requires adaptive equipment. Takes additional time.",
+          "lastAssessed": "2025-01-14"
+        },
+        "oral_care": {
+          "independence": "independent",
+          "frequency": "multiple_daily",
+          "notes": "Able to complete oral care independently without modifications",
+          "lastAssessed": "2025-01-14"
+        },
+        "toileting": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Raised toilet seat, grab bars",
+          "notes": "Uses raised toilet seat and grab bars for safety during transfers",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "dressing": {
+        "upper_body": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Button hook, dressing stick",
+          "timeTaken": "5_15min",
+          "notes": "Uses adaptive equipment for buttons and reaching. Prefers front-closure clothing.",
+          "lastAssessed": "2025-01-14"
+        },
+        "lower_body": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Sock aid, long-handled shoe horn",
+          "timeTaken": "15_30min",
+          "notes": "Needs assistance with socks and shoes. Difficulty with bending and lifting legs.",
+          "lastAssessed": "2025-01-14"
+        },
+        "footwear": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Long-handled shoe horn, elastic laces",
+          "notes": "Uses slip-on shoes with elastic laces. Needs help with traditional laced shoes.",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "transfers": {
+        "bed_transfer": {
+          "independence": "supervision",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Bed rail, transfer pole",
+          "timeTaken": "5_15min",
+          "notes": "Uses bed rail for safety. Requires supervision for first morning transfer due to stiffness.",
+          "lastAssessed": "2025-01-14"
+        },
+        "toilet_transfer": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Grab bars, raised toilet seat",
+          "timeTaken": "under_5min",
+          "notes": "Independent with use of grab bars. Uses raised toilet seat for safety.",
+          "lastAssessed": "2025-01-14"
+        },
+        "shower_transfer": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Shower chair, grab bars",
+          "timeTaken": "5_15min",
+          "notes": "Needs standby assistance for shower transfers. Uses grab bars and shower chair.",
+          "lastAssessed": "2025-01-14"
+        },
+        "position_changes": {
+          "independence": "supervision",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Support surfaces, grab bars",
+          "timeTaken": "under_5min",
+          "notes": "Independent with position changes but requires supervision when fatigued.",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "feeding": {
+        "eating": {
+          "independence": "independent",
+          "frequency": "multiple_daily",
+          "notes": "No difficulties with eating tasks",
+          "lastAssessed": "2025-01-14"
+        },
+        "setup": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Reacher, sliding board for heavy items",
+          "timeTaken": "15_30min",
+          "notes": "Can prepare simple meals with adaptive equipment. Needs help with heavier items.",
+          "lastAssessed": "2025-01-14"
+        }
+      }
+    },
+    "adl": {
+    "basic": {
+      "bathing": {
+        "shower": {
+          "independence": "moderate_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Shower chair, grab bars, handheld shower head",
+          "frequency": "daily",
+          "timeTaken": "15_30min",
+          "notes": "Requires assistance with lower body washing due to limited trunk flexion and knee mobility. Uses shower chair for safety.",
+          "lastAssessed": "2025-01-14"
+        },
+        "grooming": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Long-handled hair brush, electric razor",
+          "frequency": "daily",
+          "notes": "Can complete most grooming tasks independently but requires adaptive equipment. Takes additional time.",
+          "lastAssessed": "2025-01-14"
+        },
+        "oral_care": {
+          "independence": "independent",
+          "frequency": "multiple_daily",
+          "notes": "Able to complete oral care independently without modifications",
+          "lastAssessed": "2025-01-14"
+        },
+        "toileting": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Raised toilet seat, grab bars",
+          "notes": "Uses raised toilet seat and grab bars for safety during transfers",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "transfers": {
+        "bed_transfer": {
+          "independence": "supervision",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Bed rail, transfer pole",
+          "timeTaken": "5_15min",
+          "notes": "Uses bed rail for safety. Requires supervision for first morning transfer due to stiffness.",
+          "lastAssessed": "2025-01-14"
+        },
+        "toilet_transfer": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Grab bars, raised toilet seat",
+          "timeTaken": "under_5min",
+          "notes": "Independent with use of grab bars. Uses raised toilet seat for safety.",
+          "lastAssessed": "2025-01-14"
+        },
+        "shower_transfer": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Shower chair, grab bars",
+          "timeTaken": "5_15min",
+          "notes": "Needs standby assistance for shower transfers. Uses grab bars and shower chair.",
+          "lastAssessed": "2025-01-14"
+        },
+        "position_changes": {
+          "independence": "supervision",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Support surfaces, grab bars",
+          "timeTaken": "under_5min",
+          "notes": "Independent with position changes but requires supervision when fatigued.",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "feeding": {
+        "eating": {
+          "independence": "independent",
+          "frequency": "multiple_daily",
+          "notes": "No difficulties with eating tasks",
+          "lastAssessed": "2025-01-14"
+        },
+        "setup": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Reacher, sliding board for heavy items",
+          "timeTaken": "15_30min",
+          "notes": "Can prepare simple meals with adaptive equipment. Needs help with heavier items.",
+          "lastAssessed": "2025-01-14"
+        }
+      }
+    },
+    "iadl": {
+      "household": {
+        "cleaning": {
+          "independence": "maximal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Long-handled duster, grabber tool",
+          "frequency": "weekly",
+          "timeTaken": "over_60min",
+          "notes": "Significant difficulty with most cleaning tasks. Needs assistance for tasks requiring bending or reaching.",
+          "lastAssessed": "2025-01-14"
+        },
+        "laundry": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Rolling laundry cart, reacher",
+          "frequency": "weekly",
+          "timeTaken": "30_60min",
+          "notes": "Can manage small loads with adaptive equipment. Needs help with heavy items and reaching into machines.",
+          "lastAssessed": "2025-01-14"
+        },
+        "meal_prep": {
+          "independence": "moderate_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Kitchen stool, adaptive utensils",
+          "frequency": "daily",
+          "timeTaken": "30_60min",
+          "notes": "Can help with meal prep while seated. Limited standing tolerance affects ability to cook full meals.",
+          "lastAssessed": "2025-01-14"
+        },
+        "home_maintenance": {
+          "independence": "maximal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Basic adapted tools",
+          "frequency": "monthly",
+          "notes": "Unable to perform most maintenance tasks. Requires assistance for nearly all home maintenance activities.",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "community": {
+        "transportation": {
+          "independence": "minimal_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Cane, car transfer handle",
+          "frequency": "weekly",
+          "notes": "Can travel as passenger. Unable to drive due to limitations in trunk movement and left leg control.",
+          "lastAssessed": "2025-01-14"
+        },
+        "shopping": {
+          "independence": "moderate_assistance",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Shopping cart for support, reacher",
+          "frequency": "weekly",
+          "timeTaken": "30_60min",
+          "notes": "Requires assistance for larger shopping trips. Uses online delivery for heavy items.",
+          "lastAssessed": "2025-01-14"
+        },
+        "money_management": {
+          "independence": "independent",
+          "frequency": "weekly",
+          "notes": "Manages finances independently through online banking and bill pay.",
+          "lastAssessed": "2025-01-14"
+        },
+        "navigation": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "GPS, mobility aids",
+          "notes": "Can navigate familiar areas with mobility aids. Uses GPS for new locations.",
+          "lastAssessed": "2025-01-14"
+        }
+      }
+    },
+    "health": {
+      "management": {
+        "medications": {
+          "independence": "independent",
+          "frequency": "multiple_daily",
+          "notes": "Manages own medications using pill organizer",
+          "lastAssessed": "2025-01-14"
+        },
+        "appointments": {
+          "independence": "modified_independent",
+          "frequency": "weekly",
+          "notes": "Manages appointment scheduling but needs transport assistance",
+          "lastAssessed": "2025-01-14"
+        },
+        "monitoring": {
+          "independence": "independent",
+          "frequency": "daily",
+          "notes": "Tracks symptoms and progress independently",
+          "lastAssessed": "2025-01-14"
+        },
+        "exercise": {
+          "independence": "supervision",
+          "frequency": "daily",
+          "timeTaken": "30_60min",
+          "notes": "Follows home exercise program with periodic supervision",
+          "lastAssessed": "2025-01-14"
+        }
+      },
+      "routine": {
+        "sleep": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Bed positioning equipment",
+          "notes": "Uses pillows and positioning devices for comfort",
+          "lastAssessed": "2025-01-14"
+        },
+        "stress": {
+          "independence": "independent",
+          "frequency": "daily",
+          "notes": "Uses learned stress management techniques effectively",
+          "lastAssessed": "2025-01-14"
+        },
+        "nutrition": {
+          "independence": "modified_independent",
+          "frequency": "daily",
+          "notes": "Follows dietary recommendations with some modifications",
+          "lastAssessed": "2025-01-14"
+        }
+      }
+    },
+    "work": {
+      "status": {
+        "current_status": {
+          "independence": "modified_independent",
+          "notes": "Currently working from home 4 hours per day, 3 days per week with ergonomic modifications",
+          "lastAssessed": "2025-01-14"
+        },
+        "workplace_accommodations": {
+          "independence": "modified_independent",
+          "usesAssistiveDevices": true,
+          "assistiveDevices": "Ergonomic chair, standing desk, document holder",
+          "notes": "Workstation fully modified to accommodate current limitations",
+          "lastAssessed": "2025-01-14"
+        },
+        "training_needs": {
+          "independence": "modified_independent",
+          "notes": "May require training on new adaptive equipment and software",
+          "lastAssessed": "2025-01-14"
+        },
+        "barriers": {
+          "independence": "minimal_assistance",
+          "notes": "Primary barriers include prolonged sitting tolerance and workstation setup requirements",
+          "lastAssessed": "2025-01-14"
+        }
+      }
+    }
+  } 
+  "environmental": {
+    "propertyOverview": {
+      "type": "single_family_house",
+      "layout": "two_story",
+      "access": {
+        "exterior": {
+          "entranceType": "steps",
+          "numberOfSteps": 3,
+          "hasRailing": true,
+          "notes": "Front entrance has 3 steps with railing on right side. Back entrance has 2 steps without railing."
+        },
+        "interior": {
+          "hasStairs": true,
+          "numberOfStairs": 14,
+          "hasRailing": true,
+          "notes": "Internal staircase to second floor with railing on both sides"
+        }
+      },
+      "generalCondition": "well_maintained",
+      "primaryConcerns": [
+        "Stairs access to essential areas",
+        "Bathroom safety",
+        "Kitchen accessibility"
+      ]
+    },
+    "roomAssessment": {
+      "kitchen": {
+        "layout": "L_shaped",
+        "dimensions": "12x15_feet",
+        "flooring": {
+          "type": "tile",
+          "condition": "good",
+          "slipResistant": false
+        },
+        "storage": {
+          "upperCabinets": {
+            "accessible": false,
+            "height": "standard",
+            "notes": "Upper cabinets too high for safe access with current limitations"
+          },
+          "lowerCabinets": {
+            "accessible": true,
+            "type": "pull_out",
+            "notes": "Pull-out shelves in lower cabinets aid access"
+          }
+        },
+        "workspaces": {
+          "counterHeight": "standard",
+          "adequateSpace": true,
+          "seatingAvailable": false,
+          "notes": "No workspace suitable for seated tasks"
+        },
+        "appliances": {
+          "stove": {
+            "type": "electric",
+            "controls": "front",
+            "accessible": true
+          },
+          "refrigerator": {
+            "type": "side_by_side",
+            "accessible": true,
+            "notes": "Side-by-side design allows access to both fridge and freezer"
+          },
+          "microwave": {
+            "mounted": "above_stove",
+            "accessible": false,
+            "notes": "Current mounting height unsafe for client"
+          }
+        },
+        "modifications": {
+          "required": [
+            "Lower microwave to counter height",
+            "Install pull-down shelving in upper cabinets",
+            "Add anti-fatigue mat at primary work area",
+            "Install task lighting under upper cabinets"
+          ]
+        }
+      },
+      "bathroom_main": {
+        "layout": "standard",
+        "dimensions": "8x10_feet",
+        "flooring": {
+          "type": "ceramic_tile",
+          "condition": "good",
+          "slipResistant": false
+        },
+        "fixtures": {
+          "toilet": {
+            "height": "standard",
+            "spaceAround": "adequate",
+            "hasGrabBars": false
+          },
+          "shower": {
+            "type": "tub_shower_combo",
+            "hasGrabBars": false,
+            "hasSeat": false,
+            "hasHandheld": false
+          },
+          "sink": {
+            "height": "standard",
+            "clearanceUnder": false,
+            "faucetType": "dual_handle"
+          }
+        },
+        "storage": {
+          "accessible": true,
+          "adequate": true,
+          "notes": "Most items stored at waist height"
+        },
+        "modifications": {
+          "required": [
+            "Install grab bars by toilet and shower",
+            "Add shower chair",
+            "Install handheld shower head",
+            "Add non-slip mats",
+            "Install raised toilet seat"
+          ]
+        }
+      },
+      "bedroom_main": {
+        "layout": "rectangular",
+        "dimensions": "12x14_feet",
+        "flooring": {
+          "type": "carpet",
+          "condition": "good",
+          "notes": "Low-pile carpet in good condition"
+        },
+        "bed": {
+          "type": "queen",
+          "height": "standard",
+          "accessibleFrom": "both_sides",
+          "transferDevices": false
+        },
+        "storage": {
+          "closet": {
+            "type": "walk_in",
+            "accessible": true,
+            "notes": "Most items within reach height"
+          },
+          "dresser": {
+            "height": "standard",
+            "accessible": true
+          }
+        },
+        "lighting": {
+          "adequate": true,
+          "controls": "accessible",
+          "notes": "Good overhead and task lighting"
+        },
+        "modifications": {
+          "required": [
+            "Install bed rails",
+            "Add bedside commode for nighttime use",
+            "Rearrange furniture for clear pathway",
+            "Install motion-sensor night lights"
+          ]
+        }
+      }
+    },
+    "safetyAssessment": {
+      "general": {
+        "lighting": {
+          "adequate": false,
+          "concerns": [
+            "Poor lighting on stairs",
+            "Dark hallways at night",
+            "Insufficient task lighting in kitchen"
+          ]
+        },
+        "electricalOutlets": {
+          "accessible": true,
+          "adequate": true,
+          "notes": "Outlets available at useful heights"
+        },
+        "flooring": {
+          "concerns": [
+            "Slippery bathroom tiles",
+            "Loose throw rugs in hallway",
+            "Transition strips between rooms need securing"
+          ]
+        },
+        "emergencyAccess": {
+          "exitPlans": "limited",
+          "concerns": [
+            "Stairs block main escape route",
+            "Back door difficult to access",
+            "No emergency alert system"
+          ]
+        }
+      },
+      "risks": {
+        "falls": {
+          "level": "high",
+          "factors": [
+            "Stairs to essential areas",
+            "Slippery bathroom surfaces",
+            "Poor lighting in key areas",
+            "Unsecured throw rugs"
+          ]
+        },
+        "fire": {
+          "level": "moderate",
+          "factors": [
+            "Kitchen layout requires reaching over stove",
+            "No accessible fire extinguisher",
+            "Limited escape routes"
+          ]
+        }
+      },
+      "modifications": {
+        "immediate": [
+          "Install additional lighting on stairs and hallways",
+          "Remove or secure throw rugs",
+          "Install grab bars in bathroom",
+          "Add non-slip surfaces in bathroom"
+        ],
+        "shortTerm": [
+          "Lower microwave to accessible height",
+          "Install pull-down shelving in kitchen",
+          "Add bed rails",
+          "Install additional handrails on stairs"
+        ],
+        "longTerm": [
+          "Consider stair lift installation",
+          "Bathroom renovation for walk-in shower",
+          "Modify kitchen for seated work areas"
+        ]
+      },
+      "recommendations": {
+        "equipment": [
+          "Shower chair",
+          "Raised toilet seat",
+          "Grab bars",
+          "Bed rails",
+          "Motion-sensor lights"
+        ],
+        "services": [
+          "Home modification assessment",
+          "Regular house cleaning service",
+          "Emergency alert system installation"
+        ],
+        "monitoring": "Monthly safety checks recommended for initial home modifications"
+      }
+    }
+  }
+}

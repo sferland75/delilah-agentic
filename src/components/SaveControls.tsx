@@ -1,172 +1,125 @@
 import React, { useRef } from 'react';
+import { useFormContext } from "react-hook-form";
 import { Button } from '@/components/ui/button';
-import { Save, Download, Upload, FileDown } from 'lucide-react';
-import { useForm } from '../context/FormContext';
-import { validateAssessmentData } from '../utils/validation';
+import { Save, Download, Upload, Loader2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { ClearFormButton } from './ui/ClearFormButton';
 import { ReportGenerationButton } from './ReportGeneration/components/ReportGenerationButton';
-import { migrateLegacyData } from '../utils/migrateLegacyData';
-import { mockAssessment } from '../testData/mockAssessment';
+import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
+import { assessmentSchema } from '@/lib/validation/assessment-schema';
+import { useAssessmentPersistence } from '@/hooks/useAssessmentPersistence';
 
-export const SaveControls: React.FC = () => {
-  const { formData, setFormData } = useForm();
+interface SaveControlsProps {
+  className?: string;
+}
+
+export const SaveControls: React.FC<SaveControlsProps> = ({ className }) => {
+  const { getValues, reset, formState: { isDirty, isValid } } = useFormContext<AssessmentFormData>();
+  const { saveAssessment, exportAssessment } = useAssessmentPersistence();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const validateAndSave = (data: any, exportType: 'current' | 'final'): boolean => {
-    const validation = validateAssessmentData(data);
-    if (!validation.valid) {
-      toast({
-        variant: "destructive",
-        title: "Cannot Save Assessment",
-        description: "Required data is missing: " + validation.errors.join(', ')
-      });
-      return false;
-    }
-    return true;
-  };
-
-  const loadMockAssessment = () => {
+  const validateForm = async (data: AssessmentFormData) => {
     try {
-      console.log('Loading mock assessment data');
-      console.log('Mock data:', JSON.stringify(mockAssessment, null, 2));
-      
-      if (!mockAssessment.functionalAssessment) {
-        console.warn('No functional assessment data in mock data');
-      } else {
-        console.log('Functional assessment data found:', 
-          JSON.stringify(mockAssessment.functionalAssessment, null, 2));
-      }
-
-      setFormData(mockAssessment);
-      
-      // Verify data was set
-      setTimeout(() => {
-        console.log('Form data after setting:', formData);
-        console.log('Functional assessment in form:', formData?.functionalAssessment);
-      }, 100);
-
-      toast({
-        title: "Test Data Loaded",
-        description: "Mock assessment data has been loaded successfully."
-      });
+      await assessmentSchema.parseAsync(data);
+      return { valid: true, errors: [] };
     } catch (error) {
-      console.error('Error loading mock data:', error);
-      toast({
-        variant: "destructive",
-        title: "Load Failed",
-        description: "Failed to load mock assessment data."
-      });
+      return {
+        valid: false,
+        errors: error.errors?.map((e: any) => e.message) || ['Invalid form data']
+      };
     }
   };
 
-  const handleFileLoad = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileLoad = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string;
-        const data = JSON.parse(content);
-        
-        // Migrate legacy data if needed
-        const migratedData = migrateLegacyData(data);
-        
-        // Set the form data
-        setFormData(migratedData);
-        
-        toast({
-          title: "Assessment Loaded",
-          description: "The assessment has been loaded successfully."
-        });
-      } catch (error) {
-        console.error('Error parsing assessment file:', error);
-        toast({
-          variant: "destructive",
-          title: "Load Failed",
-          description: "Failed to load the assessment file. Please check the file format."
-        });
+    setIsLoading(true);
+    try {
+      const content = await file.text();
+      const data = JSON.parse(content);
+      
+      // Validate the loaded data
+      const validation = await validateForm(data);
+      if (!validation.valid) {
+        throw new Error('Invalid assessment data: ' + validation.errors.join(', '));
       }
-    };
-    reader.readAsText(file);
-
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      
+      // Reset the form with the new data
+      reset(data);
+      
+      toast({
+        title: "Assessment Loaded",
+        description: "The assessment has been loaded successfully."
+      });
+    } catch (error) {
+      console.error('Error loading assessment file:', error);
+      toast({
+        variant: "destructive",
+        title: "Load Failed",
+        description: error instanceof Error ? error.message : "Failed to load the assessment file."
+      });
+    } finally {
+      setIsLoading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
-  const saveLocal = () => {
+  const handleSave = async () => {
+    setIsLoading(true);
     try {
-      if (!validateAndSave(formData, 'current')) return;
-
-      const timestamp = new Date().toISOString().split('T')[0];
-      const dataStr = JSON.stringify(formData, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+      const formData = getValues();
+      const validation = await validateForm(formData);
       
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `delilah_assessment_${timestamp}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (!validation.valid) {
+        throw new Error('Required data is missing: ' + validation.errors.join(', '));
+      }
 
-      toast({
-        title: "Assessment Saved",
-        description: "Your work has been saved successfully."
-      });
+      await saveAssessment();
+
     } catch (error) {
-      console.error('Error saving file:', error);
+      console.error('Error saving assessment:', error);
       toast({
         variant: "destructive",
         title: "Save Failed",
-        description: "There was an error saving your work. Please try again."
+        description: error instanceof Error ? error.message : "Failed to save the assessment."
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const exportFinalJSON = () => {
+  const handleExport = async () => {
+    setIsLoading(true);
     try {
-      const finalData = {
-        ...formData,
-        exportDate: new Date().toISOString(),
-        version: '1.0'
-      };
-
-      if (!validateAndSave(finalData, 'final')) return;
+      const formData = getValues();
+      const validation = await validateForm(formData);
       
-      const dataStr = JSON.stringify(finalData, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `delilah_final_assessment.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      if (!validation.valid) {
+        throw new Error('Required data is missing: ' + validation.errors.join(', '));
+      }
 
-      toast({
-        title: "Final Assessment Exported",
-        description: "Your assessment has been exported successfully."
-      });
+      await exportAssessment();
+
     } catch (error) {
-      console.error('Error exporting JSON:', error);
+      console.error('Error exporting assessment:', error);
       toast({
         variant: "destructive",
         title: "Export Failed",
-        description: "There was an error exporting your assessment. Please try again."
+        description: error instanceof Error ? error.message : "Failed to export the assessment."
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex gap-2">
+    <div className={`flex gap-2 ${className}`}>
       <input
         type="file"
         ref={fileInputRef}
@@ -175,43 +128,47 @@ export const SaveControls: React.FC = () => {
         className="hidden"
       />
 
-      {process.env.NODE_ENV === 'development' && <ClearFormButton />}
+      <ClearFormButton variant="outline" />
       
       <Button
         onClick={() => fileInputRef.current?.click()}
         variant="outline"
+        disabled={isLoading}
         className="flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
       >
-        <Upload className="h-4 w-4" />
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Upload className="h-4 w-4" />
+        )}
         Load Assessment
       </Button>
 
-      {process.env.NODE_ENV === 'development' && (
-        <Button
-          onClick={loadMockAssessment}
-          variant="outline"
-          className="flex items-center gap-2 border-purple-600 text-purple-600 hover:bg-purple-50"
-        >
-          <FileDown className="h-4 w-4" />
-          Load Test Data
-        </Button>
-      )}
-
       <Button
-        onClick={saveLocal}
+        onClick={handleSave}
+        disabled={!isDirty || !isValid || isLoading}
         className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
       >
-        <Save className="h-4 w-4" />
-        Save Current Work
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Save className="h-4 w-4" />
+        )}
+        Save Progress
       </Button>
       
       <Button
-        onClick={exportFinalJSON}
+        onClick={handleExport}
         variant="outline"
+        disabled={!isValid || isLoading}
         className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50"
       >
-        <Download className="h-4 w-4" />
-        Export Final JSON
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Download className="h-4 w-4" />
+        )}
+        Export Assessment
       </Button>
 
       <ReportGenerationButton />

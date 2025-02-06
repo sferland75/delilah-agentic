@@ -1,5 +1,42 @@
 import { FunctionalAssessmentData } from './functionalAssessment';
 
+// Independence level type
+export type IndependenceLevel = 
+  | 'independent'
+  | 'modified_independent'
+  | 'supervision'
+  | 'minimal_assistance'
+  | 'moderate_assistance'
+  | 'maximal_assistance'
+  | 'dependent';
+
+// Frequency type
+export type Frequency = 
+  | 'multiple_daily'
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'rarely';
+
+// Time taken type
+export type TimeTaken = 
+  | 'under_5min'
+  | '5_15min'
+  | '15_30min'
+  | '30_60min'
+  | 'over_60min';
+
+// Base interface for ADL entries
+export interface ADLEntry {
+  independence: IndependenceLevel;
+  usesAssistiveDevices?: boolean;
+  assistiveDevices?: string;
+  frequency?: Frequency;
+  timeTaken?: TimeTaken;
+  notes?: string;
+  lastAssessed?: string; // ISO format date string
+}
+
 // Interface definitions
 export interface Assessment {
   demographics: Demographics;
@@ -32,7 +69,6 @@ export interface Provider {
   focus: string;
 }
 
-// Rest of your existing interfaces remain unchanged
 export interface Demographics {
   emergencyContact: {
     name: string;
@@ -148,73 +184,60 @@ export interface Environmental {
 export interface ADL {
   basic: {
     bathing?: {
-      shower?: {
-        independence?: string;
-        notes?: string;
-      };
-      grooming?: {
-        independence?: string;
-        notes?: string;
-      };
-      oral_care?: {
-        independence?: string;
-        notes?: string;
-      };
+      shower?: ADLEntry;
+      grooming?: ADLEntry;
+      oral_care?: ADLEntry;
+      toileting?: ADLEntry;
     };
     dressing?: {
-      upper_body?: {
-        independence?: string;
-        notes?: string;
-      };
-      lower_body?: {
-        independence?: string;
-        notes?: string;
-      };
-      footwear?: {
-        independence?: string;
-        notes?: string;
-      };
+      upper_body?: ADLEntry;
+      lower_body?: ADLEntry;
+      footwear?: ADLEntry;
+    };
+    transfers?: {
+      bed_transfer?: ADLEntry;
+      toilet_transfer?: ADLEntry;
+      shower_transfer?: ADLEntry;
+      position_changes?: ADLEntry;
     };
     feeding?: {
-      eating?: {
-        notes?: string;
-      };
+      eating?: ADLEntry;
+      setup?: ADLEntry;
     };
-    transfers?: Record<string, {
-      independence?: string;
-      notes?: string;
-    }>;
   };
   iadl: {
     household?: {
-      cleaning?: {
-        independence?: string;
-        notes?: string;
-      };
-      home_maintenance?: {
-        independence?: string;
-        notes?: string;
-      };
+      cleaning?: ADLEntry;
+      laundry?: ADLEntry;
+      meal_prep?: ADLEntry;
+      home_maintenance?: ADLEntry;
     };
     community?: {
-      transportation?: {
-        independence?: string;
-        notes?: string;
-      };
-      shopping?: {
-        independence?: string;
-        notes?: string;
-      };
+      transportation?: ADLEntry;
+      shopping?: ADLEntry;
+      money_management?: ADLEntry;
+      navigation?: ADLEntry;
+    };
+  };
+  health?: {
+    management?: {
+      medications?: ADLEntry;
+      appointments?: ADLEntry;
+      monitoring?: ADLEntry;
+      exercise?: ADLEntry;
+    };
+    routine?: {
+      sleep?: ADLEntry;
+      stress?: ADLEntry;
+      nutrition?: ADLEntry;
     };
   };
   work?: {
     status?: {
-      current_status?: {
-        notes?: string;
-      };
-      barriers?: {
-        notes?: string;
-      };
+      current_status?: ADLEntry;
+      workplace_accommodations?: ADLEntry;
+      training_needs?: ADLEntry;
+      barriers?: ADLEntry;
     };
   };
 }

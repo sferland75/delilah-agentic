@@ -1,119 +1,118 @@
-# Form Integration Task Prompt
+# Integration Task: Environmental Section Debug
 
 ## Overview
-All report generation templates and tests are complete (45 passing tests). Your task is to integrate this into our form application. The main challenge is bridging our form state to the report generation system while maintaining type safety and error handling.
+Environmental section components have been updated but are not rendering. Need to investigate and fix rendering issues while maintaining data integrity.
 
-## Key Files to Review
-```
-src/
-├── components/ReportGeneration/     # ✅ Tested and ready
-│   ├── services/
-│   │   └── templates/              # All report sections
-│   └── utils/
-│       └── formTransformer.ts      # Form data conversion
-└── types/
-    └── assessment.ts               # Required data structure
-```
-
-## Main Tasks
-
-1. **Add Report Generation Button**
-- Location: Bottom of assessment form
-- State: Disabled until form is valid
-- Loading state while generating
-- Error feedback on issues
-
-2. **Connect Form Data**
+## Current Structure
 ```typescript
-// Example flow
-const handleGenerateReport = async () => {
-  const formData = getFormValues();
-  const isValid = validateFormData(formData);
-  
-  if (!isValid) {
-    // Show validation UI
-    return;
-  }
-
-  const assessmentData = transformFormToAssessment(formData);
-  const report = await generateReport(assessmentData);
-};
+interface EnvironmentalSection {
+  propertyOverview: {
+    type: string;
+    layout: string;
+    access: {
+      exterior: PropertyAccess;
+      interior: PropertyAccess & {
+        hasStairs: boolean;
+        numberOfStairs: number;
+      };
+    };
+    generalCondition: string;
+    primaryConcerns: string[];
+  };
+  roomAssessment: {
+    kitchen: RoomBase & KitchenDetails;
+    bathroom_main: RoomBase & BathroomDetails;
+    bedroom_main: RoomBase & BedroomDetails;
+  };
+  safetyAssessment: {
+    general: GeneralSafety;
+    risks: RiskAssessment;
+    modifications: ModificationPlan;
+    recommendations: Recommendations;
+  };
+}
 ```
 
-3. **Progress UI**
-- Show which sections are generating
-- Display overall progress
-- Allow cancellation
-- Save partial progress
+## Debug Steps
 
-## Example Integration
-```typescript
-import { transformFormToAssessment, validateFormData } from './ReportGeneration/utils/formTransformer';
-import { ReportGenerator } from './ReportGeneration/services/reportTemplateSystem';
+1. **Form Context Verification**
+   ```typescript
+   const { watch } = useFormContext();
+   console.log('Environmental Data:', watch('environmental'));
+   ```
 
-const AssessmentForm = () => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
-  
-  // Add to your existing form
-  return (
-    <form>
-      {/* Existing form fields */}
-      
-      <ReportDialog
-        open={isGenerating}
-        progress={progress}
-        onCancel={() => setIsGenerating(false)}
-      />
-      
-      <Button
-        onClick={handleGenerateReport}
-        disabled={!formState.isValid || isGenerating}
-      >
-        Generate Report
-      </Button>
-    </form>
-  );
-};
-```
+2. **Component Loading Check**
+   ```typescript
+   useEffect(() => {
+     console.log('Environmental Component Mounted');
+     // Check initial values
+   }, []);
+   ```
 
-## Testing Focus
-- Form validation ↔ AssessmentData conversion
-- Progress UI states
-- Error handling
-- Cancel/retry flows
+3. **Data Structure Validation**
+   ```typescript
+   const validateEnvironmentalData = (data: any): boolean => {
+     // Add validation logic
+     return true;
+   };
+   ```
+
+## Implementation Notes
+
+1. **JSON Structure**
+   - Environmental section should be root level
+   - Remove duplicate ADL section
+   - Ensure proper nesting of objects
+
+2. **Component Hierarchy**
+   ```
+   Form
+   └── EnvironmentalSection
+       ├── PropertyOverview
+       ├── RoomAssessment
+       └── SafetyAssessment
+   ```
+
+3. **Form Paths**
+   - Use consistent prefix: 'environmental'
+   - Match JSON structure exactly
+   - Validate path existence
+
+## Testing Approach
+
+1. **Component Tests**
+   ```typescript
+   describe('EnvironmentalSection', () => {
+     it('should render with empty data', () => {});
+     it('should render with mock data', () => {});
+     it('should handle form updates', () => {});
+   });
+   ```
+
+2. **Integration Tests**
+   - Verify form context integration
+   - Check data flow
+   - Validate rendering sequence
+
+## Implementation Checklist
+
+- [ ] Add debug logging
+- [ ] Verify JSON structure
+- [ ] Test form context integration
+- [ ] Validate component mounting
+- [ ] Add error boundaries
+- [ ] Implement loading states
+- [ ] Add data validation
+- [ ] Create test suite
 
 ## Resources
-1. Test suite examples in `__tests__/` directories
-2. Type definitions in assessment.ts
-3. Existing transformations in formTransformer.ts
+1. Form context documentation
+2. Component specifications
+3. Test suite examples
+4. JSON schema validation tools
 
-## Next Steps
-1. Start with button UI + basic validation
-2. Add progress dialog
-3. Implement data transformation
-4. Add error handling
-5. Write integration tests
-
-## Notes
-- Report generation can take 30s+ for full assessment
-- Save partial results
-- Handle network issues gracefully
-- Test with incomplete form data
-- Consider mobile layout
-
-## Questions?
-Reach out to team about:
-- Form state structure questions
-- API credentials
-- UI component library usage
-- Testing setup
-
-## Definition of Done
-- [ ] Report button integrated in form
-- [ ] Progress UI implemented
-- [ ] Error handling complete
-- [ ] Form validation working
-- [ ] Integration tests passing
-- [ ] Type safety maintained
-- [ ] Mobile layout working
+## Questions to Address
+1. Is environmental data loading in form context?
+2. Are components mounting in correct order?
+3. Is JSON structure valid and complete?
+4. Are form paths correctly mapped?

@@ -11,53 +11,89 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown } from "lucide-react";
-import { emotionalSymptomCategories } from '@/lib/validation/symptom-schema';
 
-// Define the static information about emotional symptoms
 const emotionalSymptoms = {
-  emotional_control: {
-    title: "Emotional Control",
+  post_traumatic: {
+    title: "Post-Traumatic Stress Symptoms",
     symptoms: [
-      { id: "depression", label: "Depression" },
-      { id: "anxiety", label: "Anxiety" },
-      { id: "mood_swings", label: "Mood Swings" },
-      { id: "irritability", label: "Irritability" },
-      { id: "emotional_lability", label: "Emotional Lability" },
-      { id: "impulsivity", label: "Emotional Impulsivity" },
-      { id: "aggression", label: "Aggression/Agitation" },
-      { id: "emotional_numbness", label: "Emotional Numbness" }
+      { id: "flashbacks", label: "Flashbacks/Intrusive memories of accident" },
+      { id: "driving_avoidance", label: "Avoidance of driving/being in vehicles" },
+      { id: "traffic_anxiety", label: "Anxiety in traffic situations" },
+      { id: "startle_response", label: "Heightened startle response (esp. to traffic sounds)" },
+      { id: "accident_nightmares", label: "Nightmares/night terrors about accident" },
+      { id: "hyper_vigilance", label: "Hypervigilance while in vehicles/traffic" },
+      { id: "dissociation", label: "Dissociative episodes/feeling detached" },
+      { id: "panic_attacks", label: "Panic attacks related to travel/vehicles" }
     ]
   },
-  motivation: {
-    title: "Motivation and Drive",
+  anxiety: {
+    title: "Anxiety and Stress",
     symptoms: [
-      { id: "apathy", label: "Apathy" },
-      { id: "reduced_motivation", label: "Reduced Motivation" },
-      { id: "anhedonia", label: "Loss of Interest/Pleasure" },
-      { id: "initiative", label: "Reduced Initiative" }
+      { id: "generalized_anxiety", label: "Generalized anxiety/constant worry" },
+      { id: "health_anxiety", label: "Anxiety about injuries/recovery" },
+      { id: "anticipatory_anxiety", label: "Anticipatory anxiety about appointments/travel" },
+      { id: "social_anxiety", label: "Social anxiety/withdrawal" },
+      { id: "agoraphobia", label: "Fear of leaving home/safe spaces" },
+      { id: "catastrophic_thinking", label: "Catastrophic thinking about future" },
+      { id: "medical_anxiety", label: "Anxiety about medical procedures" },
+      { id: "control_loss", label: "Anxiety about loss of control" }
     ]
   },
-  social: {
-    title: "Social-Emotional",
+  depression: {
+    title: "Depression and Mood",
     symptoms: [
-      { id: "social_withdrawal", label: "Social Withdrawal" },
-      { id: "relationship_changes", label: "Changes in Relationships" },
-      { id: "empathy", label: "Changes in Empathy" },
-      { id: "social_anxiety", label: "Social Anxiety" }
+      { id: "depressed_mood", label: "Persistent low/depressed mood" },
+      { id: "anhedonia", label: "Loss of interest/pleasure in activities" },
+      { id: "hopelessness", label: "Feelings of hopelessness about recovery" },
+      { id: "worthlessness", label: "Feelings of worthlessness/low self-worth" },
+      { id: "grief", label: "Grief over life changes/losses" },
+      { id: "sleep_changes", label: "Sleep disturbances/changes" },
+      { id: "appetite_changes", label: "Changes in appetite/eating patterns" },
+      { id: "suicidal_thoughts", label: "Thoughts of death/suicide" }
     ]
   },
-  regulation: {
-    title: "Self-Awareness and Regulation",
+  behavioral_changes: {
+    title: "Behavioral Changes",
     symptoms: [
-      { id: "self_monitoring", label: "Difficulty Monitoring Emotions" },
-      { id: "coping", label: "Poor Coping Skills" },
-      { id: "emotional_awareness", label: "Reduced Emotional Awareness" },
-      { id: "self_regulation", label: "Difficulty Self-Regulating" }
+      { id: "irritability", label: "Increased irritability/short temper" },
+      { id: "impulsivity", label: "Impulsive behavior/poor control" },
+      { id: "agitation", label: "Restlessness/agitation" },
+      { id: "emotional_lability", label: "Emotional lability/mood swings" },
+      { id: "aggression", label: "Increased aggression/hostility" },
+      { id: "apathy", label: "Apathy/loss of motivation" },
+      { id: "disinhibition", label: "Social disinhibition" },
+      { id: "personality_changes", label: "Personality changes noted by others" }
+    ]
+  },
+  relationship_impact: {
+    title: "Relationship and Social Impact",
+    symptoms: [
+      { id: "isolation", label: "Social isolation/withdrawal" },
+      { id: "dependency", label: "Increased dependency on others" },
+      { id: "relationship_strain", label: "Strain on relationships/marriage" },
+      { id: "communication", label: "Difficulty communicating needs" },
+      { id: "role_changes", label: "Distress over role changes in family" },
+      { id: "intimacy", label: "Changes in intimate relationships" },
+      { id: "social_support", label: "Difficulty accepting help/support" },
+      { id: "work_relationships", label: "Impact on work relationships" }
+    ]
+  },
+  self_concept: {
+    title: "Self-Concept and Identity",
+    symptoms: [
+      { id: "identity_changes", label: "Changes in sense of self/identity" },
+      { id: "body_image", label: "Negative changes in body image" },
+      { id: "self_esteem", label: "Decreased self-esteem" },
+      { id: "guilt", label: "Guilt/self-blame about accident" },
+      { id: "confidence", label: "Loss of confidence in abilities" },
+      { id: "future_plans", label: "Uncertainty about future plans" },
+      { id: "independence", label: "Loss of independence impact" },
+      { id: "disability_adjustment", label: "Difficulty adjusting to disability" }
     ]
   }
 };
 
-export function EmotionalSymptoms() {
+const EmotionalSymptoms = () => {
   const { setValue, watch } = useFormContext();
   const watchSymptoms = watch('symptoms.emotional') || {};
   const [openSections, setOpenSections] = React.useState<string[]>([]);
@@ -73,8 +109,11 @@ export function EmotionalSymptoms() {
   const handleSymptomChange = (symptomId: string, checked: boolean) => {
     setValue(`symptoms.emotional.${symptomId}`, {
       present: checked,
-      severity: checked ? 5 : 0, // Default to middle severity when checked
-      notes: watchSymptoms[symptomId]?.notes || ""
+      severity: checked ? 5 : 0,
+      notes: watchSymptoms[symptomId]?.notes || "",
+      onset: watchSymptoms[symptomId]?.onset || "post_accident",
+      frequency: watchSymptoms[symptomId]?.frequency || "intermittent",
+      impact: watchSymptoms[symptomId]?.impact || ""
     }, { 
       shouldDirty: true,
       shouldValidate: true
@@ -119,7 +158,13 @@ export function EmotionalSymptoms() {
                 <div className="space-y-6">
                   <div className="space-y-4">
                     {symptoms.map((symptom) => {
-                      const symptomValue = watchSymptoms[symptom.id] || { present: false, severity: 0, notes: "" };
+                      const symptomValue = watchSymptoms[symptom.id] || { 
+                        present: false, 
+                        severity: 0, 
+                        notes: "",
+                        onset: "post_accident",
+                        frequency: "intermittent"
+                      };
                       return (
                         <div key={symptom.id} className="space-y-2">
                           <div className="flex items-center space-x-2">
@@ -153,9 +198,9 @@ export function EmotionalSymptoms() {
                               </div>
                               
                               <div className="space-y-2">
-                                <Label className="text-sm">Examples/Observations</Label>
+                                <Label className="text-sm">Impact on Function</Label>
                                 <Textarea
-                                  placeholder="Provide specific examples or clinical observations..."
+                                  placeholder="Describe frequency, triggers, and impact on activities of daily living..."
                                   className="h-20"
                                   value={symptomValue.notes || ""}
                                   onChange={(e) => handleNotesChange(symptom.id, e.target.value)}
@@ -169,9 +214,9 @@ export function EmotionalSymptoms() {
                   </div>
 
                   <div className="space-y-2 pt-4 border-t">
-                    <Label>Category Observations</Label>
+                    <Label>Impairment Summary</Label>
                     <Textarea
-                      placeholder={`Additional observations about ${title.toLowerCase()}...`}
+                      placeholder={`Document overall functional impact and impairment related to ${title.toLowerCase()}...`}
                       className="h-24"
                       value={watchSymptoms[`${category}_observations`] || ""}
                       onChange={(e) => setValue(
@@ -190,30 +235,17 @@ export function EmotionalSymptoms() {
       
       <Card>
         <CardHeader>
-          <CardTitle>General Emotional/Behavioral Notes</CardTitle>
+          <CardTitle>Overall Psychological/Emotional Impairment Summary</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent>
           <div className="space-y-2">
-            <Label>Mood Observations</Label>
+            <Label>Clinical Assessment & Functional Impact</Label>
             <Textarea
-              placeholder="Overall observations about emotional and mood patterns..."
+              placeholder="Document overall psychological/emotional impairment level and impact on function..."
               className="min-h-[100px]"
-              value={watchSymptoms.mood_observations || ""}
+              value={watchSymptoms.clinical_impression || ""}
               onChange={(e) => setValue(
-                'symptoms.emotional.mood_observations',
-                e.target.value,
-                { shouldDirty: true }
-              )}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>General Observations</Label>
-            <Textarea
-              placeholder="Overall observations about emotional and behavioral function, patterns noticed, or additional symptoms not covered above..."
-              className="min-h-[100px]"
-              value={watchSymptoms.general_observations || ""}
-              onChange={(e) => setValue(
-                'symptoms.emotional.general_observations',
+                'symptoms.emotional.clinical_impression',
                 e.target.value,
                 { shouldDirty: true }
               )}
@@ -223,4 +255,6 @@ export function EmotionalSymptoms() {
       </Card>
     </div>
   );
-}
+};
+
+export default EmotionalSymptoms;

@@ -1,19 +1,37 @@
 import React from 'react';
-import { useForm } from '../context/FormContext';
+import { useFormWithAutosave } from '@/hooks/useFormWithAutosave';
+import { useAssessmentPersistence } from '@/hooks/useAssessmentPersistence';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Save, Download, Trash2 } from 'lucide-react';
+import { CheckCircle2, Loader2, Save, Download, Trash2 } from 'lucide-react';
 
-export const AutoSaveStatus: React.FC = () => {
-  const { lastSaved, saveToJSON, clearDraft } = useForm();
+interface AutoSaveStatusProps {
+  className?: string;
+}
+
+export const AutoSaveStatus: React.FC<AutoSaveStatusProps> = ({ className }) => {
+  const { isSaving, lastSaved } = useFormWithAutosave();
+  const { clearAssessment, exportAssessment } = useAssessmentPersistence();
 
   return (
-    <Card className="fixed bottom-4 right-4 flex items-center gap-4 bg-white/90 backdrop-blur shadow-lg p-4 z-50">
-      <div className="text-sm text-slate-600">
-        {lastSaved ? (
-          <>Last saved: {new Date(lastSaved).toLocaleTimeString()}</>
+    <Card className={`flex items-center gap-4 bg-white/90 backdrop-blur p-4 ${className}`}>
+      <div className="flex items-center gap-2">
+        {isSaving ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Saving...</span>
+          </>
         ) : (
-          'No saved draft'
+          <>
+            <CheckCircle2 className="h-4 w-4 text-green-500" />
+            <span className="text-sm text-muted-foreground">
+              {lastSaved ? (
+                `Last saved: ${lastSaved.toLocaleTimeString()}`
+              ) : (
+                'All changes saved'
+              )}
+            </span>
+          </>
         )}
       </div>
       
@@ -21,11 +39,21 @@ export const AutoSaveStatus: React.FC = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={clearDraft}
-          className="flex items-center gap-2 text-red-600 hover:text-red-700"
+          onClick={() => exportAssessment()}
+          className="flex items-center gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => clearAssessment()}
+          className="flex items-center gap-2 text-destructive hover:text-destructive"
         >
           <Trash2 className="h-4 w-4" />
-          Clear Draft
+          Clear
         </Button>
       </div>
     </Card>

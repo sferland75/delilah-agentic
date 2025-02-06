@@ -1,79 +1,99 @@
-# Next Development Phase: ADL Section Restoration
-
-## Context
-We're working on the Delilah medico-legal report generation system. We've just completed the environmental assessment section with full data integration and visualization. The next phase involves restoring and enhancing the Activities of Daily Living (ADL) section.
+# Next Development Steps: Form-Based Assessment Data Collection
 
 ## Current Status
-- All previous sections (personal, medical, functional, ROM/MMT, environmental) are working
-- Form context system is fully functional
-- Mock data structure is well-established
-- Component architecture is standardized
+Moving to form-based data collection, eliminating mock data in favor of real user input through the assessment form interface.
 
-## Repository Location
-- Main repository: d:\delilah
-- ADL components expected in: src/components/ADLSection
+## Implementation Strategy
+
+### Phase 1: Form Data Collection
+1. [ ] Ensure all form sections are properly connected
+   - Initial Information
+   - Medical History
+   - Symptoms Assessment
+   - Typical Day Assessment
+   - Functional Assessment
+   - Environmental Assessment
+   - ADL Assessment
+
+2. [ ] Implement form validation
+   - Required fields
+   - Data type validation
+   - Cross-field validation
+   - Section completion tracking
+
+3. [ ] Setup data export functionality
+   - JSON structure export
+   - Form state persistence
+   - Auto-save functionality
+   - Export format validation
+
+### Phase 2: Data Processing
+1. [ ] Create data transformation layer
+   - Form data to assessment model
+   - Validation checks
+   - Data normalization
+   - Error handling
+
+2. [ ] Implement save/export features
+   - Local storage integration
+   - JSON file export
+   - Data versioning
+   - Backup functionality
+
+### Phase 3: Report Generation Integration
+1. [ ] Map form fields to report sections
+2. [ ] Create report templates
+3. [ ] Implement draft report generation
+4. [ ] Add report customization options
+
+## Technical Requirements
+1. Form State Management
+   - Use React Hook Form
+   - Implement form context
+   - Setup field validation
+   - Handle conditional fields
+
+2. Data Processing
+   - Type-safe transformations
+   - Data validation
+   - Error handling
+   - Format consistency
+
+3. Export Functionality
+   - JSON structure
+   - File handling
+   - Error recovery
+   - Version control
 
 ## Immediate Tasks
+1. [ ] Update form components to handle direct input
+2. [ ] Implement section-by-section validation
+3. [ ] Create JSON export functionality
+4. [ ] Setup automated saving system
+5. [ ] Create data transformation layer
+6. [ ] Update test suite for new approach
 
-1. Component Recovery
-   - Locate existing ADL components in the codebase
-   - Review their structure and functionality
-   - Identify any missing features
+## Testing Strategy
+1. Form Validation
+   - Field-level validation
+   - Section completion checks
+   - Cross-field validation
+   - Error messaging
 
-2. Data Structure
-   - Define comprehensive ADL assessment structure
-   - Include activity categories
-   - Add independence levels
-   - Include assistance requirements
-   - Track modifications/adaptations
+2. Data Processing
+   - Transform accuracy
+   - Error handling
+   - Edge cases
+   - Performance testing
 
-3. Integration Requirements
-   - Ensure proper form context integration
-   - Match data structure with form fields
-   - Maintain consistency with other sections
-   - Add necessary validation
+3. Export Functions
+   - File generation
+   - Data integrity
+   - Error recovery
+   - Format validation
 
-4. Mock Data Updates
-   - Enhance ADL section in mock data
-   - Include realistic assessment scenarios
-   - Add comprehensive activity details
-   - Match field structure exactly
-
-## Key Components to Review/Create
-1. ADL Overview
-2. Activity Assessment
-3. Independence Evaluation
-4. Modification Tracking
-5. Assistance Requirements
-
-## Technical Considerations
-- Follow existing form context pattern
-- Match component structure of other sections
-- Use shadcn/ui components
-- Maintain consistent styling
-- Update types as needed
-
-## Future Enhancements
-1. Visual activity tracking
-2. Progress indicators
-3. Comparative analysis
-4. Historical tracking
-
-## Documentation Needs
-1. Component documentation
-2. Data structure documentation
-3. Integration notes
-4. Usage examples
-
-## Resources
-- Existing components in src/components
-- Form context implementation
-- Environmental section as reference
-- Mock data structure
-
-## Getting Started
-1. Review this document
-2. Locate existing ADL components
-3. Create component plan
-4. Update mock data
-5. Implement step by step
+## Resources Needed
+1. Form validation requirements
+2. Field mapping documentation
+3. Report generation specifications
+4. Output format requirements

@@ -19,8 +19,16 @@
         "type": "Pain",
         "severity": "7/10",
         "frequency": "Constant",
-        "aggravating": ["Prolonged sitting", "Bending", "Lifting"],
-        "relieving": ["Rest", "Ice", "Pain medication"],
+        "aggravating": [
+          "Prolonged sitting",
+          "Bending",
+          "Lifting"
+        ],
+        "relieving": [
+          "Rest",
+          "Ice",
+          "Pain medication"
+        ],
         "description": "Sharp, constant pain in lower back, worse with movement",
         "additional": "Pain radiates down left leg at times"
       },
@@ -29,8 +37,16 @@
         "type": "Pain and Stiffness",
         "severity": "5/10",
         "frequency": "Intermittent",
-        "aggravating": ["Walking", "Stairs", "Standing from seated position"],
-        "relieving": ["Rest", "Elevation", "Ice"],
+        "aggravating": [
+          "Walking",
+          "Stairs",
+          "Standing from seated position"
+        ],
+        "relieving": [
+          "Rest",
+          "Elevation",
+          "Ice"
+        ],
         "description": "Dull ache with occasional sharp pain during movement",
         "additional": "Swelling by end of day"
       }
@@ -121,7 +137,7 @@
         "notes": "Significantly modified schedule to accommodate pain levels and medical appointments"
       }
     }
-  },
+  }, 
   "functionalAssessment": {
     "tolerances": {
       "Standing": {
@@ -168,36 +184,6 @@
         "painLevel": 7,
         "limitations": "Significant difficulty bending forward. Limited by low back pain",
         "adaptations": "Use of grabber tool, knee bend instead of waist bend when possible, raise work height"
-      },
-      "Kneeling": {
-        "painLevel": 8,
-        "limitations": "Unable to kneel on left knee, limited on right. Pain in both knees with pressure",
-        "adaptations": "Use of kneeling pad when necessary, alternative positions such as squatting or sitting"
-      },
-      "Crouching": {
-        "painLevel": 7,
-        "limitations": "Limited ability to maintain squatting position. Pain in knees and low back",
-        "adaptations": "Use of low stool or chair instead of crouching, reorganize work areas to avoid low positions"
-      },
-      "Reaching": {
-        "painLevel": 5,
-        "limitations": "Overhead reaching increases back pain. Difficulty with sustained reaching",
-        "adaptations": "Use of step stool to bring items closer, rearrangement of commonly used items to waist height"
-      },
-      "Handling": {
-        "painLevel": 4,
-        "limitations": "Mild difficulty with larger objects. Some limitation with grip strength",
-        "adaptations": "Two-handed techniques for heavier items, use of grip aids when needed"
-      },
-      "Fingering": {
-        "painLevel": 2,
-        "limitations": "Minimal limitations with fine motor tasks. Occasional stiffness",
-        "adaptations": "Regular stretching breaks, ergonomic tools when available"
-      },
-      "Feeling": {
-        "painLevel": 2,
-        "limitations": "Minimal limitations with tactile tasks. No significant impairment",
-        "adaptations": "No specific adaptations required"
       }
     },
     "rangeOfMotion": {
@@ -267,5 +253,300 @@
     ],
     "followUpNeeded": true,
     "followUpNotes": "Monitor progress with physiotherapy and reassess work tolerances"
+   },
+  "environmental": {
+    "propertyOverview": {
+      "propertyType": "Single Family Home",
+      "layoutDescription": "Single story ranch-style home with open floor plan. All living areas on ground level.",
+      "access": {
+        "exterior": {
+          "description": "Level driveway with concrete walkway to entrance. Well-lit with motion sensors. No steps to entrance."
+        },
+        "interior": {
+          "description": "Wide hallways (36\"+), standard doorways (32-34\"). No interior stairs. Open floor plan with good clearance.",
+          "hasStairs": false,
+          "numberOfStairs": 0
+        }
+      },
+      "recommendedModifications": [
+        "Install grab bars in bathroom",
+        "Add anti-slip mats in bathroom",
+        "Consider raised toilet seat",
+        "Install handrails in hallway"
+      ],
+      "identifiedHazards": [
+        "Throw rugs in living room could be trip hazard",
+        "Shower threshold requires stepping over",
+        "Limited lighting in hallway at night"
+      ]
+    },
+    "safety": {
+      "hazards": [
+        "Uneven Surfaces",
+        "Poor Lighting",
+        "Limited Accessibility"
+      ],
+      "concerns": "Client reports difficulty accessing shower and toilet. Nighttime navigation in hallways poses increased fall risk due to limited lighting. Some throw rugs present trip hazards.",
+      "recommendations": "Immediate recommendations include removing or securing throw rugs, installing motion-activated night lights in hallways, and adding grab bars in bathroom. Consider installing handrails in main hallway and raised toilet seat for improved safety and independence."
+    }
+  },
+  "adl": {
+    "basicADL": {
+      "feeding": {
+        "independence": "Modified Independent",
+        "assistance": "Setup/Cleanup only",
+        "equipment": ["Built-up utensils", "Non-slip mat"],
+        "notes": "Able to feed self with adaptive equipment. Some difficulty with cutting food."
+      },
+      "dressing": {
+        "independence": "Modified Independent",
+        "assistance": "Minimal",
+        "equipment": ["Button hook", "Long-handled shoe horn"],
+        "notes": "Needs help with buttons and socks. Can manage most clothing independently."
+      },
+      "bathing": {
+        "independence": "Modified Independent",
+        "assistance": "Standby",
+        "equipment": ["Shower chair", "Hand-held shower", "Grab bars"],
+        "notes": "Requires standby assistance for safety. Uses shower chair and grab bars."
+      },
+      "toileting": {
+        "independence": "Modified Independent",
+        "assistance": "Minimal",
+        "equipment": ["Raised toilet seat", "Grab bars"],
+        "notes": "Uses raised toilet seat with grab bars. Occasionally needs help with clothing adjustment."
+      },
+      "transferring": {
+        "independence": "Modified Independent",
+        "assistance": "Supervision",
+        "equipment": ["Transfer board", "Bed rail"],
+        "notes": "Supervision needed for safety during transfers. Uses bed rail for support."
+      },
+      "mobility": {
+        "independence": "Modified Independent",
+        "assistance": "Standby",
+        "equipment": ["Walker", "Cane"],
+        "notes": "Uses walker for longer distances, cane in home. Requires standby assistance on stairs."
+      }
+    },
+    "instrumentalADL": {
+      "mealPrep": {
+        "independence": "Modified Independent",
+        "assistance": "Setup",
+        "equipment": ["Kitchen trolley", "Electric can opener"],
+        "notes": "Can prepare simple meals. Difficulty with heavy pots and prolonged standing."
+      },
+      "housekeeping": {
+        "independence": "Modified Independent",
+        "assistance": "Moderate",
+        "equipment": ["Long-handled duster", "Grabber"],
+        "notes": "Can manage light housekeeping. Needs help with heavy cleaning and high reaches."
+      },
+      "laundry": {
+        "independence": "Modified Independent",
+        "assistance": "Minimal",
+        "equipment": ["Rolling laundry cart"],
+        "notes": "Can do laundry but needs help carrying basket up/down stairs."
+      },
+      "transportation": {
+        "independence": "Modified Independent",
+        "assistance": "Minimal",
+        "equipment": ["Car transfer handle", "Swivel seat cushion"],
+        "notes": "Can drive but avoids long distances. Uses adaptations for car transfers."
+      },
+      "shopping": {
+        "independence": "Modified Independent",
+        "assistance": "Minimal",
+        "equipment": ["Shopping cart", "Grabber"],
+        "notes": "Can shop for essentials. Difficulty with heavy items and reaching high shelves."
+      },
+      "medications": {
+        "independence": "Independent",
+        "assistance": "Setup only",
+        "equipment": ["Pill organizer", "Automatic reminders"],
+        "notes": "Manages medications independently with organizer. No errors reported."
+      },
+      "finances": {
+        "independence": "Independent",
+        "assistance": "None",
+        "equipment": ["Online banking", "Bill pay services"],
+        "notes": "Manages finances independently. Uses online services to minimize paper handling."
+      }
+    },
+    "healthManagement": {
+      "appointments": {
+        "independence": "Modified Independent",
+        "assistance": "Scheduling only",
+        "equipment": ["Calendar app", "Reminder system"],
+        "notes": "Manages medical appointments with electronic reminders. Family helps with scheduling."
+      },
+      "exerciseRoutine": {
+        "independence": "Modified Independent",
+        "assistance": "Setup/Supervision",
+        "equipment": ["Exercise bands", "Ankle weights"],
+        "notes": "Follows home exercise program. Needs supervision for new exercises."
+      },
+      "painManagement": {
+        "independence": "Independent",
+        "assistance": "None",
+        "equipment": ["TENS unit", "Ice/heat packs"],
+        "notes": "Uses combination of medication and modalities effectively. Good understanding of pain management strategies."
+      },
+      "symptomMonitoring": {
+        "independence": "Independent",
+        "assistance": "None",
+        "equipment": ["Blood pressure monitor", "Pain diary"],
+        "notes": "Tracks symptoms daily. Reports changes appropriately to healthcare team."
+      }
+    }
+  },
+  "healthStatus": {
+    "generalHealth": {
+      "currentStatus": "Stable with ongoing management",
+      "trends": "Gradual improvement with treatment adherence",
+      "concerns": [
+        "Pain management",
+        "Activity tolerance",
+        "Sleep quality"
+      ]
+    },
+    "painManagement": {
+      "currentLevel": "5-7/10",
+      "pattern": "Increases with activity, improved with rest",
+      "triggers": [
+        "Prolonged sitting",
+        "Static postures",
+        "Lifting activities",
+        "End of day fatigue"
+      ],
+      "managementStrategies": {
+        "medications": [
+          "Regular pain medication schedule",
+          "PRN for breakthrough pain",
+          "Evening muscle relaxant"
+        ],
+        "physical": [
+          "Regular position changes",
+          "Ice/heat application",
+          "Gentle stretching",
+          "Prescribed exercises"
+        ],
+        "behavioral": [
+          "Pacing strategies",
+          "Sleep hygiene",
+          "Stress management techniques"
+        ]
+      },
+      "effectiveness": "Moderate control with current regime"
+    },
+    "sleepPatterns": {
+      "quality": "Fair",
+      "duration": "6-7 hours",
+      "disruptions": [
+        "Pain with position changes",
+        "Difficulty finding comfortable position",
+        "Early morning stiffness"
+      ],
+      "management": [
+        "Sleep positioning devices",
+        "Evening relaxation routine",
+        "Consistent sleep schedule"
+      ]
+    },
+    "energyLevels": {
+      "pattern": "Variable throughout day",
+      "peakTimes": "Mid-morning",
+      "lowPoints": "Late afternoon",
+      "management": [
+        "Strategic activity scheduling",
+        "Regular rest breaks",
+        "Energy conservation techniques"
+      ]
+    },
+    "stressManagement": {
+      "currentStressors": [
+        "Recovery progression",
+        "Work responsibilities",
+        "Financial concerns"
+      ],
+      "copingStrategies": [
+        "Deep breathing exercises",
+        "Progressive muscle relaxation",
+        "Regular social support",
+        "Professional counseling"
+      ],
+      "effectiveness": "Developing improved coping skills"
+    }
+  },
+  "workStatus": {
+    "currentStatus": {
+      "employmentType": "Modified Return to Work",
+      "hours": "20 hours/week",
+      "schedule": "4-hour shifts, 3 days per week",
+      "position": "Office Administrator",
+      "duties": [
+        "Data entry",
+        "Filing",
+        "Phone support",
+        "Document processing"
+      ],
+      "modifications": {
+        "workstation": [
+          "Ergonomic chair",
+          "Sit-stand desk",
+          "Document holder",
+          "Footrest"
+        ],
+        "schedule": [
+          "Flexible start times",
+          "Extended breaks",
+          "Work from home options"
+        ],
+        "duties": [
+          "No lifting over 10 lbs",
+          "No prolonged standing",
+          "No repetitive bending",
+          "Regular position changes"
+        ]
+      }
+    },
+    "barriers": {
+      "physical": [
+        "Limited sitting tolerance (30 min max)",
+        "Difficulty with prolonged computer use",
+        "Pain with static postures",
+        "Limited lifting capacity"
+      ],
+      "environmental": [
+        "Workstation setup requirements",
+        "Need for frequent position changes",
+        "Access to rest area"
+      ],
+      "cognitive": [
+        "Pain interference with concentration",
+        "Medication side effects",
+        "Fatigue management"
+      ]
+    },
+    "goals": {
+      "shortTerm": [
+        "Increase to 6-hour shifts within 4 weeks",
+        "Expand task variety",
+        "Improve workstation ergonomics"
+      ],
+      "longTerm": [
+        "Return to full-time hours within 3 months",
+        "Resume majority of pre-injury duties",
+        "Maintain sustainable work-life balance"
+      ]
+    },
+    "followUp": {
+      "scheduled": "2024-02-15",
+      "type": "Progress review",
+      "focus": [
+        "Work tolerance assessment",
+        "Accommodation effectiveness",
+        "Goal progression"
+      ]
+    }
   }
-}

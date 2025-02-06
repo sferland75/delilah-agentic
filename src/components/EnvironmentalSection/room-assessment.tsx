@@ -1,41 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from 'lucide-react';
-import { nanoid } from 'nanoid';
 
 type Room = {
   id: string;
   type: string;
-  notes: string;  // Changed from count to notes to be more flexible
+  notes: string;
 };
 
-export function RoomAssessment() {
+const RoomAssessment: React.FC = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [nextId, setNextId] = useState(1);
 
-  const addRoom = () => {
+  const addRoom = useCallback(() => {
     setRooms(prev => [...prev, {
-      id: nanoid(),
+      id: `room-${nextId}`,
       type: 'living_room',
       notes: ''
     }]);
-  };
+    setNextId(prev => prev + 1);
+  }, [nextId]);
 
-  const updateNotes = (id: string, value: string) => {
+  const updateNotes = useCallback((id: string, value: string) => {
     setRooms(prev => prev.map(room => 
       room.id === id ? { ...room, notes: value } : room
     ));
-  };
+  }, []);
 
-  const updateType = (id: string, value: string) => {
+  const updateType = useCallback((id: string, value: string) => {
     setRooms(prev => prev.map(room => 
       room.id === id ? { ...room, type: value } : room
     ));
-  };
+  }, []);
 
-  const removeRoom = (id: string) => {
+  const removeRoom = useCallback((id: string) => {
     setRooms(prev => prev.filter(room => room.id !== id));
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -71,7 +72,7 @@ export function RoomAssessment() {
                   className="border rounded px-2 py-1 min-w-[150px]"
                   value={room.notes}
                   onChange={e => updateNotes(room.id, e.target.value)}
-                  placeholder="Enter count or NA"
+                  placeholder="Enter notes"
                   rows={1}
                 />
               </div>
@@ -101,4 +102,6 @@ export function RoomAssessment() {
       </div>
     </div>
   );
-}
+};
+
+export default RoomAssessment;

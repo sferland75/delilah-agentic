@@ -1,5 +1,4 @@
 import React from 'react';
-import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,18 +21,11 @@ interface PainAssessmentProps {
 }
 
 export function PainAssessment({ region, initialData, onSave }: PainAssessmentProps) {
-  const { setValue } = useFormContext();
-  
-  // Initialize state from initialData or defaults
+  // Initialize state with initialData if available
   const [painLevel, setPainLevel] = React.useState(initialData?.severity || 0);
-  const [notes, setNotes] = React.useState(initialData?.comments || '');
-  
-  // Initialize selected qualifiers from initialData
-  const initialQualifiers = initialData?.qualifiers || {};
-  const [selectedQualifiers, setSelectedQualifiers] = React.useState(
-    Object.entries(initialQualifiers)
-      .filter(([_, isSelected]) => isSelected)
-      .map(([qualifier]) => qualifier)
+  const [notes, setNotes] = React.useState(initialData?.notes || '');
+  const [selectedQualifiers, setSelectedQualifiers] = React.useState<string[]>(
+    initialData?.symptoms || []
   );
 
   const qualifiers = getQualifiersForRegion(region.id);
@@ -47,29 +39,16 @@ export function PainAssessment({ region, initialData, onSave }: PainAssessmentPr
   };
 
   const handleSave = () => {
-    // Convert selected qualifiers array to object
-    const qualifiersObj = qualifiers.reduce((acc, qualifier) => ({
-      ...acc,
-      [qualifier]: selectedQualifiers.includes(qualifier)
-    }), {});
-
-    const data = {
-      region: region.id,
+    // Ensure all data is included in the save
+    console.log('Saving data for region:', region.id);
+    const saveData = {
       severity: painLevel,
-      qualifiers: qualifiersObj,
-      comments: notes
+      symptoms: selectedQualifiers,
+      notes: notes,
+      timestamp: new Date().toISOString()
     };
-
-    console.log('Saving pain data:', data);
-    onSave(data);
-  };
-
-  const getPainDescription = (level: number) => {
-    if (level === 0) return "No Pain";
-    if (level <= 3) return "Mild";
-    if (level <= 6) return "Moderate";
-    if (level <= 8) return "Severe";
-    return "Very Severe";
+    console.log('Save data:', saveData);
+    onSave(saveData);
   };
 
   return (
@@ -78,14 +57,14 @@ export function PainAssessment({ region, initialData, onSave }: PainAssessmentPr
         <CardContent className="pt-6 space-y-4">
           <div className="space-y-2">
             <Label className="text-sm font-medium">
-              Pain Level: {painLevel} - {getPainDescription(painLevel)}
+              Pain Level: {painLevel}
             </Label>
             <Slider
               min={0}
               max={10}
               step={1}
               value={[painLevel]}
-              onValueChange={(value) => setPainLevel(value[0])}
+              onValueChange={values => setPainLevel(values[0])}
               className="w-full"
             />
             <div className="flex justify-between text-xs text-gray-500">
@@ -125,6 +104,7 @@ export function PainAssessment({ region, initialData, onSave }: PainAssessmentPr
       <Button 
         onClick={handleSave}
         className="w-full"
+        type="button"
       >
         <Check className="w-4 h-4 mr-2" />
         Save Assessment

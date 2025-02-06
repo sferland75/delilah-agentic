@@ -1,24 +1,49 @@
 import React, { useState } from 'react';
+import { useFormContext } from "react-hook-form";
 import { Button } from '@/components/ui/button';
-import { FileText } from 'lucide-react';
-import { useForm } from '@/context/FormContext';
-import { validateAssessmentData } from '@/utils/validation';
+import { FileText, Loader2 } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 import { ProgressDialog } from './ProgressDialog';
 import { ReportGenerator } from '../services/reportTemplateSystem';
 import { defaultTemplate } from '../services/reportTemplates';
+import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
+import { assessmentSchema } from '@/lib/validation/assessment-schema';
 
-export const ReportGenerationButton: React.FC = () => {
-  const { formData } = useForm();
+interface ReportGenerationButtonProps {
+  variant?: 'default' | 'outline' | 'secondary';
+  size?: 'default' | 'sm' | 'lg';
+  className?: string;
+}
+
+export const ReportGenerationButton: React.FC<ReportGenerationButtonProps> = ({
+  variant = 'outline',
+  size = 'default',
+  className = ''
+}) => {
+  const { getValues, formState: { isValid } } = useFormContext<AssessmentFormData>();
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentSection, setCurrentSection] = useState<string>('');
   const [error, setError] = useState<Error | null>(null);
 
+  const validateForm = async (data: AssessmentFormData) => {
+    try {
+      await assessmentSchema.parseAsync(data);
+      return { valid: true, errors: [] };
+    } catch (error) {
+      return {
+        valid: false,
+        errors: error.errors?.map((e: any) => e.message) || ['Invalid form data']
+      };
+    }
+  };
+
   const handleGenerateReport = async () => {
     try {
-      const validation = validateAssessmentData(formData);
+      const formData = getValues();
+      const validation = await validateForm(formData);
+      
       if (!validation.valid) {
         toast({
           variant: "destructive",
@@ -38,8 +63,8 @@ export const ReportGenerationButton: React.FC = () => {
       // Header
       report.push(`
 OCCUPATIONAL THERAPY IN-HOME ASSESSMENT
-Client Name: ${formData.demographics.firstName} ${formData.demographics.lastName}
-Date of Birth: ${formData.demographics.dateOfBirth}
+Client Name: ${formData.initial.personal.firstName} ${formData.initial.personal.lastName}
+Date of Birth: ${formData.initial.personal.dateOfBirth}
 Date of Assessment: ${new Date().toISOString().split('T')[0]}
 `);
 
@@ -50,7 +75,12 @@ Date of Assessment: ${new Date().toISOString().split('T')[0]}
         setProgress((i / totalSections) * 100);
         
         const content = await section.generate(formData);
-        report.push(content);
+        if (content) {
+          report.push(content);
+        }
+        
+        // Add small delay to prevent UI freezing
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       // Create download
@@ -59,7 +89,7 @@ Date of Assessment: ${new Date().toISOString().split('T')[0]}
       
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${formData.demographics.lastName}_${formData.demographics.firstName}_Assessment_${new Date().toISOString().split('T')[0]}.md`;
+      a.download = `${formData.initial.personal.lastName}_${formData.initial.personal.firstName}_Assessment_${new Date().toISOString().split('T')[0]}.md`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -78,6 +108,10 @@ Date of Assessment: ${new Date().toISOString().split('T')[0]}
         title: "Generation Failed",
         description: "There was an error generating your report. Please try again."
       });
+    } finally {
+      setIsGenerating(false);
+      setProgress(0);
+      setCurrentSection('');
     }
   };
 
@@ -92,11 +126,19 @@ Date of Assessment: ${new Date().toISOString().split('T')[0]}
     <>
       <Button
         onClick={handleGenerateReport}
-        variant="outline"
-        className="flex items-center gap-2 border-purple-600 text-purple-600 hover:bg-purple-50"
+        variant={variant}
+        size={size}
+        disabled={!isValid || isGenerating}
+        className={`flex items-center gap-2 ${
+          variant === 'outline' ? 'border-purple-600 text-purple-600 hover:bg-purple-50' : ''
+        } ${className}`}
       >
-        <FileText className="h-4 w-4" />
-        Generate Report
+        {isGenerating ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <FileText className="h-4 w-4" />
+        )}
+        {isGenerating ? 'Generating...' : 'Generate Report'}
       </Button>
 
       <ProgressDialog

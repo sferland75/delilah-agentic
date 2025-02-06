@@ -1,30 +1,30 @@
+import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
-import type { AssessmentForm, AssessmentFormPath } from '@/types/form';
+import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
 
-interface UseFormSectionOptions<T> {
-  path: AssessmentFormPath;
-  defaultValue: T;
-}
+export const useFormSection = <T extends keyof AssessmentFormData>(section: T) => {
+  const { watch, setValue, formState: { errors } } = useFormContext<AssessmentFormData>();
+  const sectionData = watch(section);
 
-export function useFormSection<T>({ path, defaultValue }: UseFormSectionOptions<T>) {
-  const { register, watch, setValue } = useFormContext<AssessmentForm>();
-  const value = watch(path as any) || defaultValue;
-
-  const updateField = (fieldValue: T) => {
-    setValue(path as any, fieldValue, {
+  const updateField = useCallback(<K extends keyof AssessmentFormData[T]>(
+    field: K,
+    value: AssessmentFormData[T][K]
+  ) => {
+    setValue(`${section}.${String(field)}`, value, {
       shouldValidate: true,
       shouldDirty: true
     });
-  };
+  }, [section, setValue]);
 
-  const registerField = (subPath: keyof T) => {
-    return register(`${path}.${String(subPath)}` as any);
-  };
+  const getSectionErrors = useCallback(() => {
+    return errors[section];
+  }, [errors, section]);
 
   return {
-    value,
+    data: sectionData,
     updateField,
-    registerField,
-    defaultValue
+    errors: getSectionErrors()
   };
-}
+};
+
+export default useFormSection;

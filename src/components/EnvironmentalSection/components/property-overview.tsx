@@ -1,108 +1,123 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { RoomsAssessment } from './rooms-assessment';
-
-const propertyTypes = [
-  { value: 'house', label: 'House' },
-  { value: 'apartment', label: 'Apartment' },
-  { value: 'condo', label: 'Condominium' },
-  { value: 'townhouse', label: 'Townhouse' },
-  { value: 'mobile', label: 'Mobile Home' },
-  { value: 'other', label: 'Other' }
-];
-
-const propertyLevels = [
-  { value: 'single', label: 'Single Level' },
-  { value: 'split', label: 'Split Level' },
-  { value: 'two', label: 'Two Story' },
-  { value: 'three', label: 'Three or More Stories' }
-];
+import { Textarea } from '@/components/ui/textarea';
+import { environmentalConfigs } from '../environmental-config';
 
 export function PropertyOverview() {
-  const { register, setValue, watch } = useFormContext();
-  const propertyData = watch('environmental.propertyOverview');
+  const { register, watch } = useFormContext();
+  const prefix = 'environmental.propertyOverview';
 
   return (
-    <div className="space-y-6">
-      <Card className="p-6">
-        <h3 className="text-lg font-medium mb-4">Property Overview</h3>
-        
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label>Property Type</Label>
-              <Select 
-                value={propertyData?.type}
-                onValueChange={(value) => setValue('environmental.propertyOverview.type', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select property type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {propertyTypes.map(type => (
-                    <SelectItem key={type.value} value={type.value}>
-                      {type.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Property Levels</Label>
-              <Select 
-                value={propertyData?.levels}
-                onValueChange={(value) => setValue('environmental.propertyOverview.levels', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select number of levels" />
-                </SelectTrigger>
-                <SelectContent>
-                  {propertyLevels.map(level => (
-                    <SelectItem key={level.value} value={level.value}>
-                      {level.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Exterior Access</Label>
-              <Input
-                {...register('environmental.propertyOverview.exteriorAccess')}
-                placeholder="Describe exterior access (steps, ramps, etc.)"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Interior Access</Label>
-              <Input
-                {...register('environmental.propertyOverview.interiorAccess')}
-                placeholder="Describe interior access and circulation"
-              />
-            </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Property Overview</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Property Type</Label>
+            <Select 
+              defaultValue={watch(`${prefix}.type`)} 
+              onValueChange={(value) => register(`${prefix}.type`).onChange({ target: { value } })}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select property type" />
+              </SelectTrigger>
+              <SelectContent>
+                {environmentalConfigs.propertyTypes.map((type) => (
+                  <SelectItem key={type} value={type.toLowerCase()}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
-            <Label>General Notes</Label>
-            <Textarea
-              {...register('environmental.propertyOverview.generalNotes')}
-              placeholder="Additional notes about the property..."
-              className="h-32"
-            />
+            <Label>Layout</Label>
+            <Input {...register(`${prefix}.layout`)} placeholder="e.g., Two story, Split level" />
           </div>
         </div>
-      </Card>
 
-      <Card className="p-6">
-        <RoomsAssessment />
-      </Card>
-    </div>
+        <div className="space-y-2">
+          <Label>Exterior Access</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Input 
+              {...register(`${prefix}.access.exterior.entranceType`)}
+              placeholder="Entrance type"
+            />
+            <Input 
+              type="number"
+              {...register(`${prefix}.access.exterior.numberOfSteps`)}
+              placeholder="Number of steps"
+            />
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                {...register(`${prefix}.access.exterior.hasRailing`)}
+                className="h-4 w-4"
+              />
+              <Label>Has Railing</Label>
+            </div>
+          </div>
+          <Textarea 
+            {...register(`${prefix}.access.exterior.notes`)}
+            placeholder="Notes about exterior access"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Interior Access</Label>
+          <div className="grid grid-cols-2 gap-4">
+            <Input 
+              {...register(`${prefix}.access.interior.entranceType`)}
+              placeholder="Interior entrance type"
+            />
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                {...register(`${prefix}.access.interior.hasStairs`)}
+                className="h-4 w-4"
+              />
+              <Label>Has Stairs</Label>
+            </div>
+            <Input 
+              type="number"
+              {...register(`${prefix}.access.interior.numberOfStairs`)}
+              placeholder="Number of stairs"
+            />
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                {...register(`${prefix}.access.interior.hasRailing`)}
+                className="h-4 w-4"
+              />
+              <Label>Has Railing</Label>
+            </div>
+          </div>
+          <Textarea 
+            {...register(`${prefix}.access.interior.notes`)}
+            placeholder="Notes about interior access"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>General Condition</Label>
+          <Input {...register(`${prefix}.generalCondition`)} placeholder="Overall property condition" />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Primary Concerns</Label>
+          <Textarea 
+            {...register(`${prefix}.primaryConcerns`)}
+            placeholder="List major concerns about the property"
+          />
+        </div>
+      </CardContent>
+    </Card>
   );
 }

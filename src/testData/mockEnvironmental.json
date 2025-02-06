@@ -1,0 +1,108 @@
+{
+  "propertyOverview": {
+    "propertyType": "single_family_home",
+    "stories": "2",
+    "entryAccess": "minor_barriers",
+    "recommendedModifications": [
+      "Install grab bars at main entrance",
+      "Add handrails on both sides of steps",
+      "Improve outdoor lighting"
+    ],
+    "identifiedHazards": [
+      "Uneven walkway to front door",
+      "Poor lighting at night",
+      "Steps without handrails"
+    ]
+  },
+  "rooms": [
+    {
+      "id": "living-room-1",
+      "type": "living_room",
+      "accessibility": "minor_barriers",
+      "safety": "minor_concerns",
+      "modifications": [
+        "Rearrange furniture for wider pathways",
+        "Secure area rugs",
+        "Add task lighting"
+      ],
+      "notes": "Room generally accessible but requires minor modifications for safety"
+    },
+    {
+      "id": "kitchen-1",
+      "type": "kitchen",
+      "accessibility": "major_barriers",
+      "safety": "major_concerns",
+      "modifications": [
+        "Lower countertop section",
+        "Install pull-out shelves",
+        "Add under-cabinet lighting",
+        "Reorganize frequently used items to accessible height"
+      ],
+      "notes": "Counter height and cabinet access present significant challenges"
+    },
+    {
+      "id": "primary-bedroom-1",
+      "type": "primary_bedroom",
+      "accessibility": "minor_barriers",
+      "safety": "minor_concerns",
+      "modifications": [
+        "Adjust bed height",
+        "Install bedside grab bar",
+        "Add motion-sensor night lighting"
+      ],
+      "notes": "Bedroom layout generally suitable with minor modifications needed"
+    },
+    {
+      "id": "bathroom-1",
+      "type": "bathroom",
+      "accessibility": "major_barriers",
+      "safety": "major_concerns",
+      "modifications": [
+        "Install walk-in shower with seat",
+        "Add grab bars by toilet and shower",
+        "Raise toilet height",
+        "Improve lighting"
+      ],
+      "notes": "Bathroom requires significant modifications for safety and accessibility"
+    }
+  ],
+  "exterior": [
+    {
+      "id": "front-yard",
+      "type": "front_access",
+      "accessibility": "minor_barriers",
+      "safety": "minor_concerns",
+      "modifications": [
+        "Repair uneven walkway sections",
+        "Install motion-sensor lights",
+        "Add second handrail to front steps"
+      ]
+    },
+    {
+      "id": "back-yard",
+      "type": "back_yard",
+      "accessibility": "major_barriers",
+      "safety": "major_concerns",
+      "modifications": [
+        "Create level pathway to garden area",
+        "Install railing along back deck",
+        "Improve step access to yard"
+      ]
+    }
+  ],
+  "safety": {
+    "hazards": [
+      "Poor lighting in several areas",
+      "Lack of grab bars in bathroom",
+      "Uneven outdoor walking surfaces",
+      "High cabinet storage in kitchen"
+    ],
+    "recommendations": [
+      "Install additional lighting with motion sensors",
+      "Add grab bars in key locations",
+      "Level walking surfaces where possible",
+      "Reorganize storage to accessible heights",
+      "Regular maintenance of walkways and stairs"
+    ]
+  }
+}

@@ -12,6 +12,19 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { CalendarIcon } from 'lucide-react';
 import { independenceLevels } from '../constants';
 
+// Helper function for safe date formatting
+const formatDate = (date: Date | string | null | undefined): string => {
+  if (!date) return 'Set date';
+  try {
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return dateObj instanceof Date && !isNaN(dateObj.getTime())
+      ? dateObj.toLocaleDateString()
+      : 'Invalid date';
+  } catch {
+    return 'Invalid date';
+  }
+};
+
 interface ADLFieldProps {
   basePath: string;
   title: string;
@@ -36,10 +49,11 @@ export function ADLField({
   const usesAssistiveDevices = watch(`${basePath}.usesAssistiveDevices`);
   const lastAssessed = watch(`${basePath}.lastAssessed`);
 
-  // Format date function
-  const formatDate = (date: Date | null) => {
-    if (!date) return 'Set date';
-    return date.toLocaleDateString();
+  // Convert string date to Date object for Calendar component
+  const getDateValue = (dateStr: string | null | undefined): Date | undefined => {
+    if (!dateStr) return undefined;
+    const date = new Date(dateStr);
+    return !isNaN(date.getTime()) ? date : undefined;
   };
 
   return (
@@ -65,8 +79,8 @@ export function ADLField({
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={lastAssessed}
-                  onSelect={(date) => setValue(`${basePath}.lastAssessed`, date)}
+                  selected={getDateValue(lastAssessed)}
+                  onSelect={(date) => setValue(`${basePath}.lastAssessed`, date ? date.toISOString().split('T')[0] : null)}
                   initialFocus
                 />
               </PopoverContent>
