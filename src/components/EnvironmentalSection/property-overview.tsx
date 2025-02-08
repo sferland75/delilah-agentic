@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { Home } from 'lucide-react';
+import { Home, Building, Shield } from 'lucide-react';
 import {
   FormField,
   FormItem,
@@ -9,24 +9,24 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Textarea } from '../ui/textarea';
-import { debugLog } from '../../utils/debug-utils';
 
 export const PropertyOverview: React.FC = () => {
   const { control } = useFormContext();
 
-  React.useEffect(() => {
-    debugLog('PropertyOverview', 'Component mounted');
-    return () => debugLog('PropertyOverview', 'Component unmounted');
-  }, []);
-
   return (
-    <>
+    <div className="space-y-6">
+      {/* Section Header */}
+      <div className="flex items-center gap-2 mb-4">
+        <Home className="h-4 w-4 text-blue-600" />
+        <h3 className="text-sm text-muted-foreground font-medium">Property Overview</h3>
+      </div>
+
       {/* Property Details */}
-      <div className="space-y-6">
-        <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
+      <div className="space-y-4">
+        <div className="border rounded-md p-4 space-y-4">
           <div className="flex items-center gap-2 mb-2">
-            <Home className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-slate-800">Property Details</h4>
+            <Building className="h-4 w-4 text-blue-600" />
+            <span className="text-sm text-muted-foreground">General Property Description</span>
           </div>
 
           <FormField
@@ -34,43 +34,56 @@ export const PropertyOverview: React.FC = () => {
             name="environmental.propertyOverview.propertyType"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-slate-700">Property Type</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Property Type</FormLabel>
                 <FormControl>
                   <Textarea 
                     {...field}
-                    placeholder="Describe the property type"
-                    className="min-h-[100px] bg-white"
+                    placeholder="Describe the general layout and features of the property..."
+                    className="resize-none text-sm min-h-[100px]"
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="environmental.propertyOverview.layoutDescription"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Layout Description</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field}
-                    placeholder="Describe the property layout"
-                    className="min-h-[100px] bg-white"
-                  />
-                </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        {/* Access and Mobility */}
-        <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
+        {/* Hazards and Safety */}
+        <div className="border rounded-md p-4 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="h-4 w-4 text-blue-600" />
+            <span className="text-sm text-muted-foreground">Hazards and Safety Concerns</span>
+          </div>
+
+          <FormField
+            control={control}
+            name="environmental.propertyOverview.identifiedHazards"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-muted-foreground">Identified Hazards</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field}
+                    value={Array.isArray(field.value) ? field.value.join('\n') : field.value}
+                    onChange={e => {
+                      const value = e.target.value.split('\n').filter(line => line.trim());
+                      field.onChange(value);
+                    }}
+                    placeholder="List any identified hazards or safety concerns..."
+                    className="resize-none text-sm min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage className="text-xs" />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Outdoor Areas */}
+        <div className="border rounded-md p-4 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Home className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-slate-800">Access and Mobility</h4>
+            <span className="text-sm text-muted-foreground">Outdoor Areas</span>
           </div>
 
           <FormField
@@ -78,93 +91,65 @@ export const PropertyOverview: React.FC = () => {
             name="environmental.propertyOverview.access.exterior.description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-slate-700">Exterior Access</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Access and Parking</FormLabel>
                 <FormControl>
                   <Textarea 
                     {...field}
-                    placeholder="Describe exterior access (parking, walkways, lighting)"
-                    className="min-h-[100px] bg-white"
+                    placeholder="Describe parking, walkways, and outdoor access..."
+                    className="resize-none text-sm min-h-[100px]"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
 
           <FormField
             control={control}
-            name="environmental.propertyOverview.access.interior.description"
+            name="environmental.propertyOverview.yard"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-slate-700">Interior Access</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Yard and Garden Areas</FormLabel>
                 <FormControl>
                   <Textarea 
                     {...field}
-                    placeholder="Describe interior access (stairs, doorways, hallways)"
-                    className="min-h-[100px] bg-white"
+                    placeholder="Describe yard space, gardens, and maintenance requirements..."
+                    className="resize-none text-sm min-h-[100px]"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
 
-        {/* Modifications and Hazards */}
-        <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
+        {/* Additional Notes */}
+        <div className="border rounded-md p-4 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Home className="h-4 w-4 text-blue-600" />
-            <h4 className="font-medium text-slate-800">Modifications and Hazards</h4>
+            <span className="text-sm text-muted-foreground">Additional Notes</span>
           </div>
 
           <FormField
             control={control}
-            name="environmental.propertyOverview.recommendedModifications"
+            name="environmental.propertyOverview.additionalNotes"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-slate-700">Recommended Modifications</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Additional Comments and Recommendations</FormLabel>
                 <FormControl>
                   <Textarea 
                     {...field}
-                    value={Array.isArray(field.value) ? field.value.join('\n') : field.value}
-                    onChange={e => {
-                      const value = e.target.value.split('\n').filter(line => line.trim());
-                      field.onChange(value);
-                    }}
-                    placeholder="Enter recommended modifications (one per line)"
-                    className="min-h-[100px] bg-white"
+                    placeholder="Add any additional notes, observations, or recommendations..."
+                    className="resize-none text-sm min-h-[100px]"
                   />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="environmental.propertyOverview.identifiedHazards"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Identified Hazards</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    {...field}
-                    value={Array.isArray(field.value) ? field.value.join('\n') : field.value}
-                    onChange={e => {
-                      const value = e.target.value.split('\n').filter(line => line.trim());
-                      field.onChange(value);
-                    }}
-                    placeholder="Enter identified hazards (one per line)"
-                    className="min-h-[100px] bg-white"
-                  />
-                </FormControl>
-                <FormMessage />
+                <FormMessage className="text-xs" />
               </FormItem>
             )}
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

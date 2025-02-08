@@ -22,7 +22,53 @@ export const useLevel3Calculations = () => {
                 'attendantCare.level3.genitourinary.menstrualCare',
                 'attendantCare.level3.genitourinary.residuals'
             ],
-            // Add other sections...
+            bowelCare: [
+                'attendantCare.level3.bowelCare.bowelRoutine',
+                'attendantCare.level3.bowelCare.ostomyCare',
+                'attendantCare.level3.bowelCare.cleaningAfterBM'
+            ],
+            tracheostomy: [
+                'attendantCare.level3.tracheostomy.suctioning',
+                'attendantCare.level3.tracheostomy.cleaning',
+                'attendantCare.level3.tracheostomy.dressing',
+                'attendantCare.level3.tracheostomy.monitoring'
+            ],
+            ventilator: [
+                'attendantCare.level3.ventilator.inspection',
+                'attendantCare.level3.ventilator.cleaning',
+                'attendantCare.level3.ventilator.monitoring'
+            ],
+            exercise: [
+                'attendantCare.level3.exercise.passiveROM',
+                'attendantCare.level3.exercise.assistedROM',
+                'attendantCare.level3.exercise.positioning'
+            ],
+            skinCare: [
+                'attendantCare.level3.skinCare.inspection',
+                'attendantCare.level3.skinCare.prevention',
+                'attendantCare.level3.skinCare.treatment'
+            ],
+            medication: [
+                'attendantCare.level3.medication.oral',
+                'attendantCare.level3.medication.injection',
+                'attendantCare.level3.medication.suppository',
+                'attendantCare.level3.medication.monitoring'
+            ],
+            bathing: [
+                'attendantCare.level3.bathing.preparation',
+                'attendantCare.level3.bathing.assistance',
+                'attendantCare.level3.bathing.monitoring'
+            ],
+            therapy: [
+                'attendantCare.level3.therapy.exercises',
+                'attendantCare.level3.therapy.treatments',
+                'attendantCare.level3.therapy.monitoring'
+            ],
+            maintenance: [
+                'attendantCare.level3.maintenance.equipment',
+                'attendantCare.level3.maintenance.supplies',
+                'attendantCare.level3.maintenance.cleaning'
+            ]
         };
 
         // Calculate totals for each field and section

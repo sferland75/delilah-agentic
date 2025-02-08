@@ -1,188 +1,134 @@
-# Next Development Steps: Hybrid Report Generation System
+# Next Development Steps: Report Generation System
 
-## Phase 1: Document Template System
+## Phase 1: Report Architecture
 
-### Word Document Framework
-1. Master Template Development
-   - Professional document structure
-   - Consistent styling system
-   - Header/footer templates
-   - Section formatting rules
-   - Table styles
-   - List formatting
+### Core Components
+1. Template System
+   - Base templates
+   - Section templates
+   - Custom fields
+   - Variable mapping
 
-2. Document Generation System
-   - Template management
-   - Dynamic content insertion
-   - Style application
-   - Quality control
-   - Version control
+2. Narrative Engine
+   - Clinical phrasing
+   - Data transformation
+   - Context awareness
+   - Quality checks
 
-3. Testing Framework
-   - Format verification
+3. Output System
+   - Formatting rules
    - Style consistency
-   - Cross-platform compatibility
-   - Performance testing
+   - Export options
+   - Preview generation
 
-## Phase 2: Agentic System Development
+### Component Library
+1. Template Components
+   ```typescript
+   // Template structure
+   interface ReportTemplate {
+     sections: Section[];
+     variables: VariableMap;
+     formatting: FormatRules;
+     clinicalTerms: TerminologyMap;
+   }
+   ```
 
-### Template System
-1. Section Mapping
-   - Identify agentic-suitable sections
-   - Create data-to-narrative mappings
-   - Standard phrase libraries
-   - Word template integration
+2. Narrative Components
+   ```typescript
+   // Narrative generator
+   interface NarrativeEngine {
+     generateSection(data: SectionData): string;
+     applyTerminology(text: string): string;
+     validateClinical(content: string): boolean;
+   }
+   ```
 
-2. Rule Engine Development
-   - Basic narrative rules
-   - Data interpretation logic
-   - Recommendation triggers
-   - Format application rules
+3. Output Components
+   ```typescript
+   // Report output
+   interface ReportOutput {
+     content: string;
+     metadata: ReportMeta;
+     formatting: FormatRules;
+     validation: ValidationResult;
+   }
+   ```
 
-3. Content Generation
-   - Demographics processing
-   - Measurement narratives
-   - Basic findings
-   - Standard recommendations
+## Phase 2: Integration
 
-## Phase 3: Claude API Integration
+### Core Features
+1. Report Generation
+   - Template selection
+   - Data mapping
+   - Narrative generation
+   - Quality validation
 
-### Complex Processing
-1. Complex Section Handling
-   - Clinical reasoning sections
-   - Professional judgment areas
-   - Medical interpretation
-   - Synthesis requirements
-
-2. API Framework
-   - Prompt engineering
-   - Context management
-   - Response formatting
-   - Document integration
-
-3. Quality System
-   - Content verification
-   - Format consistency
-   - Professional standards
-   - Clinical accuracy
-
-## Phase 4: Integration & Output
-
-### System Components
-1. Processing Router
-   - Content type detection
-   - Processing path selection
-   - Resource optimization
-   - Format management
-
-2. Document Assembly
-   - Section compilation
-   - Style application
-   - Quality verification
-   - Final formatting
+2. Clinical Integration
+   - Terminology mapping
+   - Phrase templates
+   - Context rules
+   - Validation checks
 
 3. Output Management
-   - Document generation
-   - Format verification
-   - Version control
+   - Format selection
+   - Style application
    - Export options
+   - Preview system
 
-## Success Criteria
+### Implementation Notes
+1. Template Rules
+   - Consistent structure
+   - Variable handling
+   - Override support
+   - Version control
 
-### Document Quality
-- Professional formatting
-- Consistent styling
-- Cross-platform compatibility
-- Clean layout
+2. Narrative Guidelines
+   - Clinical accuracy
+   - Professional tone
+   - Context awareness
+   - Natural flow
+
+3. Quality Standards
+   - Validation rules
+   - Content checks
+   - Format verification
+   - Clinical review
+
+## Quality Standards
 
 ### Content Quality
-- Professional narratives
 - Clinical accuracy
+- Professional language
 - Consistent terminology
-- Proper structure
+- Logical flow
 
-### System Performance
+### Technical Quality
+- Clean data mapping
 - Reliable generation
-- Format integrity
 - Error handling
-- Processing speed
+- Performance
 
-## Next Actions
-1. Create master Word template
-2. Set up document generation system
-3. Develop formatting rules
-4. Build content integration pipeline
+### Output Quality
+- Format consistency
+- Style compliance
+- Export reliability
+- Preview accuracy
 
-## Technical Implementation
+## Success Metrics
+1. Report Quality
+   - Clinical accuracy
+   - Professional tone
+   - Consistent formatting
+   - Complete content
 
-### Document Generation
-```javascript
-// Template system structure
-class ReportTemplate {
-  constructor() {
-    this.sections = {
-      demographics: new Section('demographics'),
-      findings: new Section('findings'),
-      recommendations: new Section('recommendations')
-    };
-    this.styles = loadStyles();
-    this.formatting = loadFormatting();
-  }
+2. System Performance
+   - Generation speed
+   - Resource usage
+   - Error handling
+   - Scalability
 
-  async generate(data) {
-    const doc = new Document({
-      sections: this.buildSections(data),
-      styles: this.styles,
-      formatting: this.formatting
-    });
-    return await this.saveDocument(doc);
-  }
-}
-
-// Style configuration
-const documentStyles = {
-  heading1: {
-    font: 'Calibri',
-    size: 16,
-    bold: true,
-    spacing: { before: 240, after: 120 }
-  },
-  normal: {
-    font: 'Calibri',
-    size: 11,
-    spacing: { before: 120, after: 120 }
-  },
-  table: {
-    font: 'Calibri',
-    size: 10,
-    borders: true
-  }
-};
-
-// Section processors
-const processors = {
-  agentic: new AgenticProcessor(documentStyles),
-  claude: new ClaudeProcessor(documentStyles)
-};
-```
-
-### Integration Points
-1. Template Management
-   - Version control for templates
-   - Style updates
-   - Format maintenance
-
-2. Content Processing
-   - Agentic content formatting
-   - Claude API response formatting
-   - Style application
-
-3. Quality Control
-   - Format verification
-   - Style consistency
-   - Layout validation
-
-4. Export Options
-   - Direct .docx output
-   - PDF conversion
-   - Format preservation
+3. User Experience
+   - Template selection
+   - Preview system
+   - Export options
+   - Customization

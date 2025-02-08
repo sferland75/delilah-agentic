@@ -1,8 +1,6 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { HomeIcon, ShieldAlert, ParkingCircle, Trees, FileText } from 'lucide-react';
 import { RoomInventory } from '@/components/EnvironmentalSection/RoomInventory';
-import { Separator } from "@/components/ui/separator";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAssessmentForm } from '@/context/FormProvider';
 
@@ -20,105 +18,98 @@ export const EnvironmentalSection = () => {
 
   return (
     <div className="space-y-6">
+      {/* Property Details */}
+      <div className="border rounded-md p-4 space-y-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <HomeIcon className="h-4 w-4 text-blue-600" />
+            <div className="text-sm font-semibold">General Property Description</div>
+          </div>
+          <Textarea
+            value={formData.environmental?.description || ''}
+            onChange={(e) => updateField('description', e.target.value)}
+            placeholder="Describe the general layout and features of the property..."
+            className="mt-2 resize-none text-sm min-h-[100px]"
+          />
+        </div>
+
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <ShieldAlert className="h-4 w-4 text-blue-600" />
+            <div className="text-sm font-semibold">Hazards and Safety Concerns</div>
+          </div>
+          <Textarea
+            value={formData.environmental?.hazards || ''}
+            onChange={(e) => updateField('hazards', e.target.value)}
+            placeholder="List any identified hazards or safety concerns..."
+            className="mt-2 resize-none text-sm min-h-[100px]"
+          />
+        </div>
+      </div>
+
       {/* Room Inventory */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Room Inventory</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <RoomInventory />
-        </CardContent>
-      </Card>
+      <RoomInventory />
 
-      {/* Property Overview */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Property Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label>General Property Description</Label>
-            <Textarea
-              value={formData.environmental?.description || ''}
-              onChange={(e) => updateField('description', e.target.value)}
-              placeholder="Describe the general layout and features of the property..."
-              className="mt-2"
-            />
+      {/* Outdoor Areas Section */}
+      <div className="border rounded-md p-4 space-y-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <ParkingCircle className="h-4 w-4 text-blue-600" />
+            <div className="text-sm font-semibold">Access and Parking</div>
           </div>
-
-          <div>
-            <Label>Hazards and Safety Concerns</Label>
-            <Textarea
-              value={formData.environmental?.hazards || ''}
-              onChange={(e) => updateField('hazards', e.target.value)}
-              placeholder="List any identified hazards or safety concerns..."
-              className="mt-2"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Outdoor Areas */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Outdoor Areas</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <Label>Access and Parking</Label>
-            <Textarea
-              value={formData.environmental?.outdoor?.access || ''}
-              onChange={(e) => updateForm({
-                environmental: {
-                  ...formData.environmental,
-                  outdoor: {
-                    ...formData.environmental?.outdoor,
-                    access: e.target.value
-                  }
+          <Textarea
+            value={formData.environmental?.outdoor?.access || ''}
+            onChange={(e) => updateForm({
+              environmental: {
+                ...formData.environmental,
+                outdoor: {
+                  ...formData.environmental?.outdoor,
+                  access: e.target.value
                 }
-              })}
-              placeholder="Describe parking, walkways, and outdoor access..."
-              className="mt-2"
-            />
-          </div>
+              }
+            })}
+            placeholder="Describe parking, walkways, and outdoor access..."
+            className="mt-2 resize-none text-sm min-h-[100px]"
+          />
+        </div>
 
-          <div>
-            <Label>Yard and Garden Areas</Label>
-            <Textarea
-              value={formData.environmental?.outdoor?.yard || ''}
-              onChange={(e) => updateForm({
-                environmental: {
-                  ...formData.environmental,
-                  outdoor: {
-                    ...formData.environmental?.outdoor,
-                    yard: e.target.value
-                  }
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Trees className="h-4 w-4 text-blue-600" />
+            <div className="text-sm font-semibold">Yard and Garden Areas</div>
+          </div>
+          <Textarea
+            value={formData.environmental?.outdoor?.yard || ''}
+            onChange={(e) => updateForm({
+              environmental: {
+                ...formData.environmental,
+                outdoor: {
+                  ...formData.environmental?.outdoor,
+                  yard: e.target.value
                 }
-              })}
-              placeholder="Describe yard space, gardens, and maintenance requirements..."
-              className="mt-2"
-            />
-          </div>
-        </CardContent>
-      </Card>
+              }
+            })}
+            placeholder="Describe yard space, gardens, and maintenance requirements..."
+            className="mt-2 resize-none text-sm min-h-[100px]"
+          />
+        </div>
+      </div>
 
-      {/* Additional Notes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Additional Notes</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div>
-            <Label>Additional Comments and Recommendations</Label>
-            <Textarea
-              value={formData.environmental?.notes || ''}
-              onChange={(e) => updateField('notes', e.target.value)}
-              placeholder="Add any additional notes, observations, or recommendations..."
-              className="mt-2"
-            />
+      {/* Notes Section */}
+      <div className="border rounded-md p-4">
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <FileText className="h-4 w-4 text-blue-600" />
+            <div className="text-sm font-semibold">Additional Comments and Recommendations</div>
           </div>
-        </CardContent>
-      </Card>
+          <Textarea
+            value={formData.environmental?.notes || ''}
+            onChange={(e) => updateField('notes', e.target.value)}
+            placeholder="Add any additional notes, observations, or recommendations..."
+            className="mt-2 resize-none text-sm min-h-[100px]"
+          />
+        </div>
+      </div>
     </div>
   );
 };

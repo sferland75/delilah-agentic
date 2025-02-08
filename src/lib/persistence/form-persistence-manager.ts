@@ -2,6 +2,7 @@ import { AssessmentFormData } from '../validation/assessment-schema';
 import { ValidationResult } from '../validation/validation-manager';
 
 const STORAGE_KEY = 'assessment_form_draft';
+const BACKUP_KEY = 'assessment_form_backup';
 const VERSION = '1.0.0';
 const AUTO_SAVE_INTERVAL = 5000; // 5 seconds
 const MAX_BACKUP_VERSIONS = 3;
@@ -57,111 +58,6 @@ export class FormPersistenceManager {
     }
   }
 
-  async saveFormDraft(
-    data: Partial<AssessmentFormData>,
-    section?: string
-  ): Promise<boolean> {
-    try {
-      const storedData: StoredData = {
-        version: VERSION,
-        timestamp: Date.now(),
-        data,
-        lastModifiedSection: section
-      };
-
-      // Save backup if enabled
-      if (this.options.keepBackups) {
-        const currentData = localStorage.getItem(STORAGE_KEY);
-        if (currentData) {
-          const backupKey = `${STORAGE_KEY}_backup_${Date.now()}`;
-          localStorage.setItem(backupKey, currentData);
-          this.cleanupOldBackups();
-        }
-      }
-
-      // Save new version
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(storedData));
-      this.pendingChanges = false;
-
-      // Attempt to sync if online
-      if (navigator.onLine) {
-        await this.syncOfflineChanges();
-      }
-
-      return true;
-    } catch (error) {
-      console.error('Error saving form draft:', error);
-      this.offlineQueue.push({ data, section, timestamp: Date.now() });
-      return false;
-    }
-  }
-
-  loadFormDraft(): {
-    data: Partial<AssessmentFormData> | null;
-    backupAvailable: boolean;
-    validationStatus?: ValidationResult;
-  } {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (!saved) {
-        return { data: null, backupAvailable: false };
-      }
-
-      const storedData: StoredData = JSON.parse(saved);
-
-      // Version check
-      if (storedData.version !== VERSION) {
-        console.warn('Form draft version mismatch');
-        const backup = this.loadLatestBackup();
-        return {
-          data: backup?.data ?? null,
-          backupAvailable: backup !== null,
-          validationStatus: backup?.validationStatus
-        };
-      }
-
-      // Age check (30 days)
-      const age = Date.now() - storedData.timestamp;
-      if (age > 30 * 24 * 60 * 60 * 1000) {
-        console.warn('Form draft expired');
-        return { data: null, backupAvailable: false };
-      }
-
-      return {
-        data: storedData.data,
-        backupAvailable: this.hasBackups(),
-        validationStatus: storedData.validationStatus
-      };
-    } catch (error) {
-      console.error('Error loading form draft:', error);
-      const backup = this.loadLatestBackup();
-      return {
-        data: backup?.data ?? null,
-        backupAvailable: backup !== null,
-        validationStatus: backup?.validationStatus
-      };
-    }
-  }
-
-  markPendingChanges() {
-    this.pendingChanges = true;
-  }
-
-  hasPendingChanges(): boolean {
-    return this.pendingChanges;
-  }
-
-  clearFormDraft() {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      if (this.options.keepBackups) {
-        this.cleanupAllBackups();
-      }
-    } catch (error) {
-      console.error('Error clearing form draft:', error);
-    }
-  }
-
   private setupAutoSave() {
     if (this.options.autoSave && !this.autoSaveTimer) {
       this.autoSaveTimer = setInterval(() => {
@@ -195,10 +91,121 @@ export class FormPersistenceManager {
     }
   }
 
+  async saveFormDraft(
+    data: Partial<AssessmentFormData>,
+    section?: string
+  ): Promise<boolean> {
+    try {
+      const storedData: StoredData = {
+        version: VERSION,
+        timestamp: Date.now(),
+        data,
+        lastModifiedSection: section
+      };
+
+      // Save as main draft
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(storedData));
+      this.pendingChanges = false;
+
+      // Attempt to sync if online
+      if (navigator.onLine) {
+        await this.syncOfflineChanges();
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error saving form draft:', error);
+      this.offlineQueue.push({ data, section, timestamp: Date.now() });
+      return false;
+    }
+  }
+
+  saveBackup(data: Partial<AssessmentFormData>): boolean {
+    try {
+      const storedData: StoredData = {
+        version: VERSION,
+        timestamp: Date.now(),
+        data
+      };
+
+      const backupKey = `${BACKUP_KEY}_${Date.now()}`;
+      localStorage.setItem(backupKey, JSON.stringify(storedData));
+      this.cleanupOldBackups();
+      return true;
+    } catch (error) {
+      console.error('Error saving backup:', error);
+      return false;
+    }
+  }
+
+  loadFormDraft(): {
+    data: Partial<AssessmentFormData> | null;
+    backupAvailable: boolean;
+    validationStatus?: ValidationResult;
+  } {
+    try {
+      // Try to get latest backup first
+      const backup = this.loadLatestBackup();
+      if (backup) {
+        return {
+          data: backup.data,
+          backupAvailable: true,
+          validationStatus: backup.validationStatus
+        };
+      }
+
+      // If no backup, try to get current draft
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        return { data: null, backupAvailable: false };
+      }
+
+      const storedData: StoredData = JSON.parse(saved);
+      return {
+        data: storedData.data,
+        backupAvailable: this.hasBackups(),
+        validationStatus: storedData.validationStatus
+      };
+    } catch (error) {
+      console.error('Error loading form draft:', error);
+      return { data: null, backupAvailable: false };
+    }
+  }
+
+  clearFormDraft() {
+    try {
+      // Save current state as backup before clearing
+      const currentData = localStorage.getItem(STORAGE_KEY);
+      if (currentData) {
+        const backupKey = `${BACKUP_KEY}_${Date.now()}`;
+        localStorage.setItem(backupKey, currentData);
+      }
+
+      // Clear the current draft
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.error('Error clearing form draft:', error);
+    }
+  }
+
+  hasBackups(): boolean {
+    return Object.keys(localStorage).some(key => 
+      key.startsWith(BACKUP_KEY)
+    );
+  }
+
+  markPendingChanges() {
+    this.pendingChanges = true;
+  }
+
+  hasPendingChanges(): boolean {
+    return this.pendingChanges;
+  }
+
   private cleanupOldBackups() {
     const allKeys = Object.keys(localStorage);
     const backupKeys = allKeys
-      .filter(key => key.startsWith(`${STORAGE_KEY}_backup_`))
+      .filter(key => key.startsWith(BACKUP_KEY))
       .sort()
       .reverse();
 
@@ -209,17 +216,10 @@ export class FormPersistenceManager {
     }
   }
 
-  private cleanupAllBackups() {
-    const allKeys = Object.keys(localStorage);
-    allKeys
-      .filter(key => key.startsWith(`${STORAGE_KEY}_backup_`))
-      .forEach(key => localStorage.removeItem(key));
-  }
-
   private loadLatestBackup(): StoredData | null {
     const allKeys = Object.keys(localStorage);
     const latestBackup = allKeys
-      .filter(key => key.startsWith(`${STORAGE_KEY}_backup_`))
+      .filter(key => key.startsWith(BACKUP_KEY))
       .sort()
       .reverse()[0];
 
@@ -234,12 +234,6 @@ export class FormPersistenceManager {
       }
     }
     return null;
-  }
-
-  private hasBackups(): boolean {
-    return Object.keys(localStorage).some(key => 
-      key.startsWith(`${STORAGE_KEY}_backup_`)
-    );
   }
 
   destroy() {

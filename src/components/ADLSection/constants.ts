@@ -191,9 +191,18 @@ export const adlCategories = {
       { 
         id: "shower_transfer", 
         title: "Shower/Tub Transfers", 
-        icon: ArrowUpDown,
+        icon: Bath,
         requiresAssistiveDevices: true,
-        requiresTimeTaken: true
+        requiresTimeTaken: true,
+        subtitle: "Getting in/out of shower or tub"
+      },
+      { 
+        id: "vehicle_transfer", 
+        title: "Vehicle Transfers", 
+        icon: Car,
+        requiresAssistiveDevices: true,
+        requiresTimeTaken: true,
+        subtitle: "Getting in/out of vehicles"
       },
       { 
         id: "position_changes", 

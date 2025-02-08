@@ -11,13 +11,30 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { FileDown, RotateCcw, History } from 'lucide-react';
+import { FileDown, RotateCcw, RotateCw } from 'lucide-react';
 import { useAssessmentForm } from '@/context/FormProvider';
 import { toast } from '@/components/ui/use-toast';
 
 export function SaveControls() {
   const { clearForm, exportForm, formData, validationStatus, hasBackup, loadBackup } = useAssessmentForm();
   const [showAlert, setShowAlert] = React.useState(false);
+
+  const handleRestore = React.useCallback(() => {
+    try {
+      loadBackup();
+      toast({
+        title: "Backup Restored",
+        description: "Previous form data has been restored."
+      });
+    } catch (error) {
+      console.error('Error restoring backup:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to restore the backup. Please try again."
+      });
+    }
+  }, [loadBackup]);
 
   const handleClear = React.useCallback(() => {
     try {
@@ -91,9 +108,9 @@ export function SaveControls() {
         <Button 
           variant="outline" 
           className="gap-2"
-          onClick={loadBackup}
+          onClick={handleRestore}
         >
-          <History className="h-4 w-4" />
+          <RotateCw className="h-4 w-4" />
           Restore Backup
         </Button>
       )}

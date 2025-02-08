@@ -5,6 +5,29 @@ import CareRow from '../CareRow';
 import CareTableHeader from '../CareTableHeader';
 import { useCareCalculations } from '../hooks/useCareCalculations';
 import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
+import {
+    FaTshirt,
+    FaBriefcaseMedical,
+    FaBandAid,
+    FaCut,
+    FaUtensils,
+    FaWalking,
+    FaTshirtInBulk,
+    FaWheelchair,
+    FaArrowsAlt,
+    FaHandsWash
+} from 'react-icons/fa';
+
+const SectionHeader = ({ icon: Icon, title }) => (
+    <TableRow className="bg-muted/50">
+        <TableCell colSpan={5} className="px-8">
+            <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-blue-600" />
+                <span className="font-medium">{title}</span>
+            </div>
+        </TableCell>
+    </TableRow>
+);
 
 export const Level1Care = () => {
     const { watch } = useFormContext<AssessmentFormData>();
@@ -18,9 +41,7 @@ export const Level1Care = () => {
                 </TableHeader>
                 <TableBody>
                     {/* Dress Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Dress</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaTshirt} title="Dress" />
                     <CareRow 
                         label="Upper Body (underwear, shirt/blouse, sweater, tie, jacket, gloves, jewelry)"
                         fieldBase="attendantCare.level1.dress.upperBody"
@@ -31,9 +52,7 @@ export const Level1Care = () => {
                     />
 
                     {/* Undress Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Undress</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaTshirt} title="Undress" />
                     <CareRow 
                         label="Upper Body (underwear, shirt/blouse, sweater, tie, jacket, gloves, jewelry)"
                         fieldBase="attendantCare.level1.undress.upperBody"
@@ -44,9 +63,7 @@ export const Level1Care = () => {
                     />
 
                     {/* Prosthetics Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Prosthetics</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaBriefcaseMedical} title="Prosthetics" />
                     <CareRow 
                         label="Applies to upper/lower limb prosthesis and stump sock(s)"
                         fieldBase="attendantCare.level1.prosthetics.apply"
@@ -74,9 +91,7 @@ export const Level1Care = () => {
                     </TableRow>
 
                     {/* Orthotics Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Orthotics</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaBandAid} title="Orthotics" />
                     <CareRow 
                         label="Assists dressing applicant using prescribed orthotics (burn garment(s), brace(s), support(s), splints, elastic stockings)"
                         fieldBase="attendantCare.level1.orthotics"
@@ -92,9 +107,7 @@ export const Level1Care = () => {
                     </TableRow>
 
                     {/* Grooming Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Grooming</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaCut} title="Grooming" />
                     <CareRow 
                         label="Face: wash, rinse, dry, morning and evening"
                         fieldBase="attendantCare.level1.grooming.face"
@@ -152,9 +165,7 @@ export const Level1Care = () => {
                     </TableRow>
 
                     {/* Feeding Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Feeding</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaUtensils} title="Feeding" />
                     <CareRow 
                         label="Prepares applicant for meals (includes transfer to appropriate location)"
                         fieldBase="attendantCare.level1.feeding.preparation"
@@ -177,9 +188,7 @@ export const Level1Care = () => {
                     </TableRow>
 
                     {/* Mobility Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Mobility (location change)</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaWalking} title="Mobility (location change)" />
                     <CareRow 
                         label="Assists applicant from sitting position (wheelchair, chair, sofa)"
                         fieldBase="attendantCare.level1.mobility.sitting"
@@ -207,9 +216,7 @@ export const Level1Care = () => {
                     </TableRow>
 
                     {/* Extra Laundering Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Extra Laundering</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaHandsWash} title="Extra Laundering" />
                     <CareRow 
                         label="Launders applicant's bedding and clothing as a result of incontinence/spillage"
                         fieldBase="attendantCare.level1.laundering.incontinence"

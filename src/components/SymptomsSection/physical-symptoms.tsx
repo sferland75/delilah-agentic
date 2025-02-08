@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
-import { Activity, PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -19,7 +19,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent } from "@/components/ui/card";
 import { Assessment } from '@/lib/validation/assessment-schema';
 import {
   AccordionItem,
@@ -77,15 +76,17 @@ export function PhysicalSymptoms() {
   });
 
   return (
-    <>
+    <div className="space-y-4">
       {physicalSymptoms?.map((field, index) => (
-        <AccordionItem key={field.id} value={`item-${index}`}>
-          <AccordionTrigger className="px-4">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4" />
-              <span>Physical Symptom {index + 1}</span>
-            </div>
+        <AccordionItem 
+          key={field.id} 
+          value={`item-${index}`}
+          className="border rounded-md"
+        >
+          <AccordionTrigger className="px-4 hover:bg-slate-50/50">
+            <span className="text-sm text-muted-foreground font-bold">Symptom {index + 1}</span>
           </AccordionTrigger>
+          
           <AccordionContent>
             <div className="p-4 space-y-6">
               <div className="flex justify-end">
@@ -106,11 +107,11 @@ export function PhysicalSymptoms() {
                     name={`symptoms.physical.${index}.location`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Location</FormLabel>
+                        <FormLabel className="text-xs text-muted-foreground font-bold">Location</FormLabel>
                         <FormControl>
-                          <Input {...field} placeholder="e.g., Lower back, right side" />
+                          <Input {...field} placeholder="e.g., Lower back, right side" className="text-sm" />
                         </FormControl>
-                        <FormDescription>{symptomGuidance.location}</FormDescription>
+                        <FormDescription className="text-xs">{symptomGuidance.location}</FormDescription>
                       </FormItem>
                     )}
                   />
@@ -120,20 +121,20 @@ export function PhysicalSymptoms() {
                     name={`symptoms.physical.${index}.painType`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Type of Pain/Discomfort</FormLabel>
+                        <FormLabel className="text-xs text-muted-foreground font-bold">Type of Pain/Discomfort</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-sm">
                               <SelectValue placeholder="Select pain type" />
                             </SelectTrigger>
                             <SelectContent>
                               {PAIN_TYPES.map(type => (
-                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                                <SelectItem key={type} value={type} className="text-sm">{type}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormDescription>{symptomGuidance.painType}</FormDescription>
+                        <FormDescription className="text-xs">{symptomGuidance.painType}</FormDescription>
                       </FormItem>
                     )}
                   />
@@ -147,20 +148,20 @@ export function PhysicalSymptoms() {
                     name={`symptoms.physical.${index}.severity`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Severity</FormLabel>
+                        <FormLabel className="text-xs text-muted-foreground font-bold">Severity</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-sm">
                               <SelectValue placeholder="Select severity" />
                             </SelectTrigger>
                             <SelectContent>
                               {SEVERITY_LEVELS.map(level => (
-                                <SelectItem key={level} value={level}>{level}</SelectItem>
+                                <SelectItem key={level} value={level} className="text-sm">{level}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormDescription>{symptomGuidance.severity}</FormDescription>
+                        <FormDescription className="text-xs">{symptomGuidance.severity}</FormDescription>
                       </FormItem>
                     )}
                   />
@@ -170,20 +171,20 @@ export function PhysicalSymptoms() {
                     name={`symptoms.physical.${index}.frequency`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Frequency</FormLabel>
+                        <FormLabel className="text-xs text-muted-foreground font-bold">Frequency</FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger>
+                            <SelectTrigger className="text-sm">
                               <SelectValue placeholder="Select frequency" />
                             </SelectTrigger>
                             <SelectContent>
                               {FREQUENCY_LEVELS.map(level => (
-                                <SelectItem key={level} value={level}>{level}</SelectItem>
+                                <SelectItem key={level} value={level} className="text-sm">{level}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
-                        <FormDescription>{symptomGuidance.frequency}</FormDescription>
+                        <FormDescription className="text-xs">{symptomGuidance.frequency}</FormDescription>
                       </FormItem>
                     )}
                   />
@@ -196,15 +197,15 @@ export function PhysicalSymptoms() {
                   name={`symptoms.physical.${index}.aggravating`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Aggravating Factors</FormLabel>
+                      <FormLabel className="text-xs text-muted-foreground font-bold">Aggravating Factors</FormLabel>
                       <FormControl>
                         <Textarea 
                           {...field} 
                           placeholder="What makes the symptoms worse?"
-                          className="min-h-[100px]"
+                          className="min-h-[100px] resize-none text-sm"
                         />
                       </FormControl>
-                      <FormDescription>{symptomGuidance.aggravating}</FormDescription>
+                      <FormDescription className="text-xs">{symptomGuidance.aggravating}</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -214,15 +215,15 @@ export function PhysicalSymptoms() {
                   name={`symptoms.physical.${index}.relieving`}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Relieving Factors</FormLabel>
+                      <FormLabel className="text-xs text-muted-foreground font-bold">Relieving Factors</FormLabel>
                       <FormControl>
                         <Textarea 
                           {...field} 
                           placeholder="What helps to reduce the symptoms?"
-                          className="min-h-[100px]"
+                          className="min-h-[100px] resize-none text-sm"
                         />
                       </FormControl>
-                      <FormDescription>{symptomGuidance.relieving}</FormDescription>
+                      <FormDescription className="text-xs">{symptomGuidance.relieving}</FormDescription>
                     </FormItem>
                   )}
                 />
@@ -250,6 +251,6 @@ export function PhysicalSymptoms() {
           Add Physical Symptom
         </Button>
       </div>
-    </>
+    </div>
   );
 }

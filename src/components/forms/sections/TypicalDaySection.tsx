@@ -5,7 +5,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { type AssessmentFormData } from '@/lib/validation/assessment-schema';
-import { Clock } from 'lucide-react';
+import { 
+  FaClock,
+  FaSun,
+  FaCloudSun,
+  FaMoon,
+  FaCalendarAlt,
+  FaRegCalendarCheck,
+  FaCalendarWeek,
+  FaRegCalendarAlt
+} from 'react-icons/fa';
 
 const timeOptions = {
   morning: ['5:00 AM', '5:30 AM', '6:00 AM', '6:30 AM', '7:00 AM', '7:30 AM', '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM', '10:00 AM'],
@@ -22,10 +31,10 @@ export const TypicalDaySection = () => {
   };
 
   const tabs = [
-    { id: 'preAccidentDay', label: 'Pre-Accident Day' },
-    { id: 'preAccidentWeek', label: 'Pre-Accident Week' },
-    { id: 'currentDay', label: 'Current Day' },
-    { id: 'currentWeek', label: 'Current Week' }
+    { id: 'preAccidentDay', label: 'Pre-Accident Day', icon: FaCalendarAlt },
+    { id: 'preAccidentWeek', label: 'Pre-Accident Week', icon: FaCalendarWeek },
+    { id: 'currentDay', label: 'Current Day', icon: FaRegCalendarCheck },
+    { id: 'currentWeek', label: 'Current Week', icon: FaRegCalendarAlt }
   ];
 
   const renderDailyRoutine = (isPreAccident: boolean) => {
@@ -34,13 +43,6 @@ export const TypicalDaySection = () => {
 
     return (
       <div className="space-y-6">
-        <div>
-          <h4 className="text-base font-medium mb-4">{titlePrefix} Daily Routine</h4>
-          <p className="text-sm text-muted-foreground mb-4">
-            Document typical daily activities {isPreAccident ? 'before the accident' : 'after the accident'}
-          </p>
-        </div>
-
         <div className="flex items-center space-x-2">
           <Checkbox 
             id={`${prefix}IrregularSchedule`}
@@ -56,7 +58,7 @@ export const TypicalDaySection = () => {
 
         <div className="space-y-4">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5" />
+            <FaClock className="h-5 w-5 text-blue-600" />
             <h5 className="font-medium">Sleep Schedule</h5>
           </div>
 
@@ -105,7 +107,10 @@ export const TypicalDaySection = () => {
 
         <div className="space-y-4">
           <div>
-            <Label>Morning Routine (Wake up - Noon)</Label>
+            <div className="flex items-center gap-2 mb-2">
+              <FaSun className="h-4 w-4 text-blue-600" />
+              <Label>Morning Routine (Wake up - Noon)</Label>
+            </div>
             <Textarea
               {...register(`typicalDay.${prefix}.morningRoutine`)}
               placeholder="Describe typical morning activities and routines"
@@ -114,7 +119,10 @@ export const TypicalDaySection = () => {
           </div>
 
           <div>
-            <Label>Afternoon Routine (Noon - 5pm)</Label>
+            <div className="flex items-center gap-2 mb-2">
+              <FaCloudSun className="h-4 w-4 text-blue-600" />
+              <Label>Afternoon Routine (Noon - 5pm)</Label>
+            </div>
             <Textarea
               {...register(`typicalDay.${prefix}.afternoonRoutine`)}
               placeholder="Describe typical afternoon activities and routines"
@@ -123,7 +131,10 @@ export const TypicalDaySection = () => {
           </div>
 
           <div>
-            <Label>Evening Routine (5pm - Bed)</Label>
+            <div className="flex items-center gap-2 mb-2">
+              <FaMoon className="h-4 w-4 text-blue-600" />
+              <Label>Evening Routine (5pm - Bed)</Label>
+            </div>
             <Textarea
               {...register(`typicalDay.${prefix}.eveningRoutine`)}
               placeholder="Describe typical evening activities and routines"
@@ -136,19 +147,7 @@ export const TypicalDaySection = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        Compare pre-accident and current daily activities and routines
-      </p>
-      
-      <div className="bg-blue-50 border border-blue-100 rounded-md p-4 text-sm">
-        Document and compare typical routines before and after the incident. Note changes in:
-        - Activity levels and patterns
-        - Time management and scheduling
-        - Required modifications
-        - Impact on daily function
-      </div>
-
+    <div className="space-y-6">
       {/* Tab Navigation */}
       <div className="bg-slate-100/80 p-1 rounded-md">
         <div className="flex space-x-1">
@@ -161,37 +160,34 @@ export const TypicalDaySection = () => {
                   ? 'bg-[#2563EB] text-white' 
                   : 'text-slate-600 hover:bg-slate-200'}`}
             >
-              {tab.label}
+              <div className="flex items-center justify-center gap-2">
+                <tab.icon className="h-4 w-4" />
+                {tab.label}
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Pre-Accident Daily Routine */}
-      {activeTab === 'preAccidentDay' && renderDailyRoutine(true)}
+      {/* Content */}
+      <div>
+        {/* Pre-Accident Daily Routine */}
+        {activeTab === 'preAccidentDay' && renderDailyRoutine(true)}
 
-      {/* Current Daily Routine */}
-      {activeTab === 'currentDay' && renderDailyRoutine(false)}
+        {/* Current Daily Routine */}
+        {activeTab === 'currentDay' && renderDailyRoutine(false)}
 
-      {/* Weekly Schedule Contents */}
-      {(activeTab === 'preAccidentWeek' || activeTab === 'currentWeek') && (
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-base font-medium mb-2">
-              {activeTab === 'preAccidentWeek' ? 'Pre-Accident' : 'Current'} Weekly Schedule
-            </h4>
-            <p className="text-sm text-muted-foreground mb-4">
-              Describe {activeTab === 'preAccidentWeek' ? 'typical' : 'current'} weekly schedule and variations from the daily routine
-            </p>
+        {/* Weekly Schedule Contents */}
+        {(activeTab === 'preAccidentWeek' || activeTab === 'currentWeek') && (
+          <div className="space-y-4">
+            <Textarea
+              {...register(`typicalDay.${activeTab === 'preAccidentWeek' ? 'preAccident' : 'current'}.weeklySchedule`)}
+              placeholder="Include regular weekly activities, appointments, work schedules, and any variations from the typical daily routine"
+              className="min-h-[200px] resize-none"
+            />
           </div>
-
-          <Textarea
-            {...register(`typicalDay.${activeTab === 'preAccidentWeek' ? 'preAccident' : 'current'}.weeklySchedule`)}
-            placeholder="Include regular weekly activities, appointments, work schedules, and any variations from the typical daily routine"
-            className="h-48"
-          />
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

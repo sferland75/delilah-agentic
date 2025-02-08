@@ -5,6 +5,32 @@ import CareRow from '../CareRow';
 import CareTableHeader from '../CareTableHeader';
 import { useCareCalculations } from '../hooks/useCareCalculations';
 import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
+import {
+    FaToilet,
+    FaBed,
+    FaShieldAlt,
+    FaTshirt,
+    FaHandsWash,
+    FaLungs,
+    FaWheelchair,
+    FaSyringe,
+    FaCalendarAlt,
+    FaHands,
+    FaBath,
+    FaHome,
+    FaUserShield
+} from 'react-icons/fa';
+
+const SectionHeader = ({ icon: Icon, title, subSection = false }) => (
+    <TableRow className={subSection ? "" : "bg-muted/50"}>
+        <TableCell colSpan={5} className={`${subSection ? "px-12" : "px-8"}`}>
+            <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-blue-600" />
+                <span className="font-medium">{title}</span>
+            </div>
+        </TableCell>
+    </TableRow>
+);
 
 export const Level2Care = () => {
     const { watch } = useFormContext<AssessmentFormData>();
@@ -18,23 +44,17 @@ export const Level2Care = () => {
                 </TableHeader>
                 <TableBody>
                     {/* Hygiene Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Hygiene</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaHandsWash} title="Hygiene" />
                     
                     {/* Bathroom subsection */}
-                    <TableRow>
-                        <TableCell className="font-medium px-12" colSpan={5}>Bathroom</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaBath} title="Bathroom" subSection={true} />
                     <CareRow 
                         label="Cleans tub/shower/sink/toilet after applicant's use"
                         fieldBase="attendantCare.level2.hygiene.bathroom.cleaning"
                     />
 
                     {/* Bedroom subsection */}
-                    <TableRow>
-                        <TableCell className="font-medium px-12" colSpan={5}>Bedroom</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaBed} title="Bedroom" subSection={true} />
                     <CareRow 
                         label="Changes applicant's bedding, makes bed, cleans bedroom, including Hoyer lifts, overhead bars, bedside tables"
                         fieldBase="attendantCare.level2.hygiene.bedroom.cleaning"
@@ -45,9 +65,7 @@ export const Level2Care = () => {
                     />
 
                     {/* Clothing Care subsection */}
-                    <TableRow>
-                        <TableCell className="font-medium px-12" colSpan={5}>Clothing Care</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaTshirt} title="Clothing Care" subSection={true} />
                     <CareRow 
                         label="Assists in preparing daily wearing apparel"
                         fieldBase="attendantCare.level2.hygiene.clothing.preparation"
@@ -74,9 +92,7 @@ export const Level2Care = () => {
                     </TableRow>
 
                     {/* Basic Supervisory Care Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Basic Supervisory Care</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaUserShield} title="Basic Supervisory Care" />
                     <CareRow 
                         label="Applicant lacks the capacity to reattach tubing if it becomes detached from trachea"
                         fieldBase="attendantCare.level2.supervisory.trachea"
@@ -110,9 +126,7 @@ export const Level2Care = () => {
                     </TableRow>
 
                     {/* Co-ordination Section */}
-                    <TableRow className="bg-muted/50">
-                        <TableCell colSpan={5} className="font-medium px-8">Co-ordination of Attendant Care</TableCell>
-                    </TableRow>
+                    <SectionHeader icon={FaCalendarAlt} title="Co-ordination of Attendant Care" />
                     <CareRow 
                         label="Applicant requires assistance in co-ordinating/scheduling attendant care (maximum 1 hour per week)"
                         fieldBase="attendantCare.level2.coordination"

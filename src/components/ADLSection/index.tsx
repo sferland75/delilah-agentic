@@ -1,9 +1,17 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFormContext } from "react-hook-form";
 import { HousekeepingAssessment } from './HousekeepingAssessment';
+import { ADLAssessment } from './ADLAssessment';
 
 export function ADLSection() {
+  const methods = useFormContext();
+
+  if (!methods) {
+    throw new Error('ADLSection must be used within a FormProvider');
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -19,8 +27,7 @@ export function ADLSection() {
             
             <TabsContent value="general">
               <div className="space-y-4">
-                {/* Existing ADL content goes here */}
-                <p className="text-muted-foreground">General ADL assessment content...</p>
+                <ADLAssessment />
               </div>
             </TabsContent>
 

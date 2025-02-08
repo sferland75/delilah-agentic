@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Activity } from 'lucide-react';
+import { FaShower, FaPersonBooth, FaWalking, FaUtensils, FaRestroom } from 'react-icons/fa';
 import { useFormContext } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,18 +16,30 @@ const activityFields = {
   toileting: ['independence', 'notes']
 };
 
+const activityIcons = {
+  bathing: FaShower,
+  dressing: FaPersonBooth,
+  transfers: FaWalking,
+  feeding: FaUtensils,
+  toileting: FaRestroom
+};
+
 const ADLField = memo(({ activity }: { activity: string }) => {
   const { control } = useFormContext();
   const { data } = useADLForm();
   const activityData = data?.basic?.[activity] || {};
+  const Icon = activityIcons[activity];
   
   return (
     <div className="space-y-4 border rounded-lg p-4">
-      <h4 className="font-medium text-lg capitalize">{activity.replace(/_/g, ' ')}</h4>
+      <div className="flex items-center gap-2 mb-2">
+        {Icon && <Icon className="h-4 w-4 text-blue-600" />}
+        <h4 className="font-medium text-sm capitalize">{activity.replace(/_/g, ' ')}</h4>
+      </div>
       
       {activityFields[activity]?.map(field => (
         <div key={field} className="space-y-4">
-          <h5 className="font-medium capitalize">{field.replace(/_/g, ' ')}</h5>
+          <h5 className="font-medium text-xs text-muted-foreground capitalize">{field.replace(/_/g, ' ')}</h5>
           
           <FormField
             control={control}
@@ -35,9 +47,9 @@ const ADLField = memo(({ activity }: { activity: string }) => {
             defaultValue={activityData[field]?.independence || ''}
             render={({ field: formField }) => (
               <FormItem>
-                <FormLabel>Independence Level</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Independence Level</FormLabel>
                 <FormControl>
-                  <Input {...formField} />
+                  <Input {...formField} className="text-sm" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -50,9 +62,9 @@ const ADLField = memo(({ activity }: { activity: string }) => {
             defaultValue={activityData[field]?.notes || ''}
             render={({ field: formField }) => (
               <FormItem>
-                <FormLabel>Notes</FormLabel>
+                <FormLabel className="text-xs text-muted-foreground">Notes</FormLabel>
                 <FormControl>
-                  <Textarea {...formField} className="min-h-[100px]" />
+                  <Textarea {...formField} className="text-sm min-h-[100px] resize-none" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -74,20 +86,13 @@ const BasicADL: React.FC = () => {
   }, [data]);
 
   return (
-    <Card>
-      <CardContent className="space-y-6 pt-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Activity className="h-5 w-5 text-blue-600" />
-          <h3 className="text-xl font-semibold">Basic ADLs</h3>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6">
-          {Object.keys(activityFields).map(activity => (
-            <ADLField key={activity} activity={activity} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6">
+        {Object.keys(activityFields).map(activity => (
+          <ADLField key={activity} activity={activity} />
+        ))}
+      </div>
+    </div>
   );
 };
 

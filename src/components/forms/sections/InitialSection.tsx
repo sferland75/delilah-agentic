@@ -1,11 +1,8 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAssessmentForm } from '@/context/FormProvider';
+import { useFormContext } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-
-// Import from Phosphor Icons
 import { 
   IdentificationCard,
   User,
@@ -16,8 +13,6 @@ import {
   Buildings,
   House
 } from "@phosphor-icons/react";
-
-// Import from React Icons
 import { 
   FaUserCircle, 
   FaAddressCard,
@@ -25,22 +20,8 @@ import {
 } from 'react-icons/fa';
 
 export const InitialSection = () => {
-  const { formData, updateForm } = useAssessmentForm();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    updateForm({
-      initial: {
-        ...formData.initial,
-        personal: {
-          ...formData.initial?.personal,
-          [name]: value
-        }
-      }
-    });
-  };
-
-  const personal = formData.initial?.personal || {};
+  const { register, watch } = useFormContext();
+  const personal = watch('initial.personal') || {};
 
   return (
     <div className="space-y-6">
@@ -60,9 +41,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="firstName"
-                name="firstName"
-                value={personal.firstName || ''}
-                onChange={handleChange}
+                {...register('initial.personal.firstName')}
                 placeholder="First Name"
               />
             </div>
@@ -74,9 +53,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="lastName"
-                name="lastName"
-                value={personal.lastName || ''}
-                onChange={handleChange}
+                {...register('initial.personal.lastName')}
                 placeholder="Last Name"
               />
             </div>
@@ -88,10 +65,8 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="dateOfBirth"
-                name="dateOfBirth"
                 type="date"
-                value={personal.dateOfBirth || ''}
-                onChange={handleChange}
+                {...register('initial.personal.dateOfBirth')}
               />
             </div>
 
@@ -102,9 +77,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="phone"
-                name="phone"
-                value={personal.phone || ''}
-                onChange={handleChange}
+                {...register('initial.personal.phone')}
                 placeholder="Phone Number"
               />
             </div>
@@ -116,10 +89,8 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
-                value={personal.email || ''}
-                onChange={handleChange}
+                {...register('initial.personal.email')}
                 placeholder="Email Address"
               />
             </div>
@@ -143,9 +114,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="streetAddress"
-                name="streetAddress"
-                value={personal.streetAddress || ''}
-                onChange={handleChange}
+                {...register('initial.personal.streetAddress')}
                 placeholder="Street Address"
               />
             </div>
@@ -157,9 +126,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="city"
-                name="city"
-                value={personal.city || ''}
-                onChange={handleChange}
+                {...register('initial.personal.city')}
                 placeholder="City"
               />
             </div>
@@ -171,9 +138,7 @@ export const InitialSection = () => {
               </Label>
               <Input
                 id="postalCode"
-                name="postalCode"
-                value={personal.postalCode || ''}
-                onChange={handleChange}
+                {...register('initial.personal.postalCode')}
                 placeholder="Postal Code"
               />
             </div>

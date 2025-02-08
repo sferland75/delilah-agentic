@@ -17,6 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { HousekeepingAssessment } from './HousekeepingAssessment';
 
 import { 
   FaBath,
@@ -38,7 +39,13 @@ import {
   FaWalking,
   FaUserAlt,
   FaBus,
-  FaWheelchair
+  FaWheelchair,
+  FaCar,
+  FaArrowsAlt,
+  FaBroom,
+  FaToilet,
+  FaTeeth,
+  FaChair
 } from 'react-icons/fa';
 
 const independenceLevels = [
@@ -54,7 +61,7 @@ const basicADLs = [
     title: "Bathing",
     icon: FaBath,
     activities: [
-      { name: "Shower", field: "shower", icon: FaShower }
+      { name: "Shower/Bath", field: "shower", icon: FaShower }
     ]
   },
   {
@@ -62,7 +69,8 @@ const basicADLs = [
     icon: FaCut,
     activities: [
       { name: "Hair Care", field: "hairCare", icon: FaCut },
-      { name: "Oral Care", field: "oralCare", icon: FaUser }
+      { name: "Oral Care", field: "oralCare", icon: FaTeeth },
+      { name: "Facial Care", field: "facialCare", icon: FaUser }
     ]
   },
   {
@@ -75,9 +83,9 @@ const basicADLs = [
   },
   {
     title: "Toileting",
-    icon: FaUser,
+    icon: FaToilet,
     activities: [
-      { name: "Toileting", field: "toileting", icon: FaUser }
+      { name: "Toileting", field: "toileting", icon: FaToilet }
     ]
   }
 ];
@@ -89,8 +97,10 @@ const transferADLs = [
     icon: FaWalking,
     activities: [
       { name: "Bed", field: "bedTransfer", icon: FaBed },
-      { name: "Toilet", field: "toiletTransfer", icon: FaUser },
-      { name: "Shower", field: "showerTransfer", icon: FaShower }
+      { name: "Toilet", field: "toiletTransfer", icon: FaToilet },
+      { name: "Shower/Tub", field: "showerTransfer", icon: FaBath },
+      { name: "Vehicle", field: "vehicleTransfer", icon: FaCar },
+      { name: "Chair/Position Changes", field: "positionChanges", icon: FaChair }
     ]
   }
 ];
@@ -252,7 +262,7 @@ const ADLCategory = ({ category, prefix }) => {
 export const ADLSection = () => {
   return (
     <Tabs defaultValue="basic" className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
+      <TabsList className="grid w-full grid-cols-5">
         <TabsTrigger value="basic" className="flex items-center gap-2">
           <FaUserAlt className="h-4 w-4" />
           Basic ADLs
@@ -268,6 +278,10 @@ export const ADLSection = () => {
         <TabsTrigger value="iadl" className="flex items-center gap-2">
           <FaHome className="h-4 w-4" />
           IADLs
+        </TabsTrigger>
+        <TabsTrigger value="housekeeping" className="flex items-center gap-2">
+          <FaBroom className="h-4 w-4" />
+          Housekeeping
         </TabsTrigger>
       </TabsList>
 
@@ -309,6 +323,10 @@ export const ADLSection = () => {
             prefix="adl.instrumental" 
           />
         ))}
+      </TabsContent>
+
+      <TabsContent value="housekeeping" className="space-y-6 mt-4">
+        <HousekeepingAssessment />
       </TabsContent>
     </Tabs>
   );

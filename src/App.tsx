@@ -9,7 +9,8 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <FormProvider>
         <div className="flex flex-col min-h-screen">
-          <div className="h-16 border-b bg-white flex items-center justify-end px-4">
+          <div className="h-16 border-b bg-white flex items-center justify-between px-4">
+            <div className="text-lg font-semibold">Delilah Assessment System</div>
             <SaveControls />
           </div>
           <main className="flex-1 container mx-auto py-6">

@@ -6,23 +6,24 @@ import { z } from 'zod';
 import { formPersistence } from '@/lib/persistence/form-persistence-manager';
 import { validationManager, type ValidationResult } from '@/lib/validation/validation-manager';
 
+// Define the context interface
 interface FormContextType {
-  formData: AssessmentFormData;
-  updateForm: (data: Partial<AssessmentFormData>, section?: string) => void;
   lastSaved: Date | null;
-  clearForm: () => void;
-  isValid: boolean;
-  validationStatus: ValidationResult | null;
   isSaving: boolean;
-  exportForm: () => Promise<string>;
+  validationStatus: ValidationResult | null;
+  isValid: boolean;
   progress: number;
   hasBackup: boolean;
-  loadBackup: () => void;
   isDirty: boolean;
+  saveForm: (data: AssessmentFormData, section?: string) => Promise<boolean>;
+  clearForm: () => void;
+  loadBackup: () => void;
 }
 
+// Create the form context
 const FormContext = createContext<FormContextType | undefined>(undefined);
 
+// Create clean default values from schema
 const defaultValues: AssessmentFormData = {
   initial: {
     personal: {
@@ -30,7 +31,10 @@ const defaultValues: AssessmentFormData = {
       lastName: '',
       dateOfBirth: '',
       phone: '',
-      email: ''
+      email: '',
+      streetAddress: '',
+      city: '',
+      postalCode: ''
     }
   },
   medical: {
@@ -46,7 +50,6 @@ const defaultValues: AssessmentFormData = {
     medications: [],
     imaging: []
   },
-  functional: {},
   environmental: {
     rooms: [],
     description: '',
@@ -56,10 +59,36 @@ const defaultValues: AssessmentFormData = {
       access: '',
       yard: ''
     }
+  },
+  functional: {}
+};
+
+// Calculate form completion progress
+const calculateProgress = (data: AssessmentFormData): number => {
+  try {
+    // Get all required fields from the schema
+    const requiredFields = Object.entries(assessmentSchema.shape)
+      .filter(([_, field]) => field._def.required)
+      .map(([key]) => key);
+
+    // Count how many required fields are filled
+    const filledFields = requiredFields.filter(field => {
+      const value = data[field as keyof AssessmentFormData];
+      return value !== undefined && value !== null && value !== '';
+    });
+
+    // Calculate percentage
+    return Math.round((filledFields.length / requiredFields.length) * 100);
+  } catch (error) {
+    console.error('Error calculating progress:', error);
+    return 0;
   }
 };
 
 export function FormProvider({ children }: { children: React.ReactNode }) {
+  const { toast } = useToast();
+  
+  // State declarations
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [validationStatus, setValidationStatus] = useState<ValidationResult | null>(null);
@@ -67,13 +96,20 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [hasBackup, setHasBackup] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const { toast } = useToast();
+
+  // Check for backup status
+  const checkBackupStatus = useCallback(() => {
+    const hasAvailableBackup = formPersistence.hasBackups();
+    console.log('Backup status:', hasAvailableBackup);
+    setHasBackup(hasAvailableBackup);
+  }, []);
 
   // Initialize form with persisted data or defaults
   const initialFormData = useMemo(() => {
     try {
       const { data: savedData, backupAvailable } = formPersistence.loadFormDraft();
       setHasBackup(backupAvailable);
+      console.log('Initial backup available:', backupAvailable);
       return savedData || defaultValues;
     } catch (error) {
       console.error('Error loading initial form data:', error);
@@ -81,25 +117,11 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Form methods initialization
   const methods = useForm<AssessmentFormData>({
     defaultValues: initialFormData,
     mode: 'onChange'
   });
-
-  // Calculate form completion progress
-  const calculateProgress = useCallback((data: AssessmentFormData) => {
-    const requiredFields = [
-      data.initial?.personal?.firstName,
-      data.initial?.personal?.lastName,
-      data.initial?.personal?.dateOfBirth,
-      data.medical?.injury?.circumstance,
-      data.medical?.injury?.date,
-      data.medical?.injury?.description
-    ];
-
-    const filledFields = requiredFields.filter(field => field && field.trim() !== '').length;
-    return Math.round((filledFields / requiredFields.length) * 100);
-  }, []);
 
   // Save form data using the persistence manager
   const saveForm = useCallback(async (data: AssessmentFormData, section?: string) => {
@@ -110,6 +132,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
         setLastSaved(new Date());
         setProgress(calculateProgress(data));
         setIsDirty(false);
+        checkBackupStatus();
       } else {
         toast({
           variant: "warning",
@@ -129,53 +152,32 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     } finally {
       setIsSaving(false);
     }
-  }, [calculateProgress, toast]);
-
-  // Subscribe to form changes with debounced auto-save
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    const subscription = methods.watch((value) => {
-      if (value) {
-        setIsDirty(true);
-        formPersistence.markPendingChanges();
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          saveForm(value as AssessmentFormData);
-        }, 1000);
-      }
-    });
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeoutId);
-    };
-  }, [methods.watch, saveForm]);
-
-  // Load backup handler
-  const loadBackup = useCallback(() => {
-    const { data: backupData, validationStatus: backupValidation } = formPersistence.loadFormDraft();
-    if (backupData) {
-      methods.reset(backupData);
-      setValidationStatus(backupValidation ?? null);
-      setIsDirty(false);
-      toast({
-        title: "Backup Restored",
-        description: "Previous version of the form has been restored."
-      });
-    }
-  }, [methods, toast]);
+  }, [toast, checkBackupStatus]);
 
   // Clear form data
   const clearForm = useCallback(() => {
     try {
+      // Create backup of current data before clearing
+      const currentData = methods.getValues();
+      if (Object.keys(currentData).length > 0) {
+        formPersistence.saveBackup(currentData);
+      }
+
+      // Clear persistence
       formPersistence.clearFormDraft();
+      
+      // Reset form to default values
       methods.reset(defaultValues);
+      
+      // Reset all state
       setLastSaved(null);
       setValidationStatus(null);
       setIsValid(false);
       setProgress(0);
-      setHasBackup(false);
       setIsDirty(false);
+      
+      // Update backup status
+      checkBackupStatus();
       
       toast({
         title: "Form Cleared",
@@ -189,59 +191,61 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
         description: "Failed to clear the form. Please try again.",
       });
     }
-  }, [methods, toast]);
+  }, [methods, toast, checkBackupStatus]);
 
-  // Export form data
-  const exportForm = useCallback(async (): Promise<string> => {
+  // Load backup handler
+  const loadBackup = useCallback(() => {
     try {
-      const formData = methods.getValues();
-      const validationResult = validationManager.validateFullAssessment(formData);
-      if (!validationResult.isValid) {
-        throw new Error('Form data is invalid');
+      const { data: backupData, validationStatus: backupValidation } = formPersistence.loadFormDraft();
+      if (backupData) {
+        methods.reset(backupData);
+        setValidationStatus(backupValidation ?? null);
+        setIsDirty(false);
+        checkBackupStatus();
+        toast({
+          title: "Backup Restored",
+          description: "Previous version of the form has been restored."
+        });
       }
-
-      const exportData = {
-        ...formData,
-        metadata: {
-          exportDate: new Date().toISOString(),
-          version: '1.0.0',
-          isValid: true,
-          validationStatus: validationResult
-        }
-      };
-
-      return JSON.stringify(exportData, null, 2);
     } catch (error) {
-      console.error('Error exporting form:', error);
-      throw error;
+      console.error('Error restoring backup:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to restore the backup. Please try again."
+      });
     }
-  }, [methods]);
+  }, [methods, toast, checkBackupStatus]);
 
+  // Check backup status periodically
+  useEffect(() => {
+    const checkInterval = setInterval(checkBackupStatus, 5000);
+    return () => clearInterval(checkInterval);
+  }, [checkBackupStatus]);
+
+  // Form context value
   const formContextValue = useMemo(() => ({
-    formData: methods.getValues(),
-    updateForm: methods.setValue,
     lastSaved,
-    clearForm,
-    isValid,
-    validationStatus,
     isSaving,
-    exportForm,
+    validationStatus,
+    isValid,
     progress,
     hasBackup,
-    loadBackup,
-    isDirty
+    isDirty,
+    saveForm,
+    clearForm,
+    loadBackup
   }), [
-    methods,
     lastSaved,
-    clearForm,
-    isValid,
-    validationStatus,
     isSaving,
-    exportForm,
+    validationStatus,
+    isValid,
     progress,
     hasBackup,
-    loadBackup,
-    isDirty
+    isDirty,
+    saveForm,
+    clearForm,
+    loadBackup
   ]);
 
   return (
