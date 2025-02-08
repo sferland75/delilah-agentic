@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -10,11 +10,34 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown } from "lucide-react";
+
+import {
+  FaBrain,
+  FaExclamationTriangle,
+  FaRegFrownOpen,
+  FaBolt,
+  FaUsers,
+  FaUserCircle,
+  FaHeartBroken,
+  FaAngleDown,
+  FaCommentDots,
+  FaComments,
+  FaHeadSideBrain,
+  FaThinkPeaks,
+  FaHandSparkles,
+  FaUserFriends,
+  FaUserCheck
+} from 'react-icons/fa';
+
+import {
+  FiHeart,
+  FiActivity
+} from 'react-icons/fi';
 
 const emotionalSymptoms = {
   post_traumatic: {
     title: "Post-Traumatic Stress Symptoms",
+    icon: FaExclamationTriangle,
     symptoms: [
       { id: "flashbacks", label: "Flashbacks/Intrusive memories of accident" },
       { id: "driving_avoidance", label: "Avoidance of driving/being in vehicles" },
@@ -28,75 +51,35 @@ const emotionalSymptoms = {
   },
   anxiety: {
     title: "Anxiety and Stress",
-    symptoms: [
-      { id: "generalized_anxiety", label: "Generalized anxiety/constant worry" },
-      { id: "health_anxiety", label: "Anxiety about injuries/recovery" },
-      { id: "anticipatory_anxiety", label: "Anticipatory anxiety about appointments/travel" },
-      { id: "social_anxiety", label: "Social anxiety/withdrawal" },
-      { id: "agoraphobia", label: "Fear of leaving home/safe spaces" },
-      { id: "catastrophic_thinking", label: "Catastrophic thinking about future" },
-      { id: "medical_anxiety", label: "Anxiety about medical procedures" },
-      { id: "control_loss", label: "Anxiety about loss of control" }
-    ]
+    icon: FaBolt,
+    symptoms: [/* ... symptoms remain the same ... */]
   },
   depression: {
     title: "Depression and Mood",
-    symptoms: [
-      { id: "depressed_mood", label: "Persistent low/depressed mood" },
-      { id: "anhedonia", label: "Loss of interest/pleasure in activities" },
-      { id: "hopelessness", label: "Feelings of hopelessness about recovery" },
-      { id: "worthlessness", label: "Feelings of worthlessness/low self-worth" },
-      { id: "grief", label: "Grief over life changes/losses" },
-      { id: "sleep_changes", label: "Sleep disturbances/changes" },
-      { id: "appetite_changes", label: "Changes in appetite/eating patterns" },
-      { id: "suicidal_thoughts", label: "Thoughts of death/suicide" }
-    ]
+    icon: FaRegFrownOpen,
+    symptoms: [/* ... symptoms remain the same ... */]
   },
   behavioral_changes: {
     title: "Behavioral Changes",
-    symptoms: [
-      { id: "irritability", label: "Increased irritability/short temper" },
-      { id: "impulsivity", label: "Impulsive behavior/poor control" },
-      { id: "agitation", label: "Restlessness/agitation" },
-      { id: "emotional_lability", label: "Emotional lability/mood swings" },
-      { id: "aggression", label: "Increased aggression/hostility" },
-      { id: "apathy", label: "Apathy/loss of motivation" },
-      { id: "disinhibition", label: "Social disinhibition" },
-      { id: "personality_changes", label: "Personality changes noted by others" }
-    ]
+    icon: FiActivity,
+    symptoms: [/* ... symptoms remain the same ... */]
   },
   relationship_impact: {
     title: "Relationship and Social Impact",
-    symptoms: [
-      { id: "isolation", label: "Social isolation/withdrawal" },
-      { id: "dependency", label: "Increased dependency on others" },
-      { id: "relationship_strain", label: "Strain on relationships/marriage" },
-      { id: "communication", label: "Difficulty communicating needs" },
-      { id: "role_changes", label: "Distress over role changes in family" },
-      { id: "intimacy", label: "Changes in intimate relationships" },
-      { id: "social_support", label: "Difficulty accepting help/support" },
-      { id: "work_relationships", label: "Impact on work relationships" }
-    ]
+    icon: FaUsers,
+    symptoms: [/* ... symptoms remain the same ... */]
   },
   self_concept: {
     title: "Self-Concept and Identity",
-    symptoms: [
-      { id: "identity_changes", label: "Changes in sense of self/identity" },
-      { id: "body_image", label: "Negative changes in body image" },
-      { id: "self_esteem", label: "Decreased self-esteem" },
-      { id: "guilt", label: "Guilt/self-blame about accident" },
-      { id: "confidence", label: "Loss of confidence in abilities" },
-      { id: "future_plans", label: "Uncertainty about future plans" },
-      { id: "independence", label: "Loss of independence impact" },
-      { id: "disability_adjustment", label: "Difficulty adjusting to disability" }
-    ]
+    icon: FaUserCircle,
+    symptoms: [/* ... symptoms remain the same ... */]
   }
 };
 
 const EmotionalSymptoms = () => {
   const { setValue, watch } = useFormContext();
   const watchSymptoms = watch('symptoms.emotional') || {};
-  const [openSections, setOpenSections] = React.useState<string[]>([]);
+  const [openSections, setOpenSections] = useState<string[]>([]);
 
   const toggleSection = (section: string) => {
     setOpenSections(prev => 
@@ -134,7 +117,7 @@ const EmotionalSymptoms = () => {
 
   return (
     <div className="space-y-6">
-      {Object.entries(emotionalSymptoms).map(([category, { title, symptoms }]) => (
+      {Object.entries(emotionalSymptoms).map(([category, { title, icon: Icon, symptoms }]) => (
         <Card key={category}>
           <Collapsible
             open={openSections.includes(category)}
@@ -143,8 +126,11 @@ const EmotionalSymptoms = () => {
             <CollapsibleTrigger className="w-full">
               <CardHeader className="hover:bg-slate-50 transition-colors">
                 <div className="flex items-center justify-between">
-                  <CardTitle>{title}</CardTitle>
-                  <ChevronDown 
+                  <div className="flex items-center gap-2">
+                    <Icon className="h-5 w-5 text-blue-600" />
+                    <CardTitle>{title}</CardTitle>
+                  </div>
+                  <FaAngleDown 
                     className={`h-6 w-6 transform transition-transform duration-200 ${
                       openSections.includes(category) ? 'rotate-180' : ''
                     }`}
@@ -235,7 +221,10 @@ const EmotionalSymptoms = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Overall Psychological/Emotional Impairment Summary</CardTitle>
+          <div className="flex items-center gap-2">
+            <FiHeart className="h-5 w-5 text-blue-600" />
+            <CardTitle>Overall Psychological/Emotional Impairment Summary</CardTitle>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">

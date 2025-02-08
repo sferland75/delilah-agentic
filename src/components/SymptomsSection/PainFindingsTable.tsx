@@ -1,5 +1,4 @@
 import React from 'react';
-import { useFormContext } from "react-hook-form";
 import {
   Table,
   TableBody,
@@ -8,58 +7,47 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
-export function PainFindingsTable() {
-  const { watch } = useFormContext();
-  const painData = watch('symptoms.pain');
-  
-  console.log('Raw pain data in table:', painData);
+interface PainFindingsTableProps {
+  painData?: Record<string, any>;
+}
 
-  // If painData is null or undefined, show empty state
-  if (!painData) {
-    return (
-      <div className="text-sm text-slate-600 italic p-4">
-        No pain findings recorded
-      </div>
-    );
-  }
+export function PainFindingsTable({ painData = {} }: PainFindingsTableProps) {
+  // Ensure painData is an object
+  const data = painData || {};
+  console.log('Pain data in table:', data);
 
   // Convert pain data to array of findings
-  const painFindings = Object.entries(painData)
-    .filter(([_, data]: [string, any]) => {
-      console.log('Checking data for filtering:', data);
-      return data && typeof data.severity === 'number' && data.severity > 0;
-    })
+  const painFindings = Object.entries(data)
     .map(([region, data]: [string, any]) => {
-      console.log('Processing region data:', region, data);
-      
-      // Get selected qualifiers
-      const selectedQualifiers = data.qualifiers ? 
-        Object.entries(data.qualifiers)
-          .filter(([_, isSelected]) => isSelected)
-          .map(([qualifier]) => qualifier) : [];
+      console.log('Processing finding for region:', region, data);
+
+      if (!data || !data.severity) {
+        return null;
+      }
 
       // Format location name
       const locationName = region
+        .replace(/([A-Z])/g, ' $1') // Add spaces before capital letters
         .replace(/_/g, ' ')
-        .replace(/\b[lr]\b/i, match => 
-          match.toLowerCase() === 'l' ? 'Left' : 'Right'
-        )
-        .split(' ')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
+        .replace(/Back$/, ' Back')
+        .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+        .replace(/\s+/g, ' ') // Remove extra spaces
+        .trim();
 
       return {
         location: locationName,
         severity: data.severity,
-        qualifiers: selectedQualifiers.join(', '),
-        comments: data.comments || ''
+        symptoms: Array.isArray(data.symptoms) ? data.symptoms.join(', ') : '',
+        notes: data.notes || ''
       };
-    });
+    })
+    .filter(Boolean);
 
   console.log('Processed findings:', painFindings);
 
-  if (painFindings.length === 0) {
+  if (!painFindings.length) {
     return (
       <div className="text-sm text-slate-600 italic p-4">
         No pain findings recorded
@@ -68,27 +56,31 @@ export function PainFindingsTable() {
   }
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Location</TableHead>
-            <TableHead>Severity (0-10)</TableHead>
-            <TableHead className="min-w-[200px]">Qualifiers</TableHead>
-            <TableHead className="min-w-[200px]">Comments</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {painFindings.map((finding, index) => (
-            <TableRow key={index}>
-              <TableCell>{finding.location}</TableCell>
-              <TableCell>{finding.severity}</TableCell>
-              <TableCell>{finding.qualifiers}</TableCell>
-              <TableCell className="text-sm text-slate-600">{finding.comments}</TableCell>
+    <ScrollArea className="h-[600px]">
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Location</TableHead>
+              <TableHead>Severity</TableHead>
+              <TableHead className="min-w-[200px]">Symptoms</TableHead>
+              <TableHead className="min-w-[200px]">Notes</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {painFindings.map((finding, index) => (
+              <TableRow key={index}>
+                <TableCell>{finding.location}</TableCell>
+                <TableCell>{finding.severity}/10</TableCell>
+                <TableCell>{finding.symptoms || 'None recorded'}</TableCell>
+                <TableCell className="text-sm text-slate-600">
+                  {finding.notes || 'No notes'}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </ScrollArea>
   );
 }

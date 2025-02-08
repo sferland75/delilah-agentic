@@ -2,15 +2,49 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useFormContext } from "react-hook-form";
-import { useForm as useDelilahForm } from '@/context/FormContext';
 import { BodyMap } from '../BodyMap';
 import { PainFindingsTable } from './PainFindingsTable';
 import EmotionalSymptoms from './EmotionalSymptoms';
 import CognitiveSymptoms from './CognitiveSymptoms';
 
-// First let's just create a simple tab navigation with buttons
 export default function SymptomsSection() {
   const [activeTab, setActiveTab] = React.useState("physical");
+  const { getValues, setValue } = useFormContext();
+  const [localPainData, setLocalPainData] = React.useState<Record<string, any>>({});
+
+  // Initialize or update pain data when form values change
+  React.useEffect(() => {
+    const medical = getValues('medical');
+    console.log('Current medical data:', medical);
+    
+    // Initialize or update pain data
+    setLocalPainData(medical?.pain || {});
+  }, [getValues]);
+
+  const handlePainDataUpdate = (regionId: string, data: any) => {
+    console.log('Updating pain data:', { regionId, data });
+
+    // Update local state
+    const newPainData = {
+      ...localPainData,
+      [regionId]: data
+    };
+    setLocalPainData(newPainData);
+
+    // Update form state
+    const currentMedical = getValues('medical') || {};
+    setValue('medical', {
+      ...currentMedical,
+      pain: newPainData
+    }, {
+      shouldDirty: true,
+      shouldTouch: true,
+      shouldValidate: true
+    });
+
+    // Verify the update
+    console.log('Local pain data after update:', newPainData);
+  };
 
   return (
     <div className="space-y-6">
@@ -19,7 +53,7 @@ export default function SymptomsSection() {
           <CardTitle>Symptoms Assessment</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Simple Button Navigation */}
+          {/* Tab Navigation */}
           <div className="flex gap-4 mb-6">
             <Button
               variant={activeTab === "physical" ? "default" : "outline"}
@@ -43,12 +77,30 @@ export default function SymptomsSection() {
 
           {/* Content */}
           {activeTab === "physical" && (
-            <>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                <BodyMap onUpdate={() => {}} />
-              </div>
-              <PainFindingsTable />
-            </>
+            <div className="grid grid-cols-3 gap-4">
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold mb-4">Anterior View</h3>
+                <BodyMap 
+                  view="anterior" 
+                  onPainDataUpdate={handlePainDataUpdate}
+                  painData={localPainData}
+                />
+              </Card>
+
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold mb-4">Posterior View</h3>
+                <BodyMap 
+                  view="posterior"
+                  onPainDataUpdate={handlePainDataUpdate}
+                  painData={localPainData}
+                />
+              </Card>
+
+              <Card className="p-4">
+                <h3 className="text-lg font-semibold mb-4">Pain Findings</h3>
+                <PainFindingsTable painData={localPainData} />
+              </Card>
+            </div>
           )}
           
           {activeTab === "emotional" && <EmotionalSymptoms />}

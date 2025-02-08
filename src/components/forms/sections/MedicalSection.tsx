@@ -4,7 +4,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { type AssessmentFormData } from '@/lib/validation/assessment-schema';
+import { PlusCircle, Trash2 } from 'lucide-react';
+
+import {
+  FaBandAid,
+  FaRegCalendarAlt,
+  FaNotesMedical,
+  FaFileMedicalAlt,
+  FaPills,
+  FaClock,
+  FaList,
+  FaStethoscope,
+  FaBookMedical,
+  FaSyringe,
+  FaClipboardList
+} from 'react-icons/fa';
 
 export const MedicalSection = () => {
   const { register, watch, setValue } = useFormContext<AssessmentFormData>();
@@ -15,15 +31,37 @@ export const MedicalSection = () => {
     setValue('medical.treatments', treatmentsArray, { shouldValidate: true });
   };
 
+  const addMedication = () => {
+    const currentMeds = medical?.medications || [];
+    setValue('medical.medications', [
+      ...currentMeds,
+      { name: '', dosage: '', frequency: '', purpose: '' }
+    ]);
+  };
+
+  const removeMedication = (index: number) => {
+    const currentMeds = medical?.medications || [];
+    setValue(
+      'medical.medications',
+      currentMeds.filter((_, i) => i !== index)
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Injury Information */}
       <Card>
         <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4">Injury Details</h4>
+          <div className="flex items-center gap-2 mb-4">
+            <FaBandAid className="h-5 w-5 text-blue-600" />
+            <h4 className="text-lg font-semibold">Injury Details</h4>
+          </div>
           <div className="grid gap-4">
             <div className="space-y-2">
-              <Label htmlFor="circumstance">Circumstance of Injury</Label>
+              <div className="flex items-center gap-2">
+                <FaNotesMedical className="h-4 w-4 text-blue-600" />
+                <Label htmlFor="circumstance">Circumstance of Injury</Label>
+              </div>
               <Textarea
                 id="circumstance"
                 {...register('medical.injury.circumstance')}
@@ -33,7 +71,10 @@ export const MedicalSection = () => {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="date">Date of Injury</Label>
+                <div className="flex items-center gap-2">
+                  <FaRegCalendarAlt className="h-4 w-4 text-blue-600" />
+                  <Label htmlFor="date">Date of Injury</Label>
+                </div>
                 <Input
                   id="date"
                   type="date"
@@ -43,7 +84,10 @@ export const MedicalSection = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Injury Description</Label>
+              <div className="flex items-center gap-2">
+                <FaFileMedicalAlt className="h-4 w-4 text-blue-600" />
+                <Label htmlFor="description">Injury Description</Label>
+              </div>
               <Textarea
                 id="description"
                 {...register('medical.injury.description')}
@@ -52,7 +96,10 @@ export const MedicalSection = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="notes">Additional Notes</Label>
+              <div className="flex items-center gap-2">
+                <FaClipboardList className="h-4 w-4 text-blue-600" />
+                <Label htmlFor="notes">Additional Notes</Label>
+              </div>
               <Textarea
                 id="notes"
                 {...register('medical.injury.notes')}
@@ -66,9 +113,15 @@ export const MedicalSection = () => {
       {/* Treatments */}
       <Card>
         <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4">Current Treatments</h4>
+          <div className="flex items-center gap-2 mb-4">
+            <FaStethoscope className="h-5 w-5 text-blue-600" />
+            <h4 className="text-lg font-semibold">Current Treatments</h4>
+          </div>
           <div className="space-y-2">
-            <Label htmlFor="treatments">Treatment List</Label>
+            <div className="flex items-center gap-2">
+              <FaList className="h-4 w-4 text-blue-600" />
+              <Label htmlFor="treatments">Treatment List</Label>
+            </div>
             <Textarea
               id="treatments"
               value={medical?.treatments?.join('\n') || ''}
@@ -86,81 +139,81 @@ export const MedicalSection = () => {
       {/* Medications */}
       <Card>
         <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4">Medications</h4>
-          <div className="space-y-4">
-            {medical?.medications?.map((_, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Medication Name</Label>
-                  <Input
-                    {...register(`medical.medications.${index}.name`)}
-                    placeholder="Medication name"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Dosage</Label>
-                  <Input
-                    {...register(`medical.medications.${index}.dosage`)}
-                    placeholder="Dosage"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Frequency</Label>
-                  <Input
-                    {...register(`medical.medications.${index}.frequency`)}
-                    placeholder="How often taken"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Purpose</Label>
-                  <Input
-                    {...register(`medical.medications.${index}.purpose`)}
-                    placeholder="What it's for"
-                  />
-                </div>
-              </div>
-            ))}
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex items-center gap-2">
+              <FaPills className="h-5 w-5 text-blue-600" />
+              <h4 className="text-lg font-semibold">Medications</h4>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={addMedication}
+              className="flex items-center gap-2"
+            >
+              <PlusCircle className="h-4 w-4" />
+              Add Medication
+            </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Imaging */}
-      <Card>
-        <CardContent className="pt-6">
-          <h4 className="text-lg font-semibold mb-4">Imaging Studies</h4>
-          <div className="space-y-4">
-            {medical?.imaging?.map((_, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Type</Label>
-                  <Input
-                    {...register(`medical.imaging.${index}.type`)}
-                    placeholder="Type of imaging"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Date</Label>
-                  <Input
-                    type="date"
-                    {...register(`medical.imaging.${index}.date`)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Region</Label>
-                  <Input
-                    {...register(`medical.imaging.${index}.region`)}
-                    placeholder="Body region"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Findings</Label>
-                  <Textarea
-                    {...register(`medical.imaging.${index}.findings`)}
-                    placeholder="Key findings"
-                  />
+          <div className="space-y-6">
+            {(medical?.medications || []).map((_, index) => (
+              <div key={index} className="relative p-4 border rounded-lg">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-2 top-2"
+                  onClick={() => removeMedication(index)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FaSyringe className="h-4 w-4 text-blue-600" />
+                      <Label>Medication Name</Label>
+                    </div>
+                    <Input
+                      {...register(`medical.medications.${index}.name`)}
+                      placeholder="Medication name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FaBookMedical className="h-4 w-4 text-blue-600" />
+                      <Label>Dosage</Label>
+                    </div>
+                    <Input
+                      {...register(`medical.medications.${index}.dosage`)}
+                      placeholder="Dosage"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FaClock className="h-4 w-4 text-blue-600" />
+                      <Label>Frequency</Label>
+                    </div>
+                    <Input
+                      {...register(`medical.medications.${index}.frequency`)}
+                      placeholder="How often taken"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <FaNotesMedical className="h-4 w-4 text-blue-600" />
+                      <Label>Purpose</Label>
+                    </div>
+                    <Input
+                      {...register(`medical.medications.${index}.purpose`)}
+                      placeholder="What it's for"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
+            {(!medical?.medications || medical.medications.length === 0) && (
+              <div className="text-center py-8 text-muted-foreground">
+                No medications added. Click "Add Medication" to begin.
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,0 +1,108 @@
+import React from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { useFormContext } from "react-hook-form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { BodyMap } from '@/components/BodyMap';
+import { PainFindingsTable } from '@/components/SymptomsSection/PainFindingsTable';
+import EmotionalSymptoms from '@/components/SymptomsSection/EmotionalSymptoms';
+import CognitiveSymptoms from '@/components/SymptomsSection/CognitiveSymptoms';
+import { FiActivity } from 'react-icons/fi';
+import { 
+  FaBrain, 
+  FaHeartBroken 
+} from 'react-icons/fa';
+
+const PhysicalContent = () => {
+  const { watch, setValue } = useFormContext();
+  const painData = watch('symptoms.painData') || {};
+
+  const handlePainDataUpdate = (regionId: string, data: any) => {
+    const newPainData = {
+      ...painData,
+      [regionId]: data
+    };
+    setValue('symptoms.painData', newPainData, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+  };
+
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      {/* Anterior View */}
+      <div className="col-span-1">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">Anterior View</h4>
+          <div className="border rounded-lg p-4">
+            <BodyMap 
+              painData={painData}
+              onPainDataUpdate={handlePainDataUpdate}
+              showAnterior={true}
+              showPosterior={false}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Posterior View */}
+      <div className="col-span-1">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">Posterior View</h4>
+          <div className="border rounded-lg p-4">
+            <BodyMap 
+              painData={painData}
+              onPainDataUpdate={handlePainDataUpdate}
+              showAnterior={false}
+              showPosterior={true}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Pain Findings */}
+      <div className="col-span-1">
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium">Pain Findings</h4>
+          <div className="border rounded-lg p-4">
+            <PainFindingsTable />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export function SymptomsSection() {
+  return (
+    <div className="space-y-6">
+      <Tabs defaultValue="physical" className="w-full">
+        <TabsList className="w-full grid grid-cols-3">
+          <TabsTrigger value="physical" className="flex items-center gap-2">
+            <FiActivity className="h-4 w-4" />
+            Physical Symptoms
+          </TabsTrigger>
+          <TabsTrigger value="emotional" className="flex items-center gap-2">
+            <FaHeartBroken className="h-4 w-4" />
+            Emotional/Psychological
+          </TabsTrigger>
+          <TabsTrigger value="cognitive" className="flex items-center gap-2">
+            <FaBrain className="h-4 w-4" />
+            Cognitive
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="physical" className="mt-6">
+          <PhysicalContent />
+        </TabsContent>
+
+        <TabsContent value="emotional" className="mt-6">
+          <EmotionalSymptoms />
+        </TabsContent>
+
+        <TabsContent value="cognitive" className="mt-6">
+          <CognitiveSymptoms />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

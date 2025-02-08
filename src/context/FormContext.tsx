@@ -74,6 +74,36 @@ const initialFormState: AssessmentFormData = {
       concerns: '',
       recommendations: ''
     }
+  },
+  ama: {
+    edition: '',
+    assessmentDate: '',
+    diagnosisCategories: [],
+    totalImpairment: '',
+    methodology: '',
+    recommendations: [],
+    additionalNotes: ''
+  },
+  attendantCare: {
+    overview: {
+      totalHoursPerDay: '',
+      caregiverTypes: [],
+      supervisedCare: false,
+      specializedTraining: false,
+      scheduleFlexibility: ''
+    },
+    tasks: [],
+    schedule: [],
+    equipment: [],
+    training: {
+      required: false,
+      topics: [],
+      duration: '',
+      provider: '',
+      specialConsiderations: ''
+    },
+    recommendations: [],
+    notes: ''
   }
 };
 
@@ -118,9 +148,16 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Validate form data
-  const validateForm = useCallback((data: AssessmentFormData) => {
+  const validateForm = useCallback((data: AssessmentFormData, strict: boolean = false) => {
     try {
-      assessmentSchema.parse(data);
+      if (strict) {
+        // Full validation for final submission
+        assessmentSchema.parse(data);
+      } else {
+        // Partial validation for drafts - only validate non-empty fields
+        const partialSchema = assessmentSchema.partial();
+        partialSchema.parse(data);
+      }
       setValidationErrors(null);
       setIsValid(true);
       return true;
@@ -137,12 +174,8 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
   const saveForm = useCallback(async (data: AssessmentFormData) => {
     try {
       setIsSaving(true);
-      const isValidData = validateForm(data);
+      validateForm(data, false); // Use partial validation for drafts
       
-      if (!isValidData) {
-        console.warn('Form data is invalid, but saving anyway');
-      }
-
       const dataStr = JSON.stringify(data);
       localStorage.setItem(STORAGE_KEY, dataStr);
       
@@ -211,7 +244,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
   // Export form data
   const exportForm = useCallback(async (): Promise<string> => {
     try {
-      const isValidData = validateForm(formData);
+      const isValidData = validateForm(formData, true); // Use strict validation for export
       if (!isValidData) {
         throw new Error('Form data is invalid');
       }
@@ -234,7 +267,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
 
   // Initial validation on load
   useEffect(() => {
-    validateForm(formData);
+    validateForm(formData, false); // Use partial validation for initial load
     const initialProgress = calculateProgress(formData);
     setProgress(initialProgress);
   }, []);
@@ -262,4 +295,10 @@ export function useFormContext() {
   return context;
 }
 
-export default FormContext;
+// Naming the default export explicitly
+const FormContextExport = {
+  Provider: FormProvider,
+  useFormContext
+};
+
+export default FormContextExport;

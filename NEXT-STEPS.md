@@ -1,99 +1,188 @@
-# Next Development Steps: Form-Based Assessment Data Collection
+# Next Development Steps: Hybrid Report Generation System
 
-## Current Status
-Moving to form-based data collection, eliminating mock data in favor of real user input through the assessment form interface.
+## Phase 1: Document Template System
 
-## Implementation Strategy
+### Word Document Framework
+1. Master Template Development
+   - Professional document structure
+   - Consistent styling system
+   - Header/footer templates
+   - Section formatting rules
+   - Table styles
+   - List formatting
 
-### Phase 1: Form Data Collection
-1. [ ] Ensure all form sections are properly connected
-   - Initial Information
-   - Medical History
-   - Symptoms Assessment
-   - Typical Day Assessment
-   - Functional Assessment
-   - Environmental Assessment
-   - ADL Assessment
-
-2. [ ] Implement form validation
-   - Required fields
-   - Data type validation
-   - Cross-field validation
-   - Section completion tracking
-
-3. [ ] Setup data export functionality
-   - JSON structure export
-   - Form state persistence
-   - Auto-save functionality
-   - Export format validation
-
-### Phase 2: Data Processing
-1. [ ] Create data transformation layer
-   - Form data to assessment model
-   - Validation checks
-   - Data normalization
-   - Error handling
-
-2. [ ] Implement save/export features
-   - Local storage integration
-   - JSON file export
-   - Data versioning
-   - Backup functionality
-
-### Phase 3: Report Generation Integration
-1. [ ] Map form fields to report sections
-2. [ ] Create report templates
-3. [ ] Implement draft report generation
-4. [ ] Add report customization options
-
-## Technical Requirements
-1. Form State Management
-   - Use React Hook Form
-   - Implement form context
-   - Setup field validation
-   - Handle conditional fields
-
-2. Data Processing
-   - Type-safe transformations
-   - Data validation
-   - Error handling
-   - Format consistency
-
-3. Export Functionality
-   - JSON structure
-   - File handling
-   - Error recovery
+2. Document Generation System
+   - Template management
+   - Dynamic content insertion
+   - Style application
+   - Quality control
    - Version control
 
-## Immediate Tasks
-1. [ ] Update form components to handle direct input
-2. [ ] Implement section-by-section validation
-3. [ ] Create JSON export functionality
-4. [ ] Setup automated saving system
-5. [ ] Create data transformation layer
-6. [ ] Update test suite for new approach
-
-## Testing Strategy
-1. Form Validation
-   - Field-level validation
-   - Section completion checks
-   - Cross-field validation
-   - Error messaging
-
-2. Data Processing
-   - Transform accuracy
-   - Error handling
-   - Edge cases
+3. Testing Framework
+   - Format verification
+   - Style consistency
+   - Cross-platform compatibility
    - Performance testing
 
-3. Export Functions
-   - File generation
-   - Data integrity
-   - Error recovery
-   - Format validation
+## Phase 2: Agentic System Development
 
-## Resources Needed
-1. Form validation requirements
-2. Field mapping documentation
-3. Report generation specifications
-4. Output format requirements
+### Template System
+1. Section Mapping
+   - Identify agentic-suitable sections
+   - Create data-to-narrative mappings
+   - Standard phrase libraries
+   - Word template integration
+
+2. Rule Engine Development
+   - Basic narrative rules
+   - Data interpretation logic
+   - Recommendation triggers
+   - Format application rules
+
+3. Content Generation
+   - Demographics processing
+   - Measurement narratives
+   - Basic findings
+   - Standard recommendations
+
+## Phase 3: Claude API Integration
+
+### Complex Processing
+1. Complex Section Handling
+   - Clinical reasoning sections
+   - Professional judgment areas
+   - Medical interpretation
+   - Synthesis requirements
+
+2. API Framework
+   - Prompt engineering
+   - Context management
+   - Response formatting
+   - Document integration
+
+3. Quality System
+   - Content verification
+   - Format consistency
+   - Professional standards
+   - Clinical accuracy
+
+## Phase 4: Integration & Output
+
+### System Components
+1. Processing Router
+   - Content type detection
+   - Processing path selection
+   - Resource optimization
+   - Format management
+
+2. Document Assembly
+   - Section compilation
+   - Style application
+   - Quality verification
+   - Final formatting
+
+3. Output Management
+   - Document generation
+   - Format verification
+   - Version control
+   - Export options
+
+## Success Criteria
+
+### Document Quality
+- Professional formatting
+- Consistent styling
+- Cross-platform compatibility
+- Clean layout
+
+### Content Quality
+- Professional narratives
+- Clinical accuracy
+- Consistent terminology
+- Proper structure
+
+### System Performance
+- Reliable generation
+- Format integrity
+- Error handling
+- Processing speed
+
+## Next Actions
+1. Create master Word template
+2. Set up document generation system
+3. Develop formatting rules
+4. Build content integration pipeline
+
+## Technical Implementation
+
+### Document Generation
+```javascript
+// Template system structure
+class ReportTemplate {
+  constructor() {
+    this.sections = {
+      demographics: new Section('demographics'),
+      findings: new Section('findings'),
+      recommendations: new Section('recommendations')
+    };
+    this.styles = loadStyles();
+    this.formatting = loadFormatting();
+  }
+
+  async generate(data) {
+    const doc = new Document({
+      sections: this.buildSections(data),
+      styles: this.styles,
+      formatting: this.formatting
+    });
+    return await this.saveDocument(doc);
+  }
+}
+
+// Style configuration
+const documentStyles = {
+  heading1: {
+    font: 'Calibri',
+    size: 16,
+    bold: true,
+    spacing: { before: 240, after: 120 }
+  },
+  normal: {
+    font: 'Calibri',
+    size: 11,
+    spacing: { before: 120, after: 120 }
+  },
+  table: {
+    font: 'Calibri',
+    size: 10,
+    borders: true
+  }
+};
+
+// Section processors
+const processors = {
+  agentic: new AgenticProcessor(documentStyles),
+  claude: new ClaudeProcessor(documentStyles)
+};
+```
+
+### Integration Points
+1. Template Management
+   - Version control for templates
+   - Style updates
+   - Format maintenance
+
+2. Content Processing
+   - Agentic content formatting
+   - Claude API response formatting
+   - Style application
+
+3. Quality Control
+   - Format verification
+   - Style consistency
+   - Layout validation
+
+4. Export Options
+   - Direct .docx output
+   - PDF conversion
+   - Format preservation

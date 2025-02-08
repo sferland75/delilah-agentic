@@ -1,177 +1,136 @@
-import React, { useRef } from 'react';
-import { useFormContext } from "react-hook-form";
-import { Button } from '@/components/ui/button';
-import { Save, Download, Upload, Loader2 } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
-import { ClearFormButton } from './ui/ClearFormButton';
-import { ReportGenerationButton } from './ReportGeneration/components/ReportGenerationButton';
-import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
-import { assessmentSchema } from '@/lib/validation/assessment-schema';
-import { useAssessmentPersistence } from '@/hooks/useAssessmentPersistence';
+import React from 'react';
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { FileDown, RotateCcw, History } from 'lucide-react';
+import { useAssessmentForm } from '@/context/FormProvider';
+import { toast } from '@/components/ui/use-toast';
 
-interface SaveControlsProps {
-  className?: string;
-}
+export function SaveControls() {
+  const { clearForm, exportForm, formData, validationStatus, hasBackup, loadBackup } = useAssessmentForm();
+  const [showAlert, setShowAlert] = React.useState(false);
 
-export const SaveControls: React.FC<SaveControlsProps> = ({ className }) => {
-  const { getValues, reset, formState: { isDirty, isValid } } = useFormContext<AssessmentFormData>();
-  const { saveAssessment, exportAssessment } = useAssessmentPersistence();
-  const { toast } = useToast();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-
-  const validateForm = async (data: AssessmentFormData) => {
+  const handleClear = React.useCallback(() => {
     try {
-      await assessmentSchema.parseAsync(data);
-      return { valid: true, errors: [] };
-    } catch (error) {
-      return {
-        valid: false,
-        errors: error.errors?.map((e: any) => e.message) || ['Invalid form data']
-      };
-    }
-  };
-
-  const handleFileLoad = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setIsLoading(true);
-    try {
-      const content = await file.text();
-      const data = JSON.parse(content);
-      
-      // Validate the loaded data
-      const validation = await validateForm(data);
-      if (!validation.valid) {
-        throw new Error('Invalid assessment data: ' + validation.errors.join(', '));
-      }
-      
-      // Reset the form with the new data
-      reset(data);
-      
+      clearForm();
       toast({
-        title: "Assessment Loaded",
-        description: "The assessment has been loaded successfully."
+        title: "Form Cleared",
+        description: "All form data has been cleared."
       });
+      setShowAlert(false);
     } catch (error) {
-      console.error('Error loading assessment file:', error);
+      console.error('Error clearing form:', error);
       toast({
         variant: "destructive",
-        title: "Load Failed",
-        description: error instanceof Error ? error.message : "Failed to load the assessment file."
+        title: "Error",
+        description: "Failed to clear the form. Please try again."
       });
-    } finally {
-      setIsLoading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
     }
-  };
-
-  const handleSave = async () => {
-    setIsLoading(true);
-    try {
-      const formData = getValues();
-      const validation = await validateForm(formData);
-      
-      if (!validation.valid) {
-        throw new Error('Required data is missing: ' + validation.errors.join(', '));
-      }
-
-      await saveAssessment();
-
-    } catch (error) {
-      console.error('Error saving assessment:', error);
-      toast({
-        variant: "destructive",
-        title: "Save Failed",
-        description: error instanceof Error ? error.message : "Failed to save the assessment."
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [clearForm]);
 
   const handleExport = async () => {
-    setIsLoading(true);
     try {
-      const formData = getValues();
-      const validation = await validateForm(formData);
-      
-      if (!validation.valid) {
-        throw new Error('Required data is missing: ' + validation.errors.join(', '));
+      // Validate before export
+      if (validationStatus && !validationStatus.isValid) {
+        const errorCount = Object.values(validationStatus.errors).flat().length;
+        const warningCount = Object.values(validationStatus.warnings).flat().length;
+        
+        let message = '';
+        if (errorCount > 0) {
+          message += `${errorCount} validation error${errorCount > 1 ? 's' : ''} `;
+        }
+        if (warningCount > 0) {
+          message += `${warningCount} warning${warningCount > 1 ? 's' : ''}`;
+        }
+
+        toast({
+          variant: "warning",
+          title: "Form Validation Issues",
+          description: `Please fix ${message} before exporting.`
+        });
+        return;
       }
 
-      await exportAssessment();
+      const jsonStr = await exportForm();
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `assessment_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
 
+      toast({
+        title: "Export Successful",
+        description: "Assessment data has been exported successfully."
+      });
     } catch (error) {
-      console.error('Error exporting assessment:', error);
+      console.error('Error exporting form:', error);
       toast({
         variant: "destructive",
         title: "Export Failed",
-        description: error instanceof Error ? error.message : "Failed to export the assessment."
+        description: "Failed to export the form. Please try again."
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <div className={`flex gap-2 ${className}`}>
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileLoad}
-        accept=".json"
-        className="hidden"
-      />
+    <div className="flex gap-2">
+      {hasBackup && (
+        <Button 
+          variant="outline" 
+          className="gap-2"
+          onClick={loadBackup}
+        >
+          <History className="h-4 w-4" />
+          Restore Backup
+        </Button>
+      )}
 
-      <ClearFormButton variant="outline" />
-      
-      <Button
-        onClick={() => fileInputRef.current?.click()}
-        variant="outline"
-        disabled={isLoading}
-        className="flex items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Upload className="h-4 w-4" />
-        )}
-        Load Assessment
-      </Button>
+      <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+        <AlertDialogTrigger asChild>
+          <Button variant="outline" className="gap-2">
+            <RotateCcw className="h-4 w-4" />
+            Clear Form
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will clear all form data. This action cannot be undone.
+              {hasBackup && " A backup will be preserved in case you need to restore it later."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleClear}>
+              Clear Form
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-      <Button
-        onClick={handleSave}
-        disabled={!isDirty || !isValid || isLoading}
-        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Save className="h-4 w-4" />
-        )}
-        Save Progress
-      </Button>
-      
-      <Button
+      <Button 
+        variant="outline" 
+        className="gap-2" 
         onClick={handleExport}
-        variant="outline"
-        disabled={!isValid || isLoading}
-        className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50"
+        disabled={validationStatus && !validationStatus.isValid}
       >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Download className="h-4 w-4" />
-        )}
-        Export Assessment
+        <FileDown className="h-4 w-4" />
+        Export
       </Button>
-
-      <ReportGenerationButton />
     </div>
   );
-};
+}

@@ -1,178 +1,145 @@
 import { z } from 'zod';
 
-// AMA Schema
-const amaImpairmentSchema = z.object({
-  category: z.string().min(1, "Category is required"),
-  diagnosisCode: z.string().min(1, "Diagnosis code is required"),
-  diagnosisDescription: z.string().min(1, "Diagnosis description is required"),
-  bodyPart: z.string().min(1, "Body part is required"),
-  impairmentRating: z.string().min(1, "Impairment rating is required"),
-  rationale: z.string().min(1, "Rationale is required"),
-  guideReference: z.string().min(1, "Guide reference is required"),
-  notes: z.string().optional()
+// Housekeeping section schemas
+const cleaningTaskSchema = z.object({
+  preAccident: z.string().optional().default(''),
+  postAccident: z.string().optional().default(''),
+  frequency: z.string().optional().default(''),
+  timeRequired: z.string().optional().default(''),
+  clinicalJustification: z.string().optional().default('')
 });
 
-const amaGuidesSchema = z.object({
-  edition: z.string().min(1, "AMA Guides edition is required"),
-  assessmentDate: z.string().min(1, "Assessment date is required"),
-  diagnosisCategories: z.array(amaImpairmentSchema),
-  totalImpairment: z.string().min(1, "Total impairment rating is required"),
-  methodology: z.string().min(1, "Combined values methodology is required"),
-  recommendations: z.array(z.string()),
-  additionalNotes: z.string().optional()
+const maintenanceTaskSchema = z.object({
+  preAccident: z.string().optional().default(''),
+  postAccident: z.string().optional().default(''),
+  frequency: z.string().optional().default(''),
+  timeRequired: z.string().optional().default(''),
+  costEstimate: z.string().optional().default(''),
+  clinicalJustification: z.string().optional().default('')
 });
 
-// Attendant Care Schema
-const careTaskSchema = z.object({
-  taskName: z.string().min(1, "Task name is required"),
-  frequency: z.string().min(1, "Frequency is required"),
-  timeRequired: z.string().min(1, "Time required is required"),
-  assistanceLevel: z.string().min(1, "Assistance level is required"),
-  equipmentNeeded: z.array(z.string()),
-  specialConsiderations: z.string().optional(),
-  trainingRequired: z.boolean(),
-  trainingDescription: z.string().optional()
+const replacementTaskSchema = z.object({
+  preAccidentStatus: z.string().optional().default(''),
+  hoursPerWeek: z.string().optional().default(''),
+  annualCost: z.string().optional().default('')
 });
 
-const careScheduleSchema = z.object({
-  timeOfDay: z.string().min(1, "Time of day is required"),
-  tasks: z.array(z.string()),
-  duration: z.string().min(1, "Duration is required"),
-  caregiverType: z.string().min(1, "Caregiver type is required")
-});
+const housekeepingSchema = z.object({
+  cleaning: z.record(cleaningTaskSchema).optional().default({}),
+  maintenance: z.record(maintenanceTaskSchema).optional().default({}),
+  replacementHours: z.record(replacementTaskSchema).optional().default({}),
+  notes: z.string().optional().default('')
+}).optional().default({});
 
-const attendantCareSchema = z.object({
-  overview: z.object({
-    totalHoursPerDay: z.string().min(1, "Total hours per day is required"),
-    caregiverTypes: z.array(z.string()),
-    supervisedCare: z.boolean(),
-    specializedTraining: z.boolean(),
-    scheduleFlexibility: z.string().min(1, "Schedule flexibility is required")
-  }),
-  tasks: z.array(careTaskSchema),
-  schedule: z.array(careScheduleSchema),
-  equipment: z.array(z.string()),
-  training: z.object({
-    required: z.boolean(),
-    topics: z.array(z.string()),
-    duration: z.string().optional(),
-    provider: z.string().optional(),
-    specialConsiderations: z.string().optional()
-  }),
-  recommendations: z.array(z.string()),
-  notes: z.string().optional()
-});
-
-// Basic schemas (existing)
-const personSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  dateOfBirth: z.string().min(1, "Date of birth is required"),
-  phone: z.string().optional(),
-  email: z.string().email().optional(),
-});
-
-const injurySchema = z.object({
-  circumstance: z.string().min(1, "Circumstance is required"),
-  date: z.string().min(1, "Date is required"),
-  description: z.string().min(1, "Description is required"),
-  notes: z.string().optional(),
-});
-
-const symptomSchema = z.object({
-  location: z.string().min(1, "Location is required"),
-  type: z.string().min(1, "Type is required"),
-  severity: z.string().min(1, "Severity is required"),
-  frequency: z.string().min(1, "Frequency is required"),
-  aggravating: z.array(z.string()),
-  relieving: z.array(z.string()),
-  description: z.string().min(1, "Description is required"),
-  additional: z.string().optional(),
-});
-
-const toleranceSchema = z.object({
-  painLevel: z.number().min(0).max(10),
-  limitations: z.string().min(1, "Limitations description is required"),
-  adaptations: z.string().min(1, "Adaptations description is required"),
-});
-
-const assessmentItemSchema = z.object({
-  score: z.string(),
-  notes: z.string().optional(),
+// Room inventory schema for environmental section
+const roomSchema = z.object({
   type: z.string(),
-  label: z.string(),
-});
+  quantity: z.number().min(0),
+  floorCovering: z.string().optional(),
+  comments: z.string().optional()
+}).optional();
 
-// Section schemas (existing)
+// Environmental section schema
+const environmentalSchema = z.object({
+  rooms: z.array(roomSchema).optional().default([]),
+  description: z.string().optional().default(''),
+  hazards: z.string().optional().default(''),
+  notes: z.string().optional().default(''),
+  outdoor: z.object({
+    access: z.string().optional().default(''),
+    yard: z.string().optional().default('')
+  }).optional().default({})
+}).optional().default({});
+
+// Initial section schema
 const initialSectionSchema = z.object({
-  personal: personSchema,
-});
+  personal: z.object({
+    firstName: z.string().optional().default(''),
+    lastName: z.string().optional().default(''),
+    dateOfBirth: z.string().optional().default(''),
+    phone: z.string().optional().default(''),
+    email: z.string().optional().default(''),
+    streetAddress: z.string().optional().default(''),
+    city: z.string().optional().default(''),
+    postalCode: z.string().optional().default('')
+  }).optional().default({})
+}).optional().default({});
 
+// Medical section schema
 const medicalSectionSchema = z.object({
-  injury: injurySchema,
-  symptoms: z.array(symptomSchema),
-  treatments: z.array(z.string()),
+  injury: z.object({
+    circumstance: z.string().optional().default(''),
+    date: z.string().optional().default(''),
+    description: z.string().optional().default(''),
+    notes: z.string().optional().default('')
+  }).optional().default({}),
+  symptoms: z.array(z.string()).optional().default([]),
+  pain: z.record(z.any()).optional().default({}),
+  treatments: z.array(z.string()).optional().default([]),
   medications: z.array(z.object({
-    name: z.string().min(1, "Medication name is required"),
-    dosage: z.string().min(1, "Dosage is required"),
-    frequency: z.string().min(1, "Frequency is required"),
-    purpose: z.string().min(1, "Purpose is required"),
-  })),
+    name: z.string().optional().default(''),
+    dosage: z.string().optional().default(''),
+    frequency: z.string().optional().default(''),
+    purpose: z.string().optional().default('')
+  })).optional().default([]),
   imaging: z.array(z.object({
-    type: z.string().min(1, "Type is required"),
-    date: z.string().min(1, "Date is required"),
-    region: z.string().min(1, "Region is required"),
-    findings: z.string().min(1, "Findings are required"),
-  })),
-});
+    type: z.string().optional().default(''),
+    date: z.string().optional().default(''),
+    region: z.string().optional().default(''),
+    findings: z.string().optional().default('')
+  })).optional().default([])
+}).optional().default({});
 
-const functionalSectionSchema = z.object({
-  tolerances: z.record(toleranceSchema),
-  rangeOfMotion: z.record(assessmentItemSchema),
-  manualMuscleTesting: z.record(assessmentItemSchema.extend({
-    pain: z.boolean(),
-  })),
-  overallNotes: z.string().min(1, "Overall notes are required"),
-  recommendations: z.array(z.string()),
-  followUpNeeded: z.boolean(),
-  followUpNotes: z.string().optional(),
-});
+// ADL section schema
+const adlSectionSchema = z.object({
+  activities: z.record(z.any()).optional().default({}),
+  notes: z.string().optional().default('')
+}).optional().default({});
 
-const environmentalSectionSchema = z.object({
-  propertyOverview: z.object({
-    propertyType: z.string().min(1, "Property type is required"),
-    layoutDescription: z.string().min(1, "Layout description is required"),
-    access: z.object({
-      exterior: z.object({
-        description: z.string().min(1, "Exterior access description is required"),
-      }),
-      interior: z.object({
-        description: z.string().min(1, "Interior access description is required"),
-        hasStairs: z.boolean(),
-        numberOfStairs: z.number(),
-      }),
-    }),
-    recommendedModifications: z.array(z.string()),
-    identifiedHazards: z.array(z.string()),
-  }),
-  safety: z.object({
-    hazards: z.array(z.string()),
-    concerns: z.string().min(1, "Safety concerns are required"),
-    recommendations: z.string().min(1, "Safety recommendations are required"),
-  }),
-});
+// AMA section schema
+const amaSectionSchema = z.object({
+  edition: z.string().optional().default(''),
+  assessmentDate: z.string().optional().default(''),
+  diagnosisCategories: z.array(z.string()).optional().default([]),
+  totalImpairment: z.string().optional().default(''),
+  methodology: z.string().optional().default(''),
+  recommendations: z.array(z.string()).optional().default([]),
+  additionalNotes: z.string().optional().default('')
+}).optional().default({});
+
+// Care section schema
+const careSectionSchema = z.object({
+  overview: z.object({
+    totalHoursPerDay: z.string().optional().default(''),
+    caregiverTypes: z.array(z.string()).optional().default([]),
+    supervisedCare: z.boolean().optional().default(false),
+    specializedTraining: z.boolean().optional().default(false),
+    scheduleFlexibility: z.string().optional().default('')
+  }).optional().default({}),
+  tasks: z.array(z.string()).optional().default([]),
+  schedule: z.array(z.string()).optional().default([]),
+  equipment: z.array(z.string()).optional().default([]),
+  training: z.object({
+    required: z.boolean().optional().default(false),
+    topics: z.array(z.string()).optional().default([]),
+    duration: z.string().optional().default(''),
+    provider: z.string().optional().default(''),
+    specialConsiderations: z.string().optional().default('')
+  }).optional().default({}),
+  recommendations: z.array(z.string()).optional().default([]),
+  notes: z.string().optional().default('')
+}).optional().default({});
 
 // Main assessment schema
 export const assessmentSchema = z.object({
   initial: initialSectionSchema,
   medical: medicalSectionSchema,
-  functional: functionalSectionSchema,
-  environmental: environmentalSectionSchema,
-  ama: amaGuidesSchema,
-  attendantCare: attendantCareSchema
-});
+  environmental: environmentalSchema,
+  housekeeping: housekeepingSchema,
+  functional: z.record(z.any()).optional().default({}),
+  adl: adlSectionSchema,
+  ama: amaSectionSchema,
+  attendantCare: careSectionSchema
+}).partial();
 
-// Export types
 export type AssessmentFormData = z.infer<typeof assessmentSchema>;
-export type AMAGuidesData = z.infer<typeof amaGuidesSchema>;
-export type AttendantCareData = z.infer<typeof attendantCareSchema>;

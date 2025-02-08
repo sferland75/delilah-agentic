@@ -1,5 +1,4 @@
 import React from 'react';
-import { useForm } from 'react-hook-form';
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,11 +18,22 @@ export const HeadPainAssessment: React.FC<HeadPainAssessmentProps> = ({
   onSave,
   initialData
 }) => {
-  const [severity, setSeverity] = React.useState(initialData?.severity || 0);
-  const [selectedSymptoms, setSelectedSymptoms] = React.useState<string[]>(initialData?.symptoms || []);
-  const [pattern, setPattern] = React.useState(initialData?.pattern || '');
-  const [impact, setImpact] = React.useState(initialData?.impact || '');
-  const [notes, setNotes] = React.useState(initialData?.notes || '');
+  // Initialize state with initialData
+  const [severity, setSeverity] = React.useState(initialData?.severity ?? 0);
+  const [selectedSymptoms, setSelectedSymptoms] = React.useState<string[]>(initialData?.symptoms ?? []);
+  const [pattern, setPattern] = React.useState(initialData?.pattern ?? '');
+  const [impact, setImpact] = React.useState(initialData?.impact ?? '');
+  const [notes, setNotes] = React.useState(initialData?.notes ?? '');
+
+  // Update state when initialData changes
+  React.useEffect(() => {
+    console.log('Initial data received:', initialData);
+    setSeverity(initialData?.severity ?? 0);
+    setSelectedSymptoms(initialData?.symptoms ?? []);
+    setPattern(initialData?.pattern ?? '');
+    setImpact(initialData?.impact ?? '');
+    setNotes(initialData?.notes ?? '');
+  }, [initialData]);
 
   const symptomCategories = {
     'Headache Characteristics': headSymptoms.headache,
@@ -34,11 +44,13 @@ export const HeadPainAssessment: React.FC<HeadPainAssessmentProps> = ({
   };
 
   const handleSymptomToggle = (symptom: string, checked: boolean) => {
-    if (checked) {
-      setSelectedSymptoms(prev => [...prev, symptom]);
-    } else {
-      setSelectedSymptoms(prev => prev.filter(s => s !== symptom));
-    }
+    setSelectedSymptoms(prev => {
+      if (checked) {
+        return [...prev, symptom];
+      } else {
+        return prev.filter(s => s !== symptom);
+      }
+    });
   };
 
   const handleSave = () => {
@@ -50,6 +62,7 @@ export const HeadPainAssessment: React.FC<HeadPainAssessmentProps> = ({
       notes,
       timestamp: new Date().toISOString()
     };
+    console.log('Saving pain assessment data:', data);
     onSave(data);
   };
 
@@ -135,5 +148,3 @@ export const HeadPainAssessment: React.FC<HeadPainAssessmentProps> = ({
     </div>
   );
 };
-
-export default HeadPainAssessment;

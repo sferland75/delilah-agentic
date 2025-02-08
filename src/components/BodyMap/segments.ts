@@ -226,38 +226,62 @@ const posteriorSegments: SegmentMap = {
     label: 'Posterior Pelvis'
   },
 
-  // Back muscles
-  leftUpperTrap: { 
-    path: anteriorSegments.leftShoulder.path, 
-    label: 'Left Upper Trapezius' 
+  // Back muscles with unique paths
+  leftUpperTrap: {
+    path: `M ${center-15},${shoulderY} 
+           L ${center-70},${shoulderY+15} 
+           L ${center-65},${shoulderY+35} 
+           L ${center-20},${shoulderY+25} Z`,
+    label: 'Left Upper Trapezius'
   },
-  rightUpperTrap: { 
-    path: anteriorSegments.rightShoulder.path, 
-    label: 'Right Upper Trapezius' 
+  rightUpperTrap: {
+    path: `M ${center+15},${shoulderY} 
+           L ${center+70},${shoulderY+15} 
+           L ${center+65},${shoulderY+35} 
+           L ${center+20},${shoulderY+25} Z`,
+    label: 'Right Upper Trapezius'
   },
-  leftPosteriorArm: { 
-    path: anteriorSegments.leftUpperArm.path, 
-    label: 'Left Posterior Arm' 
+  leftPosteriorArm: {
+    path: `M ${center-65},${shoulderY+35} 
+           L ${center-70},${chestY+25} 
+           L ${center-55},${chestY+25} 
+           L ${center-50},${shoulderY+35} Z`,
+    label: 'Left Posterior Arm'
   },
-  rightPosteriorArm: { 
-    path: anteriorSegments.rightUpperArm.path, 
-    label: 'Right Posterior Arm' 
+  rightPosteriorArm: {
+    path: `M ${center+50},${shoulderY+35} 
+           L ${center+65},${shoulderY+35} 
+           L ${center+70},${chestY+25} 
+           L ${center+55},${chestY+25} Z`,
+    label: 'Right Posterior Arm'
   },
-  leftHamstring: { 
-    path: anteriorSegments.leftThigh.path, 
-    label: 'Left Hamstring' 
+  leftHamstring: {
+    path: `M ${center-35},${pelvisY+5} 
+           L ${center-15},${pelvisY+5} 
+           L ${center-15},${kneeY+5} 
+           L ${center-35},${kneeY+5} Z`,
+    label: 'Left Hamstring'
   },
-  rightHamstring: { 
-    path: anteriorSegments.rightThigh.path, 
-    label: 'Right Hamstring' 
+  rightHamstring: {
+    path: `M ${center+15},${pelvisY+5} 
+           L ${center+35},${pelvisY+5} 
+           L ${center+35},${kneeY+5} 
+           L ${center+15},${kneeY+5} Z`,
+    label: 'Right Hamstring'
   },
-  leftCalf: { 
-    path: anteriorSegments.leftLowerLeg.path, 
-    label: 'Left Calf' 
+  leftCalf: {
+    path: `M ${center-35},${kneeY+10} 
+           L ${center-15},${kneeY+10} 
+           L ${center-15},${ankleY+5} 
+           L ${center-35},${ankleY+5} Z`,
+    label: 'Left Calf'
   },
-  rightCalf: { 
-    path: anteriorSegments.rightLowerLeg.path, 
-    label: 'Right Calf' 
+  rightCalf: {
+    path: `M ${center+15},${kneeY+10} 
+           L ${center+35},${kneeY+10} 
+           L ${center+35},${ankleY+5} 
+           L ${center+15},${ankleY+5} Z`,
+    label: 'Right Calf'
   }
 };
 

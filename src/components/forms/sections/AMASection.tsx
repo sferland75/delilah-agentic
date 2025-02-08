@@ -36,6 +36,8 @@ export const AMASection = () => {
 
   return (
     <div className="space-y-6">
+      <h2 className="text-xl font-semibold">AMA Guides Assessment</h2>
+      
       {/* General AMA Information */}
       <Card>
         <CardContent className="pt-6">
@@ -56,7 +58,7 @@ export const AMASection = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="flex justify-between items-center mb-4">
-            <h4 className="text-lg font-semibold">Diagnosis Categories</h4>
+            <div className="text-lg font-medium">Diagnosis Categories</div>
             <Button onClick={addDiagnosis} variant="outline" size="sm">
               <Plus className="h-4 w-4 mr-2" />
               Add Diagnosis
@@ -67,7 +69,7 @@ export const AMASection = () => {
             {diagnosisCategories.map((_, index) => (
               <div key={index} className="p-4 border rounded-lg space-y-4">
                 <div className="flex justify-between items-start">
-                  <h5 className="font-medium">Diagnosis {index + 1}</h5>
+                  <div className="font-medium">Diagnosis {index + 1}</div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -140,5 +142,3 @@ export const AMASection = () => {
     </div>
   );
 };
-
-export default AMASection;
