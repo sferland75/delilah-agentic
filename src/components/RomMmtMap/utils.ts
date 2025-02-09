@@ -2,17 +2,17 @@ export const getJointROMScore = (jointId: string, romData: any, joints: any) => 
   const joint = joints[jointId];
   if (!joint) return 'WFL';
 
-  // Extract joint name and map special cases
+  // Use exact joint label for specificity
   const jointMap: { [key: string]: string } = {
     'Lumbar Spine': 'Trunk',
     'Thoracic Spine': 'Trunk'
   };
 
-  const searchName = jointMap[joint.label] || joint.label.split(' ')[0];
+  const searchName = jointMap[joint.label] || joint.label;
 
-  // Look for matching ROM entries
+  // Look for exact matching ROM entries
   const jointEntries = Object.entries(romData || {}).filter(([key]) => 
-    key.startsWith(searchName)
+    key === searchName || key.startsWith(`${searchName} `)
   );
 
   console.log(`ROM lookup for ${joint.label} (${searchName}):`, jointEntries);
