@@ -2,18 +2,15 @@ import React from 'react';
 import { HomeIcon, ShieldAlert, ParkingCircle, Trees, FileText } from 'lucide-react';
 import { RoomInventory } from '@/components/EnvironmentalSection/RoomInventory';
 import { Textarea } from "@/components/ui/textarea";
-import { useAssessmentForm } from '@/context/FormProvider';
+import { useFormContext } from 'react-hook-form';
+import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
 
 export const EnvironmentalSection = () => {
-  const { formData, updateForm } = useAssessmentForm();
+  const { register, watch, setValue } = useFormContext<AssessmentFormData>();
+  const environmental = watch('environmental');
 
   const updateField = (field: string, value: string) => {
-    updateForm({
-      environmental: {
-        ...formData.environmental,
-        [field]: value
-      }
-    });
+    setValue(`environmental.${field}`, value, { shouldDirty: true });
   };
 
   return (
@@ -26,8 +23,7 @@ export const EnvironmentalSection = () => {
             <div className="text-sm font-semibold">General Property Description</div>
           </div>
           <Textarea
-            value={formData.environmental?.description || ''}
-            onChange={(e) => updateField('description', e.target.value)}
+            {...register('environmental.description')}
             placeholder="Describe the general layout and features of the property..."
             className="mt-2 resize-none text-sm min-h-[100px]"
           />
@@ -39,8 +35,7 @@ export const EnvironmentalSection = () => {
             <div className="text-sm font-semibold">Hazards and Safety Concerns</div>
           </div>
           <Textarea
-            value={formData.environmental?.hazards || ''}
-            onChange={(e) => updateField('hazards', e.target.value)}
+            {...register('environmental.hazards')}
             placeholder="List any identified hazards or safety concerns..."
             className="mt-2 resize-none text-sm min-h-[100px]"
           />
@@ -58,16 +53,7 @@ export const EnvironmentalSection = () => {
             <div className="text-sm font-semibold">Access and Parking</div>
           </div>
           <Textarea
-            value={formData.environmental?.outdoor?.access || ''}
-            onChange={(e) => updateForm({
-              environmental: {
-                ...formData.environmental,
-                outdoor: {
-                  ...formData.environmental?.outdoor,
-                  access: e.target.value
-                }
-              }
-            })}
+            {...register('environmental.outdoor.access')}
             placeholder="Describe parking, walkways, and outdoor access..."
             className="mt-2 resize-none text-sm min-h-[100px]"
           />
@@ -79,16 +65,7 @@ export const EnvironmentalSection = () => {
             <div className="text-sm font-semibold">Yard and Garden Areas</div>
           </div>
           <Textarea
-            value={formData.environmental?.outdoor?.yard || ''}
-            onChange={(e) => updateForm({
-              environmental: {
-                ...formData.environmental,
-                outdoor: {
-                  ...formData.environmental?.outdoor,
-                  yard: e.target.value
-                }
-              }
-            })}
+            {...register('environmental.outdoor.yard')}
             placeholder="Describe yard space, gardens, and maintenance requirements..."
             className="mt-2 resize-none text-sm min-h-[100px]"
           />
@@ -103,8 +80,7 @@ export const EnvironmentalSection = () => {
             <div className="text-sm font-semibold">Additional Comments and Recommendations</div>
           </div>
           <Textarea
-            value={formData.environmental?.notes || ''}
-            onChange={(e) => updateField('notes', e.target.value)}
+            {...register('environmental.notes')}
             placeholder="Add any additional notes, observations, or recommendations..."
             className="mt-2 resize-none text-sm min-h-[100px]"
           />

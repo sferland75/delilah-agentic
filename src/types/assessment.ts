@@ -1,262 +1,117 @@
-import { FunctionalAssessmentData } from './functionalAssessment';
-
-// Independence level type
-export type IndependenceLevel = 
-  | 'independent'
-  | 'modified_independent'
-  | 'supervision'
-  | 'minimal_assistance'
-  | 'moderate_assistance'
-  | 'maximal_assistance'
-  | 'dependent';
-
-// Frequency type
-export type Frequency = 
-  | 'multiple_daily'
-  | 'daily'
-  | 'weekly'
-  | 'monthly'
-  | 'rarely';
-
-// Time taken type
-export type TimeTaken = 
-  | 'under_5min'
-  | '5_15min'
-  | '15_30min'
-  | '30_60min'
-  | 'over_60min';
-
-// Base interface for ADL entries
-export interface ADLEntry {
-  independence: IndependenceLevel;
-  usesAssistiveDevices?: boolean;
-  assistiveDevices?: string;
-  frequency?: Frequency;
-  timeTaken?: TimeTaken;
-  notes?: string;
-  lastAssessed?: string; // ISO format date string
+export enum IndependenceLevel {
+    Independent = 'independent',
+    ModifiedIndependent = 'modified_independent',
+    Supervision = 'supervision',
+    MinimalAssistance = 'minimal_assistance',
+    ModerateAssistance = 'moderate_assistance',
+    MaximalAssistance = 'maximal_assistance',
+    Dependent = 'dependent',
+    NotApplicable = 'not_applicable'
 }
 
-// Interface definitions
-export interface Assessment {
-  demographics: Demographics;
-  documentation?: Documentation;
-  medicalHistory: MedicalHistory;
-  typicalDay: TypicalDay;
-  functionalAssessment: FunctionalAssessmentData;
-  symptoms: Symptoms;
-  environmental: Environmental;
-  adl: ADL;
-  care: Care;
-  amaGuides?: AMAGuides;
+export interface WorkStatus {
+    status: string;
+    employer?: string;
+    hours?: string;
+    duties?: string;
+    changes?: string;
+    limitations?: string;
+}
+
+export interface ADLData {
+    selfCare: {
+        preAccident: string;
+        current: string;
+    };
+    homeManagement: Array<{
+        task: string;
+        preAccident: string;
+        current: string;
+        timeAllotted?: string;
+    }>;
+    leisure: {
+        preAccident: string[];
+        current: string[];
+    };
+    work: {
+        preAccident: WorkStatus;
+        current: WorkStatus;
+    };
 }
 
 export interface AssessmentData {
-  assessment: Assessment;
-}
-
-export interface Medication {
-  name: string;
-  dosage: string;
-  frequency: string;
-  purpose?: string;
-}
-
-export interface Provider {
-  providerType: string;
-  name: string;
-  frequency: string;
-  focus: string;
-}
-
-export interface Demographics {
-  emergencyContact: {
-    name: string;
-    phone?: string;
-    relationship: string;
-  };
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  gender: string;
-  phone: string;
-  email: string;
-  address: string;
-  maritalStatus: string;
-  numberOfChildren?: number;
-  childrenDetails?: string;
-  householdMembers?: Array<{
-    name: string;
-    relationship: string;
-    notes?: string;
-  }>;
-}
-
-export interface Documentation {
-  medicalDocumentation: any[];
-  legalDocumentation: any[];
-}
-
-export interface MedicalHistory {
-  medications: Medication[];
-  allergies: string[];
-  treatments: string[];
-  surgeries?: string;
-  injury: {
-    position?: string;
-    circumstance?: string;
-    immediateResponse?: string;
-    subsequentCare?: string;
-  };
-  currentTreatment: Provider[];
-  preExisting?: string;
-  familyHistory?: string;
-}
-
-export interface TypicalDay {
-  preAccident?: DailyRoutine;
-  current: DailyRoutine;
-}
-
-export interface DailyRoutine {
-  daily: {
-    sleepSchedule?: {
-      wakeTime?: string;
-      bedTime?: string;
+    clientInfo: {
+        name: string;
+        dob: string;
+        dol: string;
+        address: string;
+        phone: string;
+        lawyer: {
+            name: string;
+            firm: string;
+        };
+        insurance: {
+            adjuster: string;
+            company: string;
+            claimNumber: string;
+        };
     };
-    routines?: {
-      morning?: {
-        activities?: string;
-      };
-      afternoon?: {
-        activities?: string;
-      };
-      evening?: {
-        activities?: string;
-      };
-      night?: {
-        activities?: string;
-      };
+    medicalHistory: {
+        preAccident: string[];
+        injury: {
+            mechanism: string;
+            nature: string[];
+            recovery: string;
+        };
+        medications: Array<{
+            name: string;
+            dosage: string;
+            frequency: string;
+            purpose: string;
+        }>;
+        currentTreatment: Array<{
+            provider: string;
+            specialty: string;
+            frequency: string;
+            lastAppointment: string;
+            nextAppointment: string;
+        }>;
     };
-  };
-  weekly?: Record<string, unknown>;
-}
-
-export interface Symptoms {
-  physical?: Array<{
-    location: string;
-    painType?: string;
-    severity?: string;
-    frequency?: string;
-    aggravating?: string;
-    relieving?: string;
-  }>;
-  cognitive?: Array<{
-    symptom: string;
-    severity: string;
-    frequency: string;
-    impact: string;
-    management?: string;
-  }>;
-  emotional?: Array<{
-    symptom: string;
-    severity: string;
-    frequency: string;
-    impact: string;
-    management?: string;
-  }>;
-  generalNotes?: string;
-}
-
-export interface Environmental {
-  propertyOverview: {
-    recommendedModifications?: string[];
-    identifiedHazards?: string[];
-    rooms: Record<string, Record<string, string>>;
-  };
-  exterior?: string[];
-  safety: {
-    hazards?: string[];
-    recommendations?: string[];
-  };
-}
-
-export interface ADL {
-  basic: {
-    bathing?: {
-      shower?: ADLEntry;
-      grooming?: ADLEntry;
-      oral_care?: ADLEntry;
-      toileting?: ADLEntry;
+    functionalAssessment: {
+        rangeOfMotion: {
+            measurements: Array<{
+                joint: string;
+                movement: string;
+                leftROM: string;
+                rightROM: string;
+                comments: string;
+            }>;
+            generalNotes: string;
+        };
+        tolerances: {
+            sitting: string;
+            standing: string;
+            walking: string;
+            lifting: string;
+        };
+        transfers: Record<string, string>;
+        overallNotes: string;
+        recommendations: string[];
     };
-    dressing?: {
-      upper_body?: ADLEntry;
-      lower_body?: ADLEntry;
-      footwear?: ADLEntry;
+    adl: ADLData;
+    environment: {
+        type: string;
+        rooms: Array<{
+            name: string;
+            quantity: number;
+            location: string;
+            flooring: string;
+        }>;
+        accessibility: {
+            entrance: string;
+            stairs: string;
+            bathroom: string;
+            bedroom: string;
+        };
     };
-    transfers?: {
-      bed_transfer?: ADLEntry;
-      toilet_transfer?: ADLEntry;
-      shower_transfer?: ADLEntry;
-      position_changes?: ADLEntry;
-    };
-    feeding?: {
-      eating?: ADLEntry;
-      setup?: ADLEntry;
-    };
-  };
-  iadl: {
-    household?: {
-      cleaning?: ADLEntry;
-      laundry?: ADLEntry;
-      meal_prep?: ADLEntry;
-      home_maintenance?: ADLEntry;
-    };
-    community?: {
-      transportation?: ADLEntry;
-      shopping?: ADLEntry;
-      money_management?: ADLEntry;
-      navigation?: ADLEntry;
-    };
-  };
-  health?: {
-    management?: {
-      medications?: ADLEntry;
-      appointments?: ADLEntry;
-      monitoring?: ADLEntry;
-      exercise?: ADLEntry;
-    };
-    routine?: {
-      sleep?: ADLEntry;
-      stress?: ADLEntry;
-      nutrition?: ADLEntry;
-    };
-  };
-  work?: {
-    status?: {
-      current_status?: ADLEntry;
-      workplace_accommodations?: ADLEntry;
-      training_needs?: ADLEntry;
-      barriers?: ADLEntry;
-    };
-  };
-}
-
-export interface Care {
-  personalCare?: {
-    type?: string;
-    frequency?: string;
-    notes?: string;
-  };
-}
-
-export interface AMAGuides {
-  narrative?: string;
-}
-
-export interface AssessmentMetadata {
-  version: string;
-  exportDate: string;
-  lastModified: string;
-  exportType: string;
 }

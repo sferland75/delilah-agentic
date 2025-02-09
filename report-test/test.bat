@@ -1,0 +1,6 @@
+@echo off
+echo Building TypeScript...
+npx tsc
+echo Running test...
+npm test
+pause

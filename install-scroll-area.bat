@@ -1,0 +1,1 @@
+npm install @radix-ui/react-scroll-area --save

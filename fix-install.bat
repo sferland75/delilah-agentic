@@ -1,0 +1,3 @@
+@echo off
+echo Installing Radix UI slider...
+npm install @radix-ui/react-slider --save

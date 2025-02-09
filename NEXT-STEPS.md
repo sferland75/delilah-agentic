@@ -1,134 +1,42 @@
-# Next Development Steps: Report Generation System
+# Next Steps - February 9, 2025
 
-## Phase 1: Report Architecture
+## Immediate Actions
 
-### Core Components
-1. Template System
-   - Base templates
-   - Section templates
-   - Custom fields
-   - Variable mapping
+### 1. Simplify Section Processing
+- Remove complex extractors
+- Focus on direct form-to-JSON
+- Maintain basic validation
 
-2. Narrative Engine
-   - Clinical phrasing
-   - Data transformation
-   - Context awareness
-   - Quality checks
+### 2. Claude Integration
+- Set up API key management
+- Create section-specific prompts
+- Implement direct API calls
+- Handle responses
 
-3. Output System
-   - Formatting rules
-   - Style consistency
-   - Export options
-   - Preview generation
+### 3. Basic Report Generation
+- Simple templating system
+- Section-by-section assembly
+- Basic formatting
 
-### Component Library
-1. Template Components
-   ```typescript
-   // Template structure
-   interface ReportTemplate {
-     sections: Section[];
-     variables: VariableMap;
-     formatting: FormatRules;
-     clinicalTerms: TerminologyMap;
-   }
-   ```
+## Technical Planning
 
-2. Narrative Components
-   ```typescript
-   // Narrative generator
-   interface NarrativeEngine {
-     generateSection(data: SectionData): string;
-     applyTerminology(text: string): string;
-     validateClinical(content: string): boolean;
-   }
-   ```
+### 1. Infrastructure
+- Basic API error handling
+- Simple response caching
+- Essential logging
 
-3. Output Components
-   ```typescript
-   // Report output
-   interface ReportOutput {
-     content: string;
-     metadata: ReportMeta;
-     formatting: FormatRules;
-     validation: ValidationResult;
-   }
-   ```
+### 2. Testing
+- Focus on form validation
+- Mock Claude API calls
+- Basic integration tests
 
-## Phase 2: Integration
+### 3. Documentation
+- API integration guide
+- Section prompt examples
+- Basic troubleshooting
 
-### Core Features
-1. Report Generation
-   - Template selection
-   - Data mapping
-   - Narrative generation
-   - Quality validation
-
-2. Clinical Integration
-   - Terminology mapping
-   - Phrase templates
-   - Context rules
-   - Validation checks
-
-3. Output Management
-   - Format selection
-   - Style application
-   - Export options
-   - Preview system
-
-### Implementation Notes
-1. Template Rules
-   - Consistent structure
-   - Variable handling
-   - Override support
-   - Version control
-
-2. Narrative Guidelines
-   - Clinical accuracy
-   - Professional tone
-   - Context awareness
-   - Natural flow
-
-3. Quality Standards
-   - Validation rules
-   - Content checks
-   - Format verification
-   - Clinical review
-
-## Quality Standards
-
-### Content Quality
-- Clinical accuracy
-- Professional language
-- Consistent terminology
-- Logical flow
-
-### Technical Quality
-- Clean data mapping
-- Reliable generation
-- Error handling
-- Performance
-
-### Output Quality
-- Format consistency
-- Style compliance
-- Export reliability
-- Preview accuracy
-
-## Success Metrics
-1. Report Quality
-   - Clinical accuracy
-   - Professional tone
-   - Consistent formatting
-   - Complete content
-
-2. System Performance
-   - Generation speed
-   - Resource usage
-   - Error handling
-   - Scalability
-
-3. User Experience
-   - Template selection
-   - Preview system
-   - Export options
-   - Customization
+## Future Considerations
+- Prompt optimization
+- Response caching
+- Error recovery
+- Format refinements

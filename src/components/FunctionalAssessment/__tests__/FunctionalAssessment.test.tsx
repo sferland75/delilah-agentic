@@ -1,102 +1,98 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { FunctionalAssessment } from '../index';
-import { AssessmentData } from '@/types/assessment';
-
-const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const methods = useForm<AssessmentData>({
-    defaultValues: {
-      functionalAssessment: {
-        capacities: [],
-        overallNotes: '',
-        recommendedAccommodations: [],
-        followUpNeeded: false,
-      },
-    },
-  });
-
-  return <FormProvider {...methods}>{children}</FormProvider>;
-};
+import { render, screen, fireEvent } from '@test/test-utils';
+import { FunctionalAssessment } from '../FunctionalAssessment';
+import { mockAssessmentData } from '@test/mocks/assessment-data';
 
 describe('FunctionalAssessment', () => {
-  it('renders all activity sections', () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
-    );
+  const defaultFormValues = {
+    functionalAssessment: {
+      rangeOfMotion: {
+        measurements: [],
+        generalNotes: ''
+      },
+      tolerances: {
+        standing: '',
+        walking: '',
+        sitting: '',
+        lifting: '',
+        carrying: '',
+        notes: ''
+      },
+      transfers: {
+        bedMobility: '',
+        toileting: '',
+        bathing: '',
+        carTransfer: '',
+        notes: ''
+      },
+      motorSkills: [],
+      generalNotes: ''
+    }
+  };
 
-    expect(screen.getByText('Standing')).toBeInTheDocument();
-    expect(screen.getByText('Walking')).toBeInTheDocument();
-    expect(screen.getByText('Sitting')).toBeInTheDocument();
-    // Add more activity checks as needed
+  it('renders all required fields', () => {
+    render(<FunctionalAssessment />, { formValues: defaultFormValues });
+    
+    expect(screen.getByLabelText('Standing tolerance')).toBeInTheDocument();
+    expect(screen.getByLabelText('Walking tolerance')).toBeInTheDocument();
+    expect(screen.getByLabelText('Sitting tolerance')).toBeInTheDocument();
   });
 
-  it('updates difficulty value when slider is changed', async () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
-    );
-
-    const slider = screen.getAllByRole('slider')[0];
-    fireEvent.change(slider, { target: { value: '5' } });
-
-    expect(slider).toHaveValue('5');
+  it('allows input in tolerance fields', () => {
+    render(<FunctionalAssessment />, { formValues: defaultFormValues });
+    
+    const standingInput = screen.getByLabelText('Standing tolerance');
+    fireEvent.change(standingInput, { target: { value: '30 minutes' } });
+    expect(standingInput).toHaveValue('30 minutes');
   });
 
-  it('allows entering limitations text', () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
-    );
-
-    const limitationsInput = screen.getAllByPlaceholderText('Describe any limitations...')[0];
-    fireEvent.change(limitationsInput, { target: { value: 'Test limitation' } });
-
-    expect(limitationsInput).toHaveValue('Test limitation');
+  it('updates ROM measurements', () => {
+    render(<FunctionalAssessment />, { formValues: defaultFormValues });
+    
+    const addMeasurementButton = screen.getByRole('button', { name: /add measurement/i });
+    fireEvent.click(addMeasurementButton);
+    
+    const jointInput = screen.getByLabelText(/joint/i);
+    const movementInput = screen.getByLabelText(/movement/i);
+    
+    fireEvent.change(jointInput, { target: { value: 'Shoulder' } });
+    fireEvent.change(movementInput, { target: { value: 'Flexion' } });
+    
+    expect(jointInput).toHaveValue('Shoulder');
+    expect(movementInput).toHaveValue('Flexion');
   });
 
-  it('allows entering adaptations text', () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
-    );
-
-    const adaptationsInput = screen.getAllByPlaceholderText('Describe any adaptations...')[0];
-    fireEvent.change(adaptationsInput, { target: { value: 'Test adaptation' } });
-
-    expect(adaptationsInput).toHaveValue('Test adaptation');
+  it('handles form validation', () => {
+    const { container } = render(<FunctionalAssessment />, { formValues: defaultFormValues });
+    
+    const submitButton = screen.getByRole('button', { name: /save assessment/i });
+    fireEvent.submit(container.querySelector('form'));
+    
+    // Check for validation message either in aria-invalid or error message
+    const standingInput = screen.getByLabelText('Standing tolerance');
+    expect(standingInput).toHaveAttribute('aria-invalid', 'true');
   });
 
-  it('shows follow-up notes field when follow-up is needed', () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
+  it('handles form submission', async () => {
+    const onSubmit = jest.fn();
+    const { container } = render(
+      <FunctionalAssessment onSubmit={onSubmit} />, 
+      { formValues: defaultFormValues }
     );
-
-    // Open the select
-    fireEvent.click(screen.getByRole('combobox'));
-    // Select "Yes"
-    fireEvent.click(screen.getByText('Yes'));
-
-    expect(screen.getByPlaceholderText('Describe required follow-up...')).toBeInTheDocument();
-  });
-
-  it('allows entering overall notes', () => {
-    render(
-      <TestWrapper>
-        <FunctionalAssessment />
-      </TestWrapper>
+    
+    const standingInput = screen.getByLabelText('Standing tolerance');
+    fireEvent.change(standingInput, { target: { value: '30 minutes' } });
+    
+    const form = container.querySelector('form');
+    fireEvent.submit(form);
+    
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        functionalAssessment: expect.objectContaining({
+          tolerances: expect.objectContaining({
+            standing: '30 minutes'
+          })
+        })
+      })
     );
-
-    const overallNotesInput = screen.getByPlaceholderText('Add any overall notes about functional capacity...');
-    fireEvent.change(overallNotesInput, { target: { value: 'Test overall notes' } });
-
-    expect(overallNotesInput).toHaveValue('Test overall notes');
   });
 });

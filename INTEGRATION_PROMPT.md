@@ -1,118 +1,111 @@
-# Integration Task: Environmental Section Debug
+# Integration Reference: Report Generation System
 
 ## Overview
-Environmental section components have been updated but are not rendering. Need to investigate and fix rendering issues while maintaining data integrity.
+This document outlines the simplified approach to report generation using direct Claude API integration per section.
 
-## Current Structure
+## Core Flow
 ```typescript
-interface EnvironmentalSection {
-  propertyOverview: {
-    type: string;
-    layout: string;
-    access: {
-      exterior: PropertyAccess;
-      interior: PropertyAccess & {
-        hasStairs: boolean;
-        numberOfStairs: number;
-      };
-    };
-    generalCondition: string;
-    primaryConcerns: string[];
-  };
-  roomAssessment: {
-    kitchen: RoomBase & KitchenDetails;
-    bathroom_main: RoomBase & BathroomDetails;
-    bedroom_main: RoomBase & BedroomDetails;
-  };
-  safetyAssessment: {
-    general: GeneralSafety;
-    risks: RiskAssessment;
-    modifications: ModificationPlan;
-    recommendations: Recommendations;
-  };
+// Basic flow example
+async function generateSection(sectionData: any, sectionType: string) {
+  // 1. Get section prompt
+  const prompt = getSectionPrompt(sectionType);
+  
+  // 2. Call Claude API
+  const response = await callClaude(prompt, sectionData);
+  
+  // 3. Process response
+  return formatSection(response);
 }
 ```
 
-## Debug Steps
+## Section Types
+1. Demographics
+2. Medical History
+3. Current Treatment
+4. Functional Assessment
+5. ADL Assessment
+6. Environmental Assessment
+7. Recommendations
 
-1. **Form Context Verification**
-   ```typescript
-   const { watch } = useFormContext();
-   console.log('Environmental Data:', watch('environmental'));
-   ```
+## Basic Implementation
 
-2. **Component Loading Check**
-   ```typescript
-   useEffect(() => {
-     console.log('Environmental Component Mounted');
-     // Check initial values
-   }, []);
-   ```
+1. Section Prompts
+```typescript
+const SECTION_PROMPTS = {
+  demographics: \`You are writing the demographics section of an OT report.
+Data: \${JSON.stringify(data, null, 2)}
+Generate a professional demographics section.\`,
+  
+  medicalHistory: \`You are writing the medical history section....\`,
+  // etc.
+};
+```
 
-3. **Data Structure Validation**
-   ```typescript
-   const validateEnvironmentalData = (data: any): boolean => {
-     // Add validation logic
-     return true;
-   };
-   ```
+2. API Integration
+```typescript
+async function callClaude(prompt: string, data: any) {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'anthropic-version': '2023-06-01',
+      'x-api-key': process.env.ANTHROPIC_API_KEY
+    },
+    body: JSON.stringify({
+      model: 'claude-3-sonnet-20240229',
+      messages: [{
+        role: 'user',
+        content: prompt
+      }]
+    })
+  });
+  return response.json();
+}
+```
 
-## Implementation Notes
-
-1. **JSON Structure**
-   - Environmental section should be root level
-   - Remove duplicate ADL section
-   - Ensure proper nesting of objects
-
-2. **Component Hierarchy**
-   ```
-   Form
-   └── EnvironmentalSection
-       ├── PropertyOverview
-       ├── RoomAssessment
-       └── SafetyAssessment
-   ```
-
-3. **Form Paths**
-   - Use consistent prefix: 'environmental'
-   - Match JSON structure exactly
-   - Validate path existence
+3. Report Assembly
+```typescript
+async function generateReport(data: AssessmentData) {
+  const sections = [];
+  
+  for (const section of SECTION_ORDER) {
+    const content = await generateSection(data[section], section);
+    sections.push(content);
+  }
+  
+  return sections.join('\\n\\n');
+}
+```
 
 ## Testing Approach
-
-1. **Component Tests**
+1. Form Tests
    ```typescript
-   describe('EnvironmentalSection', () => {
-     it('should render with empty data', () => {});
-     it('should render with mock data', () => {});
-     it('should handle form updates', () => {});
+   test('captures demographics data', () => {
+     // Test form data capture
    });
    ```
 
-2. **Integration Tests**
-   - Verify form context integration
-   - Check data flow
-   - Validate rendering sequence
+2. API Tests
+   ```typescript
+   test('calls Claude API correctly', async () => {
+     // Test API integration
+   });
+   ```
 
-## Implementation Checklist
+3. Assembly Tests
+   ```typescript
+   test('assembles report sections', async () => {
+     // Test report assembly
+   });
+   ```
 
-- [ ] Add debug logging
-- [ ] Verify JSON structure
-- [ ] Test form context integration
-- [ ] Validate component mounting
-- [ ] Add error boundaries
-- [ ] Implement loading states
-- [ ] Add data validation
-- [ ] Create test suite
+## Key Questions
+1. Is form capturing correct data?
+2. Are Claude prompts effective?
+3. Is report assembly clean?
+4. Are errors handled properly?
 
 ## Resources
-1. Form context documentation
-2. Component specifications
-3. Test suite examples
-4. JSON schema validation tools
-
-## Questions to Address
-1. Is environmental data loading in form context?
-2. Are components mounting in correct order?
-3. Is JSON structure valid and complete?
-4. Are form paths correctly mapped?
+1. Claude API documentation
+2. Assessment templates
+3. Section examples

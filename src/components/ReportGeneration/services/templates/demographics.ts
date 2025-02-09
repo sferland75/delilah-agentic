@@ -1,6 +1,49 @@
 import { AssessmentData } from '../../../../types/assessment';
 import { ReportSection } from '../reportTemplateSystem';
 
+async function enhanceWithClaude(templateContent: string, data: AssessmentData): Promise<string> {
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY || '',
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: 1000,
+        temperature: 0.7,
+        messages: [
+          {
+            role: 'user',
+            content: `You are an occupational therapist writing a professional assessment report.
+Please enhance this demographics section while maintaining all the factual information:
+
+${templateContent}
+
+Client Data:
+${JSON.stringify(data.assessment, null, 2)}
+
+Please enhance this to be more professional and detailed while maintaining accuracy.`
+          }
+        ]
+      })
+    });
+
+    if (!response.ok) {
+      console.error('Claude API call failed, using template version');
+      return templateContent;
+    }
+
+    const result = await response.json();
+    return result.content[0].text;
+  } catch (error) {
+    console.error('Error calling Claude:', error);
+    return templateContent;
+  }
+}
+
 export const demographicsSection: ReportSection = {
   id: 'demographics',
   title: 'DEMOGRAPHICS',
@@ -30,6 +73,8 @@ export const demographicsSection: ReportSection = {
     content += `Relationship: ${demographics.emergencyContact.relationship}\n`;
     content += `Phone: ${demographics.emergencyContact.phone || 'Not provided'}\n`;
 
-    return content;
+    // Enhance the content using Claude
+    const enhancedContent = await enhanceWithClaude(content, data);
+    return enhancedContent;
   }
 };

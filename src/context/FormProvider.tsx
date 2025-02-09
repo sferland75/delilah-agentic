@@ -16,6 +16,7 @@ interface FormContextType {
   hasBackup: boolean;
   isDirty: boolean;
   saveForm: (data: AssessmentFormData, section?: string) => Promise<boolean>;
+  exportForm: () => Promise<string>;
   clearForm: () => void;
   loadBackup: () => void;
 }
@@ -122,6 +123,18 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     defaultValues: initialFormData,
     mode: 'onChange'
   });
+
+  // Export form data
+  const exportForm = useCallback(async (): Promise<string> => {
+    try {
+      const formData = methods.getValues();
+      // Add any necessary data cleaning or formatting here
+      return JSON.stringify(formData, null, 2);
+    } catch (error) {
+      console.error('Error exporting form:', error);
+      throw new Error('Failed to export form data');
+    }
+  }, [methods]);
 
   // Save form data using the persistence manager
   const saveForm = useCallback(async (data: AssessmentFormData, section?: string) => {
@@ -233,6 +246,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     hasBackup,
     isDirty,
     saveForm,
+    exportForm,
     clearForm,
     loadBackup
   }), [
@@ -244,6 +258,7 @@ export function FormProvider({ children }: { children: React.ReactNode }) {
     hasBackup,
     isDirty,
     saveForm,
+    exportForm,
     clearForm,
     loadBackup
   ]);

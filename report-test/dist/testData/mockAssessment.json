@@ -1,0 +1,218 @@
+{
+    "personal": {
+        "firstName": "John",
+        "lastName": "Smith",
+        "dateOfBirth": "1975-03-15",
+        "phone": "555-0123",
+        "email": "john.smith@email.com"
+    },
+    "medical": {
+        "injury": {
+            "circumstance": "Workplace accident - fell from ladder",
+            "date": "2024-01-10",
+            "description": "Patient fell approximately 8 feet from ladder while at work, resulting in injuries to lower back and left knee",
+            "notes": "Impact primarily to lower back with secondary injury to left knee from landing"
+        },
+        "symptoms": [
+            {
+                "location": "Lower Back",
+                "type": "Pain",
+                "severity": "7/10",
+                "frequency": "Constant",
+                "aggravating": ["Prolonged sitting", "Bending", "Lifting"],
+                "relieving": ["Rest", "Ice", "Pain medication"],
+                "description": "Sharp, constant pain in lower back, worse with movement",
+                "additional": "Pain radiates down left leg at times"
+            },
+            {
+                "location": "Left Knee",
+                "type": "Pain and Stiffness",
+                "severity": "5/10",
+                "frequency": "Intermittent",
+                "aggravating": ["Walking", "Stairs", "Standing from seated position"],
+                "relieving": ["Rest", "Elevation", "Ice"],
+                "description": "Dull ache with occasional sharp pain during movement",
+                "additional": "Swelling by end of day"
+            }
+        ],
+        "treatments": [
+            "Physiotherapy - 2x weekly",
+            "Pain Management",
+            "Occupational Therapy",
+            "Chiropractic Care"
+        ],
+        "medications": [
+            {
+                "name": "Naproxen",
+                "dosage": "500mg",
+                "frequency": "Twice daily",
+                "purpose": "Pain and inflammation"
+            },
+            {
+                "name": "Cyclobenzaprine",
+                "dosage": "10mg",
+                "frequency": "At bedtime",
+                "purpose": "Muscle spasm"
+            }
+        ],
+        "imaging": [
+            {
+                "type": "X-ray",
+                "date": "2024-01-10",
+                "region": "Lumbar Spine",
+                "findings": "No acute fracture. Mild degenerative changes L4-L5"
+            },
+            {
+                "type": "MRI",
+                "date": "2024-01-15",
+                "region": "Left Knee",
+                "findings": "Grade 2 MCL sprain. No meniscal tear"
+            }
+        ]
+    },
+    "functionalAssessment": {
+        "tolerances": {
+            "Standing": {
+                "painLevel": 7,
+                "limitations": "Limited to 15 minutes at a time. Increased pain with prolonged standing, favors right leg",
+                "adaptations": "Regular position changes, use of anti-fatigue mat, ability to lean on counters/supports"
+            },
+            "Walking": {
+                "painLevel": 6,
+                "limitations": "Limited to 10 minutes continuous. Antalgic gait pattern, reduced weight bearing on left leg",
+                "adaptations": "Use of walking stick for longer distances, frequent rest breaks"
+            },
+            "Sitting": {
+                "painLevel": 6,
+                "limitations": "Limited to 30 minutes continuous. Requires frequent position changes",
+                "adaptations": "Ergonomic chair with lumbar support, regular standing breaks"
+            }
+        },
+        "rangeOfMotion": {
+            "Trunk_Flexion": {
+                "score": "1/2",
+                "notes": "Limited with pain throughout range",
+                "type": "ROM",
+                "label": "Trunk Flexion"
+            },
+            "Trunk_Extension": {
+                "score": "1/4",
+                "notes": "Severely limited with pain",
+                "type": "ROM",
+                "label": "Trunk Extension"
+            },
+            "Knee_Flexion": {
+                "score": "3/4",
+                "notes": "Left knee limited by pain",
+                "type": "ROM",
+                "label": "Knee Flexion"
+            },
+            "Knee_Extension": {
+                "score": "3/4",
+                "notes": "Left knee lacks full extension",
+                "type": "ROM",
+                "label": "Knee Extension"
+            }
+        },
+        "manualMuscleTesting": {
+            "Trunk_Flexion": {
+                "score": "3",
+                "pain": true,
+                "notes": "Weakness with pain",
+                "type": "MMT",
+                "label": "Trunk Flexion"
+            },
+            "Trunk_Extension": {
+                "score": "3",
+                "pain": true,
+                "notes": "Weakness with pain",
+                "type": "MMT",
+                "label": "Trunk Extension"
+            },
+            "Knee_Flexion": {
+                "score": "4",
+                "pain": true,
+                "notes": "Left side weaker with pain",
+                "type": "MMT",
+                "label": "Knee Flexion"
+            },
+            "Knee_Extension": {
+                "score": "3",
+                "pain": true,
+                "notes": "Left side significantly weaker",
+                "type": "MMT",
+                "label": "Knee Extension"
+            }
+        }
+    },
+    "adl": {
+        "basic": {
+            "bathing": {
+                "shower": {
+                    "independence": "moderate_assistance",
+                    "usesAssistiveDevices": true,
+                    "assistiveDevices": "Shower chair, grab bars, handheld shower head",
+                    "frequency": "daily",
+                    "timeTaken": "15_30min",
+                    "notes": "Requires assistance with lower body washing due to limited trunk flexion and knee mobility."
+                }
+            },
+            "dressing": {
+                "upper_body": {
+                    "independence": "modified_independent",
+                    "usesAssistiveDevices": true,
+                    "assistiveDevices": "Button hook, dressing stick",
+                    "notes": "Uses adaptive equipment for buttons and reaching. Prefers front-closure clothing."
+                },
+                "lower_body": {
+                    "independence": "minimal_assistance",
+                    "usesAssistiveDevices": true,
+                    "assistiveDevices": "Sock aid, long-handled shoe horn",
+                    "notes": "Needs assistance with socks and shoes. Difficulty with bending and lifting legs."
+                }
+            }
+        }
+    },
+    "environmental": {
+        "propertyOverview": {
+            "type": "single_family_house",
+            "layout": "two_story",
+            "access": {
+                "exterior": {
+                    "entranceType": "steps",
+                    "numberOfSteps": 3,
+                    "hasRailing": true,
+                    "notes": "Front entrance has 3 steps with railing on right side. Back entrance has 2 steps without railing."
+                },
+                "interior": {
+                    "hasStairs": true,
+                    "numberOfStairs": 14,
+                    "hasRailing": true,
+                    "notes": "Internal staircase to second floor with railing on both sides"
+                }
+            },
+            "primaryConcerns": [
+                "Stairs access to essential areas",
+                "Bathroom safety",
+                "Kitchen accessibility"
+            ]
+        },
+        "recommendations": {
+            "immediate": [
+                "Install grab bars in bathroom",
+                "Add non-slip surfaces in bathroom",
+                "Remove or secure throw rugs"
+            ],
+            "shortTerm": [
+                "Install bed rails",
+                "Add additional handrails on stairs",
+                "Lower microwave to accessible height"
+            ],
+            "longTerm": [
+                "Consider stair lift installation",
+                "Bathroom renovation for walk-in shower",
+                "Modify kitchen for seated work areas"
+            ]
+        }
+    }
+}

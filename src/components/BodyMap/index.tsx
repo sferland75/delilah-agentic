@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -6,10 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { anteriorSegments, posteriorSegments } from './segments';
-import { anteriorHeadSegments, posteriorHeadSegments } from './headSegments';
 import { PainAssessment } from './PainAssessment';
-import { HeadPainAssessment } from './HeadPainAssessment';
-import { HandPainAssessment } from './HandPainAssessment';
 
 interface BodyMapProps {
   onRegionSelect?: (region: any) => void;
@@ -27,8 +24,15 @@ export const BodyMap: React.FC<BodyMapProps> = ({
   const [showDialog, setShowDialog] = useState(false);
   const [selectedArea, setSelectedArea] = useState<any>(null);
 
+  // Debug pain data updates
+  useEffect(() => {
+    console.log('Pain data updated:', painData);
+  }, [painData]);
+
   const handleClick = (area: any) => {
-    console.log('Selected area:', area);
+    console.log('Clicked area:', area);
+    console.log('Current pain data:', painData);
+    console.log('Pain data for region:', area.id, painData[area.id]);
     setSelectedArea(area);
     if (onRegionSelect) {
       onRegionSelect(area);
@@ -37,122 +41,72 @@ export const BodyMap: React.FC<BodyMapProps> = ({
   };
 
   const handlePainAssessmentSave = (data: any) => {
-    console.log('Saving pain assessment:', selectedArea?.id, data);
-    
+    console.log('Saving pain data for region:', selectedArea?.id, data);
     if (onPainDataUpdate && selectedArea) {
       onPainDataUpdate(selectedArea.id, data);
     }
-
     setShowDialog(false);
   };
 
   const getRegionColor = (regionId: string) => {
     const regionPain = painData[regionId]?.severity || 0;
-    console.log('Getting color for region:', regionId, 'severity:', regionPain);
+    console.log('Getting color for region:', regionId, 'pain level:', regionPain);
     
-    if (regionPain === 0) return "fill-gray-100";
-    if (regionPain <= 3) return "fill-yellow-200";
-    if (regionPain <= 6) return "fill-orange-200";
-    if (regionPain <= 8) return "fill-red-200";
-    return "fill-red-300";
+    if (regionPain === 0) return "fill-gray-100 hover:fill-gray-200";
+    if (regionPain <= 3) return "fill-yellow-200 hover:fill-yellow-300";
+    if (regionPain <= 6) return "fill-orange-200 hover:fill-orange-300";
+    if (regionPain <= 8) return "fill-red-200 hover:fill-red-300";
+    return "fill-red-300 hover:fill-red-400";
   };
 
-  const isHeadRegion = (id: string) => {
-    return id.includes('head');
-  };
-
-  const isHandRegion = (id: string) => {
-    return id.includes('Hand') || id.includes('hand');
-  };
-
-  // Select appropriate segments based on view
-  const currentHeadSegments = view === 'anterior' ? anteriorHeadSegments : posteriorHeadSegments;
-  const currentBodySegments = view === 'anterior' ? anteriorSegments : posteriorSegments;
+  const segments = view === 'anterior' ? anteriorSegments : posteriorSegments;
 
   return (
     <div>
       <div className="relative w-[300px] h-[600px] border rounded-lg bg-white">
-        <svg viewBox="0 0 400 600" className="w-full h-full" preserveAspectRatio="xMidYMid meet">
-          {/* Render body segments */}
-          {Object.entries(currentBodySegments)
-            .map(([id, segment]) => {
-              const color = getRegionColor(id);
-              return (
-                <path
-                  key={id}
-                  d={segment.path}
-                  className={`
-                    ${color}
-                    stroke-gray-400
-                    hover:brightness-95
-                    cursor-pointer
-                    transition-colors
-                  `}
-                  onClick={() => handleClick({ id, ...segment })}
-                >
-                  <title>{segment.label}</title>
-                </path>
-              );
-            })}
-
-          {/* Render head segments */}
-          {Object.entries(currentHeadSegments)
-            .map(([id, segment]) => {
-              const color = getRegionColor(id);
-              return (
-                <path
-                  key={id}
-                  d={segment.path}
-                  className={`
-                    ${color}
-                    stroke-gray-400
-                    hover:brightness-95
-                    cursor-pointer
-                    transition-colors
-                  `}
-                  onClick={() => handleClick({ id, ...segment })}
-                >
-                  <title>{segment.label}</title>
-                </path>
-              );
-            })}
+        <svg 
+          viewBox="0 0 400 600" 
+          className="w-full h-full" 
+          preserveAspectRatio="xMidYMid meet"
+        >
+          {Object.entries(segments).map(([id, segment]) => {
+            const color = getRegionColor(id);
+            return (
+              <path
+                key={id}
+                d={segment.path}
+                className={`
+                  ${color}
+                  stroke-gray-400
+                  cursor-pointer
+                  transition-colors
+                `}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClick({ id, ...segment });
+                }}
+              >
+                <title>{segment.label}</title>
+              </path>
+            );
+          })}
         </svg>
       </div>
 
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto" aria-describedby="pain-assessment-description">
-          <DialogHeader className="sticky top-0 bg-white z-10 pb-4">
+        <DialogContent>
+          <DialogHeader>
             <DialogTitle>
               Pain Assessment - {selectedArea?.label}
             </DialogTitle>
           </DialogHeader>
-          <div id="pain-assessment-description" className="sr-only">
-            Pain assessment form for {selectedArea?.label}
-          </div>
-
-          <div className="overflow-y-auto pr-2">
-            {selectedArea && (
-              isHeadRegion(selectedArea.id) ? (
-                <HeadPainAssessment
-                  region={selectedArea}
-                  onSave={handlePainAssessmentSave}
-                  initialData={painData[selectedArea.id]}
-                />
-              ) : isHandRegion(selectedArea.id) ? (
-                <HandPainAssessment
-                  region={selectedArea}
-                  onSave={handlePainAssessmentSave}
-                  initialData={painData[selectedArea.id]}
-                />
-              ) : (
-                <PainAssessment
-                  region={selectedArea}
-                  onSave={handlePainAssessmentSave}
-                  initialData={painData[selectedArea.id]}
-                />
-              )
-            )}
-          </div>
+          {selectedArea && (
+            <PainAssessment
+              region={selectedArea}
+              onSave={handlePainAssessmentSave}
+              initialData={painData[selectedArea.id]}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

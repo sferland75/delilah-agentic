@@ -1,0 +1,9 @@
+@echo off
+echo Installing dependencies...
+npm init -y
+npm install dotenv node-fetch typescript @types/node @types/node-fetch
+echo Copying environment file...
+copy ..\\.env .\\
+echo Building and running test...
+npx tsc
+node --experimental-json-modules dist/src/test.js
