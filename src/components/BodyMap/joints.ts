@@ -9,9 +9,9 @@ const ankleLevel = 520;     // Adjusted down for better foot position
 
 // Define joint positions and movements for body map
 export const joints = {
-  // Cervical (neck)
+  // Cervical (neck) - Adjusted position
   cervical: { 
-    cx: center, cy: 90, r: 6,
+    cx: center, cy: 70, r: 6,  // Moved higher for better anatomical position
     label: "Cervical Spine",
     movements: ["flexion", "extension", "rotation", "lateral flexion"],
     view: "both"
@@ -19,33 +19,33 @@ export const joints = {
 
   // Shoulders - Adjusted to match glenohumeral joint position
   rightShoulder: { 
-    cx: center-60, cy: shoulderLevel, r: 7,  // Moved inward for true shoulder joint position
+    cx: center-60, cy: shoulderLevel, r: 7,
     label: "Right Shoulder",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
   leftShoulder: { 
-    cx: center+60, cy: shoulderLevel, r: 7,  // Moved inward for true shoulder joint position
+    cx: center+60, cy: shoulderLevel, r: 7,
     label: "Left Shoulder",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
 
-  // Elbows - Adjusted to proper anatomical height and width
+  // Elbows
   rightElbow: { 
-    cx: center-65, cy: elbowLevel, r: 6,  // Adjusted for proper elbow joint position
+    cx: center-65, cy: elbowLevel, r: 6,
     label: "Right Elbow",
     movements: ["flexion", "extension", "pronation", "supination"],
     view: "both"
   },
   leftElbow: { 
-    cx: center+65, cy: elbowLevel, r: 6,  // Adjusted for proper elbow joint position
+    cx: center+65, cy: elbowLevel, r: 6,
     label: "Left Elbow",
     movements: ["flexion", "extension", "pronation", "supination"],
     view: "both"
   },
 
-  // Wrists - Added wrist joints
+  // Wrists
   rightWrist: {
     cx: center-65, cy: 260, r: 5,
     label: "Right Wrist",
@@ -59,43 +59,43 @@ export const joints = {
     view: "both"
   },
 
-  // Hips - Adjusted to match true hip joint position
+  // Hips
   rightHip: { 
-    cx: center-45, cy: hipLevel, r: 7,  // Moved inward to match anatomical hip joint
+    cx: center-45, cy: hipLevel, r: 7,
     label: "Right Hip",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
   leftHip: { 
-    cx: center+45, cy: hipLevel, r: 7,  // Moved inward to match anatomical hip joint
+    cx: center+45, cy: hipLevel, r: 7,
     label: "Left Hip",
     movements: ["flexion", "extension", "abduction", "adduction", "internal rotation", "external rotation"],
     view: "both"
   },
 
-  // Knees - Adjusted for proper anatomical position
+  // Knees
   rightKnee: { 
-    cx: center-45, cy: kneeLevel, r: 6,  // Aligned with hip width
+    cx: center-45, cy: kneeLevel, r: 6,
     label: "Right Knee",
     movements: ["flexion", "extension"],
     view: "both"
   },
   leftKnee: { 
-    cx: center+45, cy: kneeLevel, r: 6,  // Aligned with hip width
+    cx: center+45, cy: kneeLevel, r: 6,
     label: "Left Knee",
     movements: ["flexion", "extension"],
     view: "both"
   },
 
-  // Ankles - Adjusted to proper foot position
+  // Ankles
   rightAnkle: { 
-    cx: center-45, cy: ankleLevel, r: 5,  // Aligned with knee
+    cx: center-45, cy: ankleLevel, r: 5,
     label: "Right Ankle",
     movements: ["dorsiflexion", "plantarflexion", "inversion", "eversion"],
     view: "both"
   },
   leftAnkle: { 
-    cx: center+45, cy: ankleLevel, r: 5,  // Aligned with knee
+    cx: center+45, cy: ankleLevel, r: 5,
     label: "Left Ankle",
     movements: ["dorsiflexion", "plantarflexion", "inversion", "eversion"],
     view: "both"
@@ -103,7 +103,7 @@ export const joints = {
 
   // Spine levels (posterior view only)
   cervicalSpine: {
-    cx: center, cy: 90, r: 6,
+    cx: center, cy: 70, r: 6,  // Also adjusted to match anterior view
     label: "Cervical Spine",
     movements: ["flexion", "extension", "rotation", "lateral flexion"],
     view: "back"
