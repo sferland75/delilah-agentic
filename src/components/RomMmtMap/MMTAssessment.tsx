@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Control } from 'react-hook-form';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,13 +13,14 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface MMTAssessmentProps {
+  control: Control<any>;
+  prefix: string;
   segment: {
     id: string;
     label: string;
   };
   initialData?: any;
   onSave: (data: any) => void;
-  onCancel: () => void;
 }
 
 const MMT_GRADES = [
@@ -31,12 +33,13 @@ const MMT_GRADES = [
 ];
 
 export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
+  control,
+  prefix,
   segment,
   initialData,
-  onSave,
-  onCancel
+  onSave
 }) => {
-  const [score, setScore] = useState(initialData?.score || '');
+  const [score, setScore] = useState(initialData?.score || '5');
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [pain, setPain] = useState(initialData?.pain || false);
 
@@ -49,6 +52,10 @@ export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
       pain,
       label: segment.label
     });
+  };
+
+  const handleCancel = () => {
+    onSave(null);
   };
 
   return (
@@ -105,7 +112,7 @@ export const MMTAssessment: React.FC<MMTAssessmentProps> = ({
       </div>
 
       <div className="flex justify-end space-x-4">
-        <Button type="button" variant="outline" onClick={onCancel}>
+        <Button type="button" variant="outline" onClick={handleCancel}>
           Cancel
         </Button>
         <Button type="submit">

@@ -1,61 +1,45 @@
-# Immediate Actions - February 9, 2025
+# IMMEDIATE ACTIONS
 
-## Test Suite Fixes
+## Current Issues - February 10, 2025
 
-### 1. Jest Configuration
-```javascript
-module.exports = {
-  // Update configuration for ESM support
-  transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: { jsx: 'react-jsx' }
-    }],
-    '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [
-        ['@babel/preset-env', { targets: { node: 'current' } }],
-        '@babel/preset-react'
-      ]
-    }]
-  }
-}
-```
+### ROM/MMT Assessment Body Map
+- Issue: ROM values are being recorded in the findings table but not updating the visual body map
+- Data Flow Problem: There's a disconnect between how ROM data is being stored and how it's being read for visualization
+- Components Affected:
+  - src/components/RomMmtMap/index.tsx
+  - src/components/RomMmtMap/utils.ts
+  - src/components/BodyMap/joints.ts
 
-### 2. Test Infrastructure
-- Implement proper IntersectionObserver mock
-- Fix TypeScript type errors
-- Update test data structures
-- Add test utilities
+### Specific ROM/MMT Issues:
+1. Data Storage vs Visualization:
+   - ROM data is being successfully stored and displayed in findings table
+   - Body map circles not updating colors to reflect ROM values
+   - Potential mismatch in data structure between storage and visualization layers
 
-### 3. Test Coverage
-- Complete data sanitizer tests
-- Fix extractor unit tests
-- Update component tests
-- Add edge case coverage
+2. Component Integration:
+   - ROMAssessment component is correctly capturing and storing data
+   - BodyMap component not receiving or interpreting the data correctly
+   - Need to align data structure between components
 
-## Next Development Tasks
+### Priority Actions:
+1. Debug Data Flow:
+   - Verify data structure in form context
+   - Ensure consistent data format between storage and visualization
+   - Check data transformation in utils.getJointROMScore
 
-### 1. Error Handling
-- Implement consistent error patterns
-- Add validation layers
-- Improve error reporting
-- Document error scenarios
+2. Fix Color Mapping:
+   - Review color assignment logic in utils.getJointColor
+   - Verify CSS class application in BodyMap component
+   - Ensure proper state updates trigger re-renders
 
-### 2. Data Processing
-- Enhance data sanitization
-- Improve extraction accuracy
-- Add validation checks
-- Handle edge cases
+### Next Steps:
+1. Add comprehensive logging to track data flow
+2. Review and align data structures between components
+3. Test and verify ROM data visualization
+4. Document final data structure for future reference
 
-### 3. Component Updates
-- Fix FunctionalAssessment component
-- Update form validation
-- Add error boundaries
-- Improve accessibility
-
-## Dependencies
-- @babel/core
-- @babel/preset-env
-- @babel/preset-react
-- @babel/preset-typescript
-- babel-jest
-- ts-jest
+### Known Working Features:
+- ROM data entry and storage
+- ROM findings table display
+- Basic form functionality
+- Data persistence

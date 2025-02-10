@@ -24,12 +24,17 @@ export const RomMmtMap: React.FC<RomMmtMapProps> = ({ onUpdate }) => {
   const [selectedType, setSelectedType] = React.useState<'ROM' | 'MMT' | null>(null);
   const [view, setView] = React.useState<'front' | 'back'>('front');
   
-  const { getValues, setValue } = useFormContext();
+  const { getValues, setValue, control } = useFormContext();
   const functionalAssessment = getValues('functionalAssessment') || {};
   const romData = functionalAssessment.rangeOfMotion || {};
   const mmtData = functionalAssessment.manualMuscleTesting || {};
 
+  React.useEffect(() => {
+    console.log('Current ROM Data:', romData);
+  }, [romData]);
+
   const handleJointClick = (joint: any) => {
+    console.log('Joint clicked:', joint);
     setSelectedArea({
       ...joint,
       label: joint.label
@@ -48,15 +53,45 @@ export const RomMmtMap: React.FC<RomMmtMapProps> = ({ onUpdate }) => {
   };
 
   const handleAssessmentSave = (data: any) => {
-    const baseKey = `functionalAssessment.${selectedType === 'ROM' ? 'rangeOfMotion' : 'manualMuscleTesting'}`;
-    const assessmentKey = `${selectedArea.label.replace(' ', '_')}_${data.movement || ''}`.trim().replace(/_+$/, '');
-    const key = `${baseKey}.${assessmentKey}`;
-    
-    setValue(key, {
-      ...data,
+    if (!data) {
+      setShowDialog(false);
+      return;
+    }
+
+    console.log('Saving Assessment Data:', { 
       type: selectedType,
-      label: `${selectedArea.label} ${data.movement || ''}`.trim()
-    }, { shouldValidate: true });
+      area: selectedArea,
+      data: data
+    });
+
+    const baseKey = `functionalAssessment.${selectedType === 'ROM' ? 'rangeOfMotion' : 'manualMuscleTesting'}`;
+    const label = selectedArea.label.replace(' ', '_');
+    const key = `${baseKey}.${label}`;
+
+    if (selectedType === 'ROM') {
+      setValue(key, {
+        ...data,
+        type: selectedType,
+        label: selectedArea.label,
+        joint: selectedArea.label,
+        entries: data.entries.map((entry: any) => ({
+          ...entry,
+          label: `${selectedArea.label} ${entry.movement}`
+        }))
+      }, { shouldValidate: true });
+    } else {
+      // MMT data saving (unchanged)
+      setValue(key, {
+        ...data,
+        type: selectedType,
+        label: selectedArea.label,
+        segment: selectedArea.label,
+        score: data.value || data.score || '5'
+      }, { shouldValidate: true });
+    }
+
+    const updatedData = getValues('functionalAssessment');
+    console.log('Updated Functional Assessment:', updatedData);
 
     setShowDialog(false);
     toast({
@@ -65,30 +100,12 @@ export const RomMmtMap: React.FC<RomMmtMapProps> = ({ onUpdate }) => {
     });
 
     if (onUpdate) {
-      const updatedData = getValues('functionalAssessment');
       onUpdate({ 
         type: selectedType, 
         data: selectedType === 'ROM' ? updatedData.rangeOfMotion : updatedData.manualMuscleTesting 
       });
     }
   };
-
-  // ROM/MMT Findings for summary
-  const romFindings = Object.entries(romData)
-    .filter(([key, data]: [string, any]) => key !== 'generalNotes' && data.score !== 'WFL')
-    .map(([joint, data]: [string, any]) => ({
-      joint,
-      ...data,
-      label: data.label || joint.replace('_', ' ')
-    }));
-
-  const mmtFindings = Object.entries(mmtData)
-    .filter(([key, data]: [string, any]) => key !== 'generalNotes' && data.score !== '5')
-    .map(([muscle, data]: [string, any]) => ({
-      muscle,
-      ...data,
-      label: data.label || muscle.replace('_', ' ')
-    }));
 
   return (
     <div className="space-y-6">
@@ -119,8 +136,28 @@ export const RomMmtMap: React.FC<RomMmtMapProps> = ({ onUpdate }) => {
         />
 
         <FindingsSummary 
-          romFindings={romFindings}
-          mmtFindings={mmtFindings}
+          romFindings={Object.entries(romData)
+            .filter(([key, data]: [string, any]) => {
+              if (key === 'generalNotes') return false;
+              // Check if any entry has a non-WFL score
+              return data.entries?.some((entry: any) => entry.score !== 'WFL');
+            })
+            .flatMap(([joint, data]: [string, any]) => 
+              data.entries
+                .filter((entry: any) => entry.score !== 'WFL')
+                .map((entry: any) => ({
+                  joint,
+                  ...entry,
+                  label: `${data.label} ${entry.movement}`
+                }))
+            )}
+          mmtFindings={Object.entries(mmtData)
+            .filter(([key, data]: [string, any]) => key !== 'generalNotes' && data.score !== '5')
+            .map(([muscle, data]: [string, any]) => ({
+              muscle,
+              ...data,
+              label: data.label || muscle.replace('_', ' ')
+            }))}
         />
       </div>
 
@@ -134,19 +171,21 @@ export const RomMmtMap: React.FC<RomMmtMapProps> = ({ onUpdate }) => {
 
           {selectedType === 'ROM' && selectedArea && (
             <ROMAssessment
-              joint={selectedArea}
+              control={control}
+              prefix="functionalAssessment.rangeOfMotion"
               onSave={handleAssessmentSave}
-              onCancel={() => setShowDialog(false)}
-              initialData={romData[`${selectedArea.label.replace(' ', '_')}`]}
+              initialData={romData[selectedArea.label.replace(' ', '_')]}
+              joint={selectedArea}
             />
           )}
 
           {selectedType === 'MMT' && selectedArea && (
             <MMTAssessment
-              segment={selectedArea}
+              control={control}
+              prefix="functionalAssessment.manualMuscleTesting"
               onSave={handleAssessmentSave}
-              onCancel={() => setShowDialog(false)}
-              initialData={mmtData[`${selectedArea.label.replace(' ', '_')}`]}
+              initialData={mmtData[selectedArea.label.replace(' ', '_')]}
+              segment={selectedArea}
             />
           )}
         </DialogContent>

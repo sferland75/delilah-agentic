@@ -2,67 +2,89 @@ export const getJointROMScore = (jointId: string, romData: any, joints: any) => 
   const joint = joints[jointId];
   if (!joint) return 'WFL';
 
-  // Use exact joint label for specificity
-  const jointMap: { [key: string]: string } = {
-    'Lumbar Spine': 'Trunk',
-    'Thoracic Spine': 'Trunk'
-  };
+  console.log('getJointROMScore called for:', {
+    jointId,
+    jointLabel: joint.label,
+    side: joint.label.split(' ')[0],
+    romData: romData
+  });
 
-  const searchName = jointMap[joint.label] || joint.label;
+  // If no data, return WFL
+  if (!romData || Object.keys(romData).length === 0) {
+    console.log('No ROM data available');
+    return 'WFL';
+  }
 
-  // Look for exact matching ROM entries
-  const jointEntries = Object.entries(romData || {}).filter(([key]) => 
-    key === searchName || key.startsWith(`${searchName} `)
-  );
+  const key = joint.label.replace(' ', '_');
+  console.log('Looking for ROM data with key:', key);
 
-  console.log(`ROM lookup for ${joint.label} (${searchName}):`, jointEntries);
+  const jointData = romData[key];
+  console.log('Found joint data:', jointData);
 
-  if (jointEntries.length === 0) return 'WFL';
+  if (!jointData || !jointData.entries || jointData.entries.length === 0) {
+    console.log('No entries found for joint');
+    return 'WFL';
+  }
 
-  // Find the most limited score
-  const scoreValues = {
-    'WFL': 0,
-    '3/4': 1,
-    '1/2': 2,
-    '1/4': 3,
-    'nominal': 4
-  };
+  // Find the worst score among all entries
+  const worstEntry = jointData.entries.reduce((worst: any, entry: any) => {
+    const currentScore = getScoreValue(entry.score);
+    const worstScore = getScoreValue(worst.score);
+    return currentScore < worstScore ? entry : worst;
+  }, { score: 'WFL' });
 
-  const worstScore = jointEntries.reduce((worst, [_, data]) => {
-    if (!data?.score) return worst;
-    const currentValue = scoreValues[data.score as keyof typeof scoreValues] || 0;
-    const worstValue = scoreValues[worst as keyof typeof scoreValues] || 0;
-    return currentValue > worstValue ? data.score : worst;
-  }, 'WFL');
+  console.log('Worst score found:', worstEntry.score);
+  return worstEntry.score;
+};
 
-  console.log(`Joint ${joint.label} worst ROM score:`, worstScore);
-  return worstScore;
+// Helper function to convert score to numeric value for comparison
+const getScoreValue = (score: string): number => {
+  switch (score) {
+    case 'nominal': return 0;
+    case '1/4': return 25;
+    case '1/2': return 50;
+    case '3/4': return 75;
+    case 'WFL': return 100;
+    default: return 100;
+  }
 };
 
 export const getSegmentMMTGrade = (segmentId: string, mmtData: any, segments: any) => {
   const segment = segments[segmentId];
   if (!segment) return '5';
 
-  // Map segments to their corresponding MMT areas
+  // Map segments to their corresponding MMT areas and keys
   const segmentMap: { [key: string]: string[] } = {
-    'Lumbar Paraspinals': ['Trunk'],
-    'Thoracic Paraspinals': ['Trunk'],
-    'lumbarSpine': ['Trunk'],
-    'thoracicSpine': ['Trunk'],
-    'Upper Abdominals': ['Trunk'],
-    'Lower Abdominals': ['Trunk'],
-    'Right Lower Leg': ['Knee'],
-    'Left Lower Leg': ['Knee']
+    'Head': ['Head', 'Neck_Flexors'],
+    'Anterior Neck': ['Anterior_Neck', 'Neck_Flexors'],
+    'Left Shoulder': ['Left_Shoulder'],
+    'Right Shoulder': ['Right_Shoulder'],
+    'Left Upper Arm': ['Left_Upper_Arm', 'Left_Biceps', 'Left_Triceps'],
+    'Right Upper Arm': ['Right_Upper_Arm', 'Right_Biceps', 'Right_Triceps'],
+    'Left Forearm': ['Left_Forearm'],
+    'Right Forearm': ['Right_Forearm'],
+    'Left Hand': ['Left_Hand'],
+    'Right Hand': ['Right_Hand'],
+    'Upper Chest': ['Upper_Chest', 'Upper_Trunk'],
+    'Lower Chest': ['Lower_Chest', 'Lower_Trunk'],
+    'Pelvis': ['Pelvis', 'Hip_Flexors'],
+    'Left Thigh': ['Left_Thigh', 'Left_Quadriceps', 'Left_Hamstrings'],
+    'Right Thigh': ['Right_Thigh', 'Right_Quadriceps', 'Right_Hamstrings'],
+    'Left Lower Leg': ['Left_Lower_Leg', 'Left_Knee'],
+    'Right Lower Leg': ['Right_Lower_Leg', 'Right_Knee'],
+    'Left Foot': ['Left_Foot', 'Left_Ankle'],
+    'Right Foot': ['Right_Foot', 'Right_Ankle']
   };
 
-  const searchTerms = segmentMap[segment.label] || [segment.label.split(' ')[0]];
+  // Get exact keys to search for this segment
+  const searchKeys = segmentMap[segment.label] || [segment.label.replace(' ', '_')];
 
-  // Look for matching MMT entries
+  // Look for exact matches in MMT data
   const segmentEntries = Object.entries(mmtData || {}).filter(([key]) =>
-    searchTerms.some(term => key.startsWith(term))
+    searchKeys.includes(key)
   );
 
-  console.log(`MMT lookup for ${segment.label} using terms ${searchTerms}:`, segmentEntries);
+  console.log(`MMT lookup for ${segment.label} using keys: ${searchKeys}:`, segmentEntries);
 
   if (segmentEntries.length === 0) return '5';
 
@@ -80,20 +102,24 @@ export const getSegmentMMTGrade = (segmentId: string, mmtData: any, segments: an
 };
 
 export const getJointColor = (jointRom: string) => {
-  switch (jointRom) {
-    case 'WFL': 
-      return "fill-green-200 stroke-green-600 stroke-2";
-    case '3/4':
-      return "fill-blue-200 stroke-blue-600 stroke-2";
-    case '1/2':
-      return "fill-yellow-200 stroke-yellow-600 stroke-2";
-    case '1/4':
-      return "fill-orange-200 stroke-orange-600 stroke-2";
-    case 'nominal':
-      return "fill-red-200 stroke-red-600 stroke-2";
-    default:
-      return "fill-green-200 stroke-green-600 stroke-2";
-  }
+  const color = (() => {
+    switch (jointRom) {
+      case 'WFL': 
+        return "fill-green-200 stroke-green-600 stroke-2";
+      case '3/4':
+        return "fill-blue-200 stroke-blue-600 stroke-2";
+      case '1/2':
+        return "fill-yellow-200 stroke-yellow-600 stroke-2";
+      case '1/4':
+        return "fill-orange-200 stroke-orange-600 stroke-2";
+      case 'nominal':
+        return "fill-red-200 stroke-red-600 stroke-2";
+      default:
+        return "fill-green-200 stroke-green-600 stroke-2";
+    }
+  })();
+  console.log('Joint ROM:', jointRom, 'Color:', color);
+  return color;
 };
 
 export const getSegmentColor = (mmt: string) => {

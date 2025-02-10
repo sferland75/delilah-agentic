@@ -9,11 +9,18 @@ const ankleLevel = 520;     // Adjusted down for better foot position
 
 // Define joint positions and movements for body map
 export const joints = {
-  // Cervical (neck) - Adjusted position
+  // Cervical (neck) - Adjusted position and movements
   cervical: { 
-    cx: center, cy: 70, r: 6,  // Moved higher for better anatomical position
+    cx: center, cy: 118, r: 6,  // Moved to 118 as requested
     label: "Cervical Spine",
-    movements: ["flexion", "extension", "rotation", "lateral flexion"],
+    movements: [
+      "flexion",
+      "extension",
+      "right rotation",
+      "left rotation",
+      "right lateral flexion",
+      "left lateral flexion"
+    ],
     view: "both"
   },
 
@@ -102,13 +109,6 @@ export const joints = {
   },
 
   // Spine levels (posterior view only)
-  cervicalSpine: {
-    cx: center, cy: 70, r: 6,  // Also adjusted to match anterior view
-    label: "Cervical Spine",
-    movements: ["flexion", "extension", "rotation", "lateral flexion"],
-    view: "back"
-  },
-  
   thoracicSpine: {
     cx: center, cy: 160, r: 6,
     label: "Thoracic Spine",

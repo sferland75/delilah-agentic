@@ -1,23 +1,14 @@
-feat(form): Complete form system v3.0
+feat(ROM/MMT): Enhanced body map assessment functionality
 
-- Fixed form provider issues & form clearing
-- Completed form validation and persistence
-- Updated documentation for completed form system
-- Ready for report module development
+- Fixed cervical spine positioning and ROM data display
+- Added support for multiple ROM entries per joint region
+- Improved MMT segment mapping with exact key matches
+- Updated ROM score calculation to handle multiple entries
+- Fixed MMT coloring to only highlight relevant segments
+- Added scroll support for ROM/MMT assessment dialogs
 
-Key changes:
-- Fixed calculateProgress implementation
-- Added proper form reset functionality
-- Updated default values handling
-- Completed documentation updates
-- Harmonized all form sections
-
-Breaking changes: none
-Migration: none required
-
-Closes issues:
-- Form clearing not working
-- Progress calculation undefined
-- Documentation outdated
-
-[version 3.0.0]
+Key improvements:
+- ROM assessments now support multiple movement planes
+- Each joint region can track multiple ROM measurements
+- MMT highlighting now properly isolates to tested segments
+- Better anatomical positioning for cervical spine region
