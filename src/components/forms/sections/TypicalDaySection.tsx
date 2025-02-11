@@ -39,10 +39,8 @@ export const TypicalDaySection = () => {
 
   const renderDailyRoutine = (isPreAccident: boolean) => {
     const prefix = isPreAccident ? 'preAccident' : 'current';
-    const titlePrefix = isPreAccident ? 'Pre-Accident' : 'Current';
-
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 mt-6">
         <div className="flex items-center space-x-2">
           <Checkbox 
             id={`${prefix}IrregularSchedule`}
@@ -147,9 +145,9 @@ export const TypicalDaySection = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="p-6">
       {/* Tab Navigation */}
-      <div className="bg-slate-100/80 p-1 rounded-md">
+      <div className="bg-slate-100/80 p-1 rounded-md mb-6">
         <div className="flex space-x-1">
           {tabs.map(tab => (
             <button
@@ -179,7 +177,7 @@ export const TypicalDaySection = () => {
 
         {/* Weekly Schedule Contents */}
         {(activeTab === 'preAccidentWeek' || activeTab === 'currentWeek') && (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-6">
             <Textarea
               {...register(`typicalDay.${activeTab === 'preAccidentWeek' ? 'preAccident' : 'current'}.weeklySchedule`)}
               placeholder="Include regular weekly activities, appointments, work schedules, and any variations from the typical daily routine"

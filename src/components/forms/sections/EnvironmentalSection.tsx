@@ -1,91 +1,88 @@
 import React from 'react';
-import { HomeIcon, ShieldAlert, ParkingCircle, Trees, FileText } from 'lucide-react';
-import { RoomInventory } from '@/components/EnvironmentalSection/RoomInventory';
-import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from 'react-hook-form';
-import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PropertyOverview } from '@/components/EnvironmentalSection/property-overview';
+import { RoomInventory } from '@/components/EnvironmentalSection/RoomInventory';
+import { OutdoorAreas } from '@/components/EnvironmentalSection/OutdoorAreas';
+import { AdditionalNotes } from '@/components/EnvironmentalSection/AdditionalNotes';
+import { 
+  FaHome,
+  FaDoorOpen,
+  FaTree,
+  FaStickyNote
+} from 'react-icons/fa';
 
-export const EnvironmentalSection = () => {
-  const { register, watch, setValue } = useFormContext<AssessmentFormData>();
-  const environmental = watch('environmental');
-
-  const updateField = (field: string, value: string) => {
-    setValue(`environmental.${field}`, value, { shouldDirty: true });
-  };
+export function EnvironmentalSection() {
+  const { control } = useFormContext();
 
   return (
-    <div className="space-y-6">
-      {/* Property Details */}
-      <div className="border rounded-md p-4 space-y-4">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <HomeIcon className="h-4 w-4 text-blue-600" />
-            <div className="text-sm font-semibold">General Property Description</div>
-          </div>
-          <Textarea
-            {...register('environmental.description')}
-            placeholder="Describe the general layout and features of the property..."
-            className="mt-2 resize-none text-sm min-h-[100px]"
-          />
+    <div className="p-6">
+      <Tabs defaultValue="property" className="w-full">
+        <div className="bg-slate-100/80 p-1 rounded-md mb-6">
+          <TabsList className="grid w-full grid-cols-4 gap-1">
+            <TabsTrigger 
+              value="property"
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaHome className="h-4 w-4" />
+                <span>Property</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="rooms"
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaDoorOpen className="h-4 w-4" />
+                <span>Rooms</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="outdoor"
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaTree className="h-4 w-4" />
+                <span>Outdoor</span>
+              </div>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="notes"
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaStickyNote className="h-4 w-4" />
+                <span>Notes</span>
+              </div>
+            </TabsTrigger>
+          </TabsList>
         </div>
 
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <ShieldAlert className="h-4 w-4 text-blue-600" />
-            <div className="text-sm font-semibold">Hazards and Safety Concerns</div>
+        <TabsContent value="property">
+          <div className="space-y-4">
+            <PropertyOverview />
           </div>
-          <Textarea
-            {...register('environmental.hazards')}
-            placeholder="List any identified hazards or safety concerns..."
-            className="mt-2 resize-none text-sm min-h-[100px]"
-          />
-        </div>
-      </div>
+        </TabsContent>
 
-      {/* Room Inventory */}
-      <RoomInventory />
-
-      {/* Outdoor Areas Section */}
-      <div className="border rounded-md p-4 space-y-4">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <ParkingCircle className="h-4 w-4 text-blue-600" />
-            <div className="text-sm font-semibold">Access and Parking</div>
+        <TabsContent value="rooms">
+          <div className="space-y-4">
+            <RoomInventory />
           </div>
-          <Textarea
-            {...register('environmental.outdoor.access')}
-            placeholder="Describe parking, walkways, and outdoor access..."
-            className="mt-2 resize-none text-sm min-h-[100px]"
-          />
-        </div>
+        </TabsContent>
 
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Trees className="h-4 w-4 text-blue-600" />
-            <div className="text-sm font-semibold">Yard and Garden Areas</div>
+        <TabsContent value="outdoor">
+          <div className="space-y-4">
+            <OutdoorAreas />
           </div>
-          <Textarea
-            {...register('environmental.outdoor.yard')}
-            placeholder="Describe yard space, gardens, and maintenance requirements..."
-            className="mt-2 resize-none text-sm min-h-[100px]"
-          />
-        </div>
-      </div>
+        </TabsContent>
 
-      {/* Notes Section */}
-      <div className="border rounded-md p-4">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <FileText className="h-4 w-4 text-blue-600" />
-            <div className="text-sm font-semibold">Additional Comments and Recommendations</div>
+        <TabsContent value="notes">
+          <div className="space-y-4">
+            <AdditionalNotes />
           </div>
-          <Textarea
-            {...register('environmental.notes')}
-            placeholder="Add any additional notes, observations, or recommendations..."
-            className="mt-2 resize-none text-sm min-h-[100px]"
-          />
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
-};
+}

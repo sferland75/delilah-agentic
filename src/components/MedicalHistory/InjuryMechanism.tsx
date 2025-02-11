@@ -8,134 +8,40 @@ import {
   FormMessage,
   FormDescription,
 } from '@/components/ui/form';
+import { Input } from "@/components/ui/input";
 import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { FaNotesMedical, FaRegCalendarAlt, FaFileMedicalAlt, FaClipboardList } from 'react-icons/fa';
 
 interface InjuryMechanismProps {
   control: Control<any>;
 }
 
-const VEHICLE_POSITIONS = [
-  "Driver",
-  "Front Passenger",
-  "Left Rear Passenger",
-  "Right Rear Passenger",
-  "Middle Rear Passenger",
-  "Other"
-] as const;
-
-const IMPACT_TYPES = [
-  "Front",
-  "Rear",
-  "Driver Side",
-  "Passenger Side",
-  "Multiple Impacts",
-  "Rollover",
-  "Other"
-] as const;
-
 export function InjuryMechanism({ control }: InjuryMechanismProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium text-slate-800">Injury Mechanism</h3>
-        <p className="text-sm text-slate-600 mb-4">Document details of the motor vehicle accident</p>
+        <h3 className="text-lg font-medium text-slate-800">Injury Details</h3>
+        <p className="text-sm text-slate-600 mb-4">Document information about the injury and its mechanism</p>
       </div>
 
       <div className="bg-white rounded-lg border shadow-sm p-4 space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="medicalHistory.injury.date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Date of Incident</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} className="bg-white" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
-          <FormField
-            control={control}
-            name="medicalHistory.injury.time"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Time of Incident</FormLabel>
-                <FormControl>
-                  <Input type="time" {...field} className="bg-white" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={control}
-            name="medicalHistory.injury.position"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Position in Vehicle</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Select position" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {VEHICLE_POSITIONS.map((pos) => (
-                      <SelectItem key={pos} value={pos}>{pos}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="medicalHistory.injury.impactType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-slate-700">Type of Impact</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="Select impact type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {IMPACT_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
         <FormField
           control={control}
-          name="medicalHistory.injury.circumstance"
+          name="medical.injury.circumstance"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-700">Circumstances of Accident</FormLabel>
+              <div className="flex items-center gap-2 mb-1.5">
+                <FaNotesMedical className="h-4 w-4 text-blue-500" />
+                <FormLabel className="text-slate-700">Circumstance of Injury</FormLabel>
+              </div>
               <FormDescription className="text-slate-600">
-                Speed of vehicles, road conditions, weather conditions, etc.
+                Describe how the injury occurred
               </FormDescription>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="Describe the circumstances leading to the accident..."
                   className="min-h-[100px] bg-white"
+                  placeholder="Describe the circumstances leading to the injury..."
                 />
               </FormControl>
               <FormMessage />
@@ -145,18 +51,21 @@ export function InjuryMechanism({ control }: InjuryMechanismProps) {
 
         <FormField
           control={control}
-          name="medicalHistory.injury.preparedForImpact"
+          name="medical.injury.date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-700">Preparation for Impact</FormLabel>
+              <div className="flex items-center gap-2 mb-1.5">
+                <FaRegCalendarAlt className="h-4 w-4 text-blue-500" />
+                <FormLabel className="text-slate-700">Date of Injury</FormLabel>
+              </div>
               <FormDescription className="text-slate-600">
-                Awareness of impending collision, bracing position, head position, etc.
+                When did the injury occur?
               </FormDescription>
               <FormControl>
-                <Textarea
+                <Input
+                  type="date"
                   {...field}
-                  placeholder="Describe preparation or awareness of impending impact..."
-                  className="min-h-[100px] bg-white"
+                  className="bg-white"
                 />
               </FormControl>
               <FormMessage />
@@ -166,18 +75,21 @@ export function InjuryMechanism({ control }: InjuryMechanismProps) {
 
         <FormField
           control={control}
-          name="medicalHistory.injury.immediateSymptoms"
+          name="medical.injury.description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-700">Immediate Symptoms</FormLabel>
+              <div className="flex items-center gap-2 mb-1.5">
+                <FaFileMedicalAlt className="h-4 w-4 text-blue-500" />
+                <FormLabel className="text-slate-700">Injury Description</FormLabel>
+              </div>
               <FormDescription className="text-slate-600">
-                Symptoms noted at scene and immediately following accident
+                Detailed description of the injury and initial impact
               </FormDescription>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="Describe immediate symptoms following the accident..."
                   className="min-h-[100px] bg-white"
+                  placeholder="Describe the nature and extent of the injury..."
                 />
               </FormControl>
               <FormMessage />
@@ -187,60 +99,21 @@ export function InjuryMechanism({ control }: InjuryMechanismProps) {
 
         <FormField
           control={control}
-          name="medicalHistory.injury.immediateResponse"
+          name="medical.injury.notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-slate-700">Immediate Response & Care</FormLabel>
+              <div className="flex items-center gap-2 mb-1.5">
+                <FaClipboardList className="h-4 w-4 text-blue-500" />
+                <FormLabel className="text-slate-700">Additional Notes</FormLabel>
+              </div>
               <FormDescription className="text-slate-600">
-                Emergency services response, treatment at scene, transport details
+                Any other relevant information about the injury
               </FormDescription>
               <FormControl>
                 <Textarea
                   {...field}
-                  placeholder="Describe immediate medical response and care received..."
                   className="min-h-[100px] bg-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="medicalHistory.injury.vehicleDamage"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-slate-700">Vehicle Damage</FormLabel>
-              <FormDescription className="text-slate-600">
-                Extent and location of damage to vehicles involved
-              </FormDescription>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder="Describe damage to vehicles involved..."
-                  className="min-h-[100px] bg-white"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="medicalHistory.injury.subsequentCare"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-slate-700">Subsequent Care</FormLabel>
-              <FormDescription className="text-slate-600">
-                Follow-up care, investigations, and initial treatments
-              </FormDescription>
-              <FormControl>
-                <Textarea
-                  {...field}
-                  placeholder="Describe medical care received after the accident..."
-                  className="min-h-[100px] bg-white"
+                  placeholder="Add any additional notes about the injury..."
                 />
               </FormControl>
               <FormMessage />

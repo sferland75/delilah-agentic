@@ -1,35 +1,27 @@
-module.exports = {
+/** @type {import('jest').Config} */
+const config = {
+  preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/src/test/jest.setup.ts'],
-  transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: {
-        jsx: 'react-jsx'
-      }
-    }],
-    '^.+\\.(js|jsx)$': ['babel-jest', {
-      presets: [
-        ['@babel/preset-env', { targets: { node: 'current' } }],
-        '@babel/preset-react'
-      ]
-    }]
-  },
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|scss|sass)$': 'identity-obj-proxy'
   },
-  testMatch: [
-    '**/__tests__/**/*.[jt]s?(x)',
-    '**/?(*.)+(spec|test).[jt]s?(x)'
+  collectCoverage: true,
+  collectCoverageFrom: [
+    'src/components/ReportGeneration/**/*.{ts,tsx}',
+    'src/lib/reports/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/**/index.{ts,tsx}'
   ],
-  coveragePathIgnorePatterns: [
-    '/node_modules/',
-    '/__tests__/',
-    '/dist/'
-  ],
-  globals: {
-    'ts-jest': {
-      isolatedModules: true
+  coverageThreshold: {
+    global: {
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100
     }
   }
 };
+
+module.exports = config;

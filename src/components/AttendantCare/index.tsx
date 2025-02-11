@@ -17,47 +17,40 @@ export const AttendantCareSection: React.FC = () => {
     const { register } = useFormContext<AssessmentFormData>();
     
     return (
-        <div className="space-y-6">
-            {/* Section Header */}
-            <div className="flex items-center gap-2 mb-4">
-                <FaUserNurse className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Assessment of Attendant Care Needs (Form 1)</h3>
-            </div>
-
-            {/* Tabs Navigation */}
-            <div className="border rounded-md p-4">
-                <Tabs defaultValue="level1">
-                    <TabsList className="grid w-full grid-cols-4 bg-slate-50/80 p-1">
+        <div className="p-6">
+            <Tabs defaultValue="level1" className="w-full">
+                <div className="bg-slate-100/80 p-1 rounded-md mb-6">
+                    <TabsList className="grid w-full grid-cols-4 gap-1">
                         <TabsTrigger 
                             value="level1"
-                            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                            className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
                         >
                             <div className="flex items-center gap-2">
                                 <FaHandHoldingHeart className="h-4 w-4" />
-                                <span>Level 1 - Routine Personal Care</span>
+                                <span>Level 1</span>
                             </div>
                         </TabsTrigger>
                         <TabsTrigger 
                             value="level2"
-                            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                            className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
                         >
                             <div className="flex items-center gap-2">
                                 <FaUserNurse className="h-4 w-4" />
-                                <span>Level 2 - Basic Supervisory</span>
+                                <span>Level 2</span>
                             </div>
                         </TabsTrigger>
                         <TabsTrigger 
                             value="level3"
-                            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                            className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
                         >
                             <div className="flex items-center gap-2">
                                 <FaUserMd className="h-4 w-4" />
-                                <span>Level 3 - Complex Health Care</span>
+                                <span>Level 3</span>
                             </div>
                         </TabsTrigger>
                         <TabsTrigger 
                             value="calculations"
-                            className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+                            className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
                         >
                             <div className="flex items-center gap-2">
                                 <FaCalculator className="h-4 w-4" />
@@ -65,24 +58,32 @@ export const AttendantCareSection: React.FC = () => {
                             </div>
                         </TabsTrigger>
                     </TabsList>
+                </div>
 
-                    <TabsContent value="level1" className="mt-6">
+                <TabsContent value="level1">
+                    <div className="space-y-4">
                         <Level1Care />
-                    </TabsContent>
+                    </div>
+                </TabsContent>
 
-                    <TabsContent value="level2" className="mt-6">
+                <TabsContent value="level2">
+                    <div className="space-y-4">
                         <Level2Care />
-                    </TabsContent>
+                    </div>
+                </TabsContent>
 
-                    <TabsContent value="level3" className="mt-6">
+                <TabsContent value="level3">
+                    <div className="space-y-4">
                         <Level3Care />
-                    </TabsContent>
+                    </div>
+                </TabsContent>
 
-                    <TabsContent value="calculations" className="mt-6">
+                <TabsContent value="calculations">
+                    <div className="space-y-4">
                         <Calculations />
-                    </TabsContent>
-                </Tabs>
-            </div>
+                    </div>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 };

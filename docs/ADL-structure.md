@@ -1,128 +1,140 @@
-# Activities of Daily Living (ADL) Assessment Structure
-
-## Overview
-The ADL section assesses functional independence across four main categories:
-1. Basic ADLs (BADLs)
-2. Instrumental ADLs (IADLs)
-3. Health Management
-4. Work Status
+# ADL Assessment Structure
 
 ## Data Structure
+[Previous ADL structure content remains...]
+
+## Report Generation Integration
+
+### ADL Section Template
 ```typescript
-adl: {
-  basic: {
-    [category: string]: {
-      [activityId: string]: {
-        independence: string;    // From independence levels enum
-        painLevel: number;      // 0-10 scale
-        lastAssessed: Date;     // Date of last assessment
-        notes: string;          // Observations and details
-        frequency?: string;     // For applicable activities
-        timeTaken?: string;     // For applicable activities
-        usesAssistiveDevices?: boolean;
-        assistiveDevices?: string;
-      }
-    }
-  },
-  iadl: {/* Same structure as basic */},
-  health: {/* Same structure as basic */},
-  work: {/* Same structure as basic */}
+const adlTemplate = {
+  system: `You are an experienced occupational therapist writing a medical-legal report.
+Focus on functional independence, safety considerations, and comparative analysis
+of pre/post accident status for activities of daily living.`,
+  human: `Based on the following ADL assessment data, generate a comprehensive analysis:
+
+{data}
+
+Include:
+1. Self-care capabilities and limitations
+2. Home management activities
+3. Community integration
+4. Work/productive activities
+5. Social/leisure participation
+6. Safety considerations
+7. Equipment/modification needs`
+};
+
+// Usage in report generation
+const adlSection = await generator.generateSection('adl', adlAssessmentData);
+```
+
+### Data Transformation
+```typescript
+interface ADLTransform {
+  selfCare: {
+    preAccident: string[];
+    current: string[];
+    impact: string;
+  };
+  homeManagement: {
+    preAccident: string[];
+    current: string[];
+    impact: string;
+  };
+  community: {
+    preAccident: string[];
+    current: string[];
+    impact: string;
+  };
+  workProductivity: {
+    status: string;
+    limitations: string[];
+    accommodations: string[];
+  };
+  socialLeisure: {
+    activities: string[];
+    limitations: string[];
+    adaptations: string[];
+  };
+}
+
+// Transform assessment data for report
+const transformedData = transformADLData(assessment.adl);
+```
+
+### Validation Rules
+```typescript
+const adlValidationSchema = z.object({
+  selfCare: z.array(z.string()).min(1),
+  homeManagement: z.array(z.string()).min(1),
+  community: z.array(z.string()).min(1),
+  workProductivity: z.object({
+    status: z.string(),
+    limitations: z.array(z.string())
+  }),
+  socialLeisure: z.object({
+    activities: z.array(z.string()),
+    limitations: z.array(z.string())
+  })
+});
+```
+
+### Report Section Structure
+```typescript
+interface ADLReportSection {
+  title: string;
+  content: string;
+  subsections: {
+    selfCare: string;
+    homeManagement: string;
+    community: string;
+    workProductivity: string;
+    socialLeisure: string;
+  };
 }
 ```
 
-## Independence Levels
-- Independent (7) - Complete independence
-- Modified Independent (6) - Uses devices/adaptations
-- Supervision (5) - Supervision/setup only
-- Minimal Assistance (4) - >75% independent
-- Moderate Assistance (3) - 50-75% independent
-- Maximal Assistance (2) - 25-49% independent
-- Total Assistance (1) - <25% independent
-- Not Applicable - Activity not relevant
+### Custom Prompts
+ADL-specific prompt customization options:
+1. Focus Areas
+   - Detailed task breakdown
+   - Safety considerations
+   - Independence levels
+   - Equipment needs
 
-## Categories and Activities
+2. Analysis Points
+   - Pre/post comparison
+   - Functional impacts
+   - Required assistance
+   - Environmental factors
 
-### Basic ADLs
-1. Bathing & Hygiene
-   - Bathing/Showering
-   - Grooming
-   - Oral Care
-   - Toileting
+3. Recommendations
+   - Equipment suggestions
+   - Technique modifications
+   - Environmental adaptations
+   - Support requirements
 
-2. Dressing
-   - Upper Body
-   - Lower Body
-   - Footwear
+### Integration Example
+```typescript
+// Generate ADL section
+const adlSection = await generator.generateSection('adl', {
+  title: 'Activities of Daily Living',
+  data: assessment.adl,
+  customPrompt: {
+    system: 'Custom system prompt...',
+    human: 'Custom human prompt...'
+  }
+});
 
-3. Feeding
-   - Eating
-   - Meal Setup
-   - Drinking
-
-4. Functional Mobility
-   - Bed Transfers
-   - Toilet Transfers
-   - Shower/Tub Transfers
-   - Position Changes
-
-### IADLs
-1. Household Management
-   - House Cleaning
-   - Laundry
-   - Meal Preparation
-   - Home Maintenance
-
-2. Community Integration
-   - Transportation
-   - Shopping
-   - Financial Management
-   - Navigation
-
-3. Communication & Technology
-   - Phone Use
-   - Computer/Device Use
-   - Written Communication
-
-4. Leisure & Social
-   - Hobbies
-   - Social Participation
-   - Physical Recreation
-
-### Health Management
-1. Management
-   - Medications
-   - Appointments
-   - Health Monitoring
-   - Exercise/Activity
-
-2. Health Routine
-   - Sleep Management
-   - Stress Management
-   - Nutrition Management
-
-### Work Status
-1. Current Status
-   - Work Situation
-   - Accommodations
-   - Training Needs
-   - Barriers to Return
-
-## Activity Properties
-Some activities require additional tracking:
-- Frequency (e.g., multiple daily, daily, weekly)
-- Time Taken (e.g., under 5min, 5-15min)
-- Assistive Devices (with description field)
-
-## Pain Level Assessment
-Each activity includes pain level tracking:
-- 0-10 scale
-- Visual indicators for severity
-- Warning levels:
-  - 0-4: Low (secondary)
-  - 5-7: Moderate (warning)
-  - 8-10: Severe (destructive)
-
-## Date Tracking
-Each activity tracks:
-- Last assessment date
-- History of changes (future feature)
+// Preview ADL section
+<SectionPreview
+  sectionKey="adl"
+  title="Activities of Daily Living"
+  content={adlSection.content}
+  originalPrompt={adlTemplate}
+  onRegenerateSection={handleRegenerate}
+  onLockSection={handleLock}
+  onUpdateContent={handleUpdate}
+/>
+```

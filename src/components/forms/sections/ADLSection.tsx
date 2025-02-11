@@ -3,29 +3,32 @@ import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { type AssessmentFormData } from '@/lib/validation/assessment-schema';
 import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
+  Tabs, 
+  TabsContent, 
+  TabsList, 
+  TabsTrigger 
 } from "@/components/ui/tabs";
-import { HousekeepingAssessment } from './HousekeepingAssessment';
-
 import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from "@/components/ui/select";
+import { type AssessmentFormData } from '@/lib/validation/assessment-schema';
+import { HousekeepingAssessment } from './HousekeepingAssessment';
+import { 
+  FaUserAlt,
+  FaWalking,
+  FaWheelchair,
+  FaHome,
+  FaBroom,
   FaBath,
   FaShower, 
   FaUser,
   FaTshirt,
   FaUtensils,
-  FaHome,
   FaBuilding,
   FaWallet,
   FaPhone,
@@ -36,26 +39,16 @@ import {
   FaMedkit,
   FaCut,
   FaHandsWash,
-  FaWalking,
-  FaUserAlt,
   FaBus,
-  FaWheelchair,
   FaCar,
   FaArrowsAlt,
-  FaBroom,
   FaToilet,
   FaTeeth,
   FaChair
 } from 'react-icons/fa';
 
-const independenceLevels = [
-  { value: "independent", label: "Independent" },
-  { value: "independent_with_mods", label: "Independent with devices and/or modification" },
-  { value: "partially_able", label: "Partially able" },
-  { value: "unable", label: "Unable" }
-];
+// ... rest of your imports ...
 
-// Basic ADLs
 const basicADLs = [
   {
     title: "Bathing",
@@ -90,7 +83,6 @@ const basicADLs = [
   }
 ];
 
-// Transfers
 const transferADLs = [
   {
     title: "Transfers",
@@ -105,7 +97,6 @@ const transferADLs = [
   }
 ];
 
-// Mobility
 const mobilityADLs = [
   {
     title: "Mobility",
@@ -118,7 +109,6 @@ const mobilityADLs = [
   }
 ];
 
-// Instrumental ADLs
 const instrumentalADLs = [
   {
     title: "Meal Preparation",
@@ -171,8 +161,15 @@ const instrumentalADLs = [
   }
 ];
 
+const independenceLevels = [
+  { value: "independent", label: "Independent" },
+  { value: "independent_with_mods", label: "Independent with devices and/or modification" },
+  { value: "partially_able", label: "Partially able" },
+  { value: "unable", label: "Unable" }
+];
+
 const ADLCategory = ({ category, prefix }) => {
-  const { register, setValue, watch } = useFormContext<AssessmentFormData>();
+  const { register, setValue, watch } = useFormContext();
   const Icon = category.icon;
   const fieldPrefix = `${prefix}.${category.title.toLowerCase()}`;
   
@@ -259,75 +256,118 @@ const ADLCategory = ({ category, prefix }) => {
   );
 };
 
-export const ADLSection = () => {
+export function ADLSection() {
   return (
-    <Tabs defaultValue="basic" className="w-full">
-      <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="basic" className="flex items-center gap-2">
-          <FaUserAlt className="h-4 w-4" />
-          Basic ADLs
-        </TabsTrigger>
-        <TabsTrigger value="transfers" className="flex items-center gap-2">
-          <FaWalking className="h-4 w-4" />
-          Transfers
-        </TabsTrigger>
-        <TabsTrigger value="mobility" className="flex items-center gap-2">
-          <FaWheelchair className="h-4 w-4" />
-          Mobility
-        </TabsTrigger>
-        <TabsTrigger value="iadl" className="flex items-center gap-2">
-          <FaHome className="h-4 w-4" />
-          IADLs
-        </TabsTrigger>
-        <TabsTrigger value="housekeeping" className="flex items-center gap-2">
-          <FaBroom className="h-4 w-4" />
-          Housekeeping
-        </TabsTrigger>
-      </TabsList>
+    <div className="p-6">
+      <Tabs defaultValue="basic" className="w-full">
+        <div className="bg-slate-100/80 p-1 rounded-md mb-6">
+          <TabsList className="grid w-full grid-cols-5 gap-1">
+            <TabsTrigger 
+              value="basic" 
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaUserAlt className="h-4 w-4" />
+                <span>Basic ADLs</span>
+              </div>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="transfers" 
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaWalking className="h-4 w-4" />
+                <span>Transfers</span>
+              </div>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="mobility" 
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaWheelchair className="h-4 w-4" />
+                <span>Mobility</span>
+              </div>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="iadl" 
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaHome className="h-4 w-4" />
+                <span>IADLs</span>
+              </div>
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="housekeeping" 
+              className="data-[state=active]:bg-[#2563EB] data-[state=active]:text-white text-slate-600 hover:bg-slate-200"
+            >
+              <div className="flex items-center gap-2">
+                <FaBroom className="h-4 w-4" />
+                <span>Housekeeping</span>
+              </div>
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
-      <TabsContent value="basic" className="space-y-6 mt-4">
-        {basicADLs.map((category, index) => (
-          <ADLCategory 
-            key={index} 
-            category={category} 
-            prefix="adl.basic" 
-          />
-        ))}
-      </TabsContent>
+        <TabsContent value="basic">
+          <div className="space-y-6 mt-6">
+            {basicADLs.map((category, index) => (
+              <ADLCategory 
+                key={index} 
+                category={category} 
+                prefix="adl.basic" 
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="transfers" className="space-y-6 mt-4">
-        {transferADLs.map((category, index) => (
-          <ADLCategory 
-            key={index} 
-            category={category} 
-            prefix="adl.transfers" 
-          />
-        ))}
-      </TabsContent>
+        <TabsContent value="transfers">
+          <div className="space-y-6 mt-6">
+            {transferADLs.map((category, index) => (
+              <ADLCategory 
+                key={index} 
+                category={category} 
+                prefix="adl.transfers" 
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="mobility" className="space-y-6 mt-4">
-        {mobilityADLs.map((category, index) => (
-          <ADLCategory 
-            key={index} 
-            category={category} 
-            prefix="adl.mobility" 
-          />
-        ))}
-      </TabsContent>
+        <TabsContent value="mobility">
+          <div className="space-y-6 mt-6">
+            {mobilityADLs.map((category, index) => (
+              <ADLCategory 
+                key={index} 
+                category={category} 
+                prefix="adl.mobility" 
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="iadl" className="space-y-6 mt-4">
-        {instrumentalADLs.map((category, index) => (
-          <ADLCategory 
-            key={index} 
-            category={category} 
-            prefix="adl.instrumental" 
-          />
-        ))}
-      </TabsContent>
+        <TabsContent value="iadl">
+          <div className="space-y-6 mt-6">
+            {instrumentalADLs.map((category, index) => (
+              <ADLCategory 
+                key={index} 
+                category={category} 
+                prefix="adl.instrumental" 
+              />
+            ))}
+          </div>
+        </TabsContent>
 
-      <TabsContent value="housekeeping" className="space-y-6 mt-4">
-        <HousekeepingAssessment />
-      </TabsContent>
-    </Tabs>
+        <TabsContent value="housekeeping">
+          <div className="mt-6">
+            <HousekeepingAssessment />
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };

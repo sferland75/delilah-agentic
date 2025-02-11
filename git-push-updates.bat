@@ -1,0 +1,3 @@
+@echo off
+echo Pushing changes to repository...
+git push origin main

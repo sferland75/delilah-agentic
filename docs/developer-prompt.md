@@ -1,98 +1,235 @@
-# Developer Prompt for Report Generation Module
+# Developer Documentation: Report Generation System
 
-## Context
-You are developing a medical-legal report generation system for occupational therapy assessments. The system combines structured assessment data with AI-enhanced narrative generation to create professional clinical reports.
+## Overview
+The report generation system combines structured assessment data with Claude AI to create professional medical-legal occupational therapy reports. The system features section-by-section generation, custom prompts, version control, and real-time preview.
 
-## Current State
-The basic architecture and Claude API integration are complete. The system can generate reports section by section, with progress tracking and error handling. Core UI components are created but not yet integrated.
+## Architecture
 
-## Key Files
-- `src/components/ReportGeneration/services/claudeReportGenerator.ts` - Main Claude integration
-- `src/components/ReportGeneration/services/reportTemplates.ts` - Report templates
-- `src/components/ReportGeneration/components/ReportDialog.tsx` - Progress UI
-- `src/lib/claude.ts` - Claude API client
-
-## Sample Report Structure
+### Core Components
 ```typescript
-interface ReportSection {
-  title: string;
-  content: string;
-  subsections?: ReportSection[];
-}
+// Report Generator
+const generator = new ReportGenerator(assessment);
+const report = await generator.generateReport({
+  onProgress: (progress) => updateUI(progress),
+  onValidationError: (errors) => handleErrors(errors)
+});
 
-interface Report {
-  metadata: {
-    clientName: string;
-    dateOfAssessment: string;
-    assessor: string;
+// Section Generation
+const narrative = await claudeGenerator.generateNarrative(
+  'demographics',
+  sectionContent,
+  subsections
+);
+
+// Preview Component
+<ReportPreview
+  assessment={assessment}
+  onComplete={handleComplete}
+  onClose={handleClose}
+/>
+```
+
+### Data Flow
+1. Assessment → Transformer → Sections
+2. Sections → Validator → Claude API
+3. Claude API → Cache → UI
+4. UI → History → Version Control
+
+## Component Integration
+
+### Report Preview
+```tsx
+import { ReportPreview } from '@/components/ReportGeneration';
+
+function AssessmentForm() {
+  const handleReportGeneration = async () => {
+    setShowPreview(true);
   };
-  sections: ReportSection[];
+
+  return (
+    <>
+      <Button onClick={handleReportGeneration}>
+        Generate Report
+      </Button>
+
+      {showPreview && (
+        <ReportPreview
+          assessment={assessmentData}
+          onComplete={handleComplete}
+          onClose={() => setShowPreview(false)}
+        />
+      )}
+    </>
+  );
 }
 ```
 
-## Example JSON Assessment Data
+### Section Customization
+```tsx
+import { SectionPreview } from '@/components/ReportGeneration';
+
+function ReportSection({ section, onUpdate }) {
+  return (
+    <SectionPreview
+      sectionKey={section.key}
+      title={section.title}
+      content={section.content}
+      originalPrompt={section.prompt}
+      onRegenerateSection={handleRegenerate}
+      onLockSection={handleLock}
+      onUpdateContent={onUpdate}
+    />
+  );
+}
+```
+
+### Progress Tracking
+```tsx
+import { GenerationProgressUI } from '@/components/ReportGeneration';
+
+function ProgressDisplay({ sections, current }) {
+  return (
+    <GenerationProgressUI
+      sections={sections}
+      currentSection={current}
+      error={error}
+    />
+  );
+}
+```
+
+## Claude Integration
+
+### Prompt Structure
 ```typescript
-interface AssessmentData {
+interface PromptTemplate {
+  system: string;  // System context
+  human: string;   // Human prompt
+}
+
+const promptTemplates = {
   demographics: {
-    firstName: string;
-    lastName: string;
-    dateOfBirth: string;
-    // ...
-  };
-  medicalHistory: {
-    preExisting: string;
-    medications: Medication[];
-    // ...
-  };
+    system: `You are an experienced occupational therapist...`,
+    human: `Based on the following data, generate...`
+  },
   // ... other sections
-}
-```
-
-## Sample Claude Prompt
-When enhancing report sections, use prompts that:
-1. Emphasize professional medical terminology
-2. Maintain objective clinical tone
-3. Focus on functional impacts
-4. Include specific examples from assessment data
-
-Example:
-```typescript
-const prompt = {
-  system: `You are an experienced occupational therapist writing a medical-legal report.
-Generate professional clinical content focusing on functional impacts.`,
-  human: `Based on this assessment data, generate a section addressing...`
 };
 ```
 
-## Development Priority
-1. Complete section templates
-2. Implement report preview
-3. Add template customization
-4. Integrate with main form
+### Custom Prompts
+```typescript
+// Customize prompt
+const customPrompt = {
+  system: 'Modified system prompt...',
+  human: 'Modified human prompt...'
+};
 
-## Style Guide
-- Use TypeScript for type safety
-- Follow React hooks pattern
-- Implement error boundaries
-- Add detailed comments
-- Include unit tests
+// Generate with custom prompt
+const content = await generator.regenerateSection(
+  'demographics',
+  customPrompt
+);
+```
 
-## Available Tools
-- Claude API (integrated)
-- React with TypeScript
-- shadcn/ui components
-- File system access
+### Error Handling
+```typescript
+try {
+  const response = await claudeClient.chat({
+    messages: [{ role: 'user', content: prompt.human }],
+    model: CLAUDE_CONFIG.MODEL,
+    temperature: CLAUDE_CONFIG.TEMPERATURE,
+    system: prompt.system
+  });
 
-## Notes
-- Report generation is asynchronous
-- Each section can be generated independently
-- Error recovery is built in
-- Progress tracking is percentage-based
+  if (response.error) {
+    throw new Error(response.error);
+  }
+
+  return { content: response.content };
+} catch (error) {
+  console.error('Claude API error:', error);
+  throw error;
+}
+```
 
 ## Testing
-Run tests with:
-```bash
-npm run test:claude     # API integration
-npm run test:templates  # Template generation
-npm run test:report     # Full report generation
+
+### Component Tests
+```typescript
+describe('ReportPreview', () => {
+  it('generates report correctly', async () => {
+    render(<ReportPreview assessment={mockAssessment} />);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Report Complete')).toBeInTheDocument();
+    });
+  });
+});
 ```
+
+### API Tests
+```typescript
+describe('ClaudeReportGenerator', () => {
+  it('generates narrative using Claude API', async () => {
+    const result = await generator.generateNarrative(
+      'demographics',
+      'Test content',
+      { personal: 'Client info' }
+    );
+
+    expect(result).toBe('Generated content');
+  });
+});
+```
+
+### Mock Data
+```typescript
+const mockAssessment = {
+  demographics: {
+    firstName: 'John',
+    lastName: 'Doe'
+  },
+  // ... other sections
+};
+```
+
+## Performance
+
+### Caching
+```typescript
+// Check cache
+const cachedResult = cache.get(cacheKey);
+if (cachedResult) {
+  return cachedResult;
+}
+
+// Generate and cache
+const result = await generateContent();
+cache.set(cacheKey, result);
+```
+
+### Rate Limiting
+```typescript
+const rateLimiter = new RateLimiter({
+  maxRequests: 10,
+  perSecond: 1
+});
+
+await rateLimiter.wait();
+const result = await makeRequest();
+```
+
+## Development Workflow
+1. Run tests: `npm test`
+2. Check coverage: `npm test -- --coverage`
+3. Start dev server: `npm run dev`
+4. Build: `npm run build`
+
+## Best Practices
+1. Always validate data before sending to Claude
+2. Use type-safe interfaces
+3. Handle all async states
+4. Implement proper error boundaries
+5. Add comprehensive tests
+6. Document any prompt changes
+7. Monitor API rate limits
