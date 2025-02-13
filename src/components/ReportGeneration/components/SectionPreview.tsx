@@ -123,6 +123,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             variant="outline"
             size="sm"
             onClick={onLockSection}
+            aria-label="Toggle lock"
           >
             {isLocked ? (
               <Lock className="h-4 w-4" />
@@ -146,7 +147,7 @@ export const SectionPreview: React.FC<SectionPreviewProps> = ({
             <div className="space-y-4">
               <h3 className="font-medium">Previous Versions</h3>
               {history.getVersions(sectionKey).map((version, index) => (
-                <div key={version.timestamp} className="space-y-2">
+                <div key={index} className="space-y-2">
                   <div className="flex justify-between">
                     <span>Version {index + 1}</span>
                     <Button

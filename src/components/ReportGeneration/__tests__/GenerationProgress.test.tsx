@@ -1,118 +1,156 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { GenerationProgressUI } from '../components/GenerationProgress';
-import { mockProgress } from '../../../lib/reports/__tests__/mockData';
+import { GenerationProgress } from '@/lib/reports/ReportGenerator';
+
+// Mock the Progress component
+jest.mock('@/components/ui/progress', () => ({
+  Progress: ({ value, className }: { value: number; className?: string }) => (
+    <div 
+      role="progressbar" 
+      className={className} 
+      data-progress={value || 0} // Default to 0 when undefined
+    >
+      {value ? Math.round(value) : 0}%
+    </div>
+  ),
+}));
 
 describe('GenerationProgressUI', () => {
+  const defaultSections: Record<string, GenerationProgress> = {
+    'section1': {
+      section: 'Demographics',
+      progress: 50,
+      status: 'processing'
+    },
+    'section2': {
+      section: 'Medical History',
+      progress: 75,
+      status: 'complete'
+    }
+  };
+
   it('renders overall progress correctly', () => {
+    render(<GenerationProgressUI sections={defaultSections} />);
+    
+    // Check title
+    expect(screen.getByText('Report Generation Progress')).toBeInTheDocument();
+    
+    // Find progress by role and check value
+    const progressBars = screen.getAllByRole('progressbar');
+    const overallProgress = progressBars[0];
+    expect(overallProgress.textContent).toBe('63%');
+  });
+
+  it('displays all section progresses', () => {
+    render(<GenerationProgressUI sections={defaultSections} />);
+    
+    expect(screen.getByText('Demographics')).toBeInTheDocument();
+    const progressBars = screen.getAllByRole('progressbar');
+    expect(progressBars[1].textContent).toBe('50%');
+    
+    expect(screen.getByText('Medical History')).toBeInTheDocument();
+    expect(progressBars[2].textContent).toBe('75%');
+  });
+
+  it('shows current section when provided', () => {
     render(
-      <GenerationProgressUI
-        sections={mockProgress}
+      <GenerationProgressUI 
+        sections={defaultSections} 
         currentSection="Demographics"
       />
     );
-
-    // Check for overall progress (75% - average of 100% and 50%)
-    expect(screen.getByText('75%')).toBeInTheDocument();
+    
+    expect(screen.getByText('Currently processing: Demographics')).toBeInTheDocument();
   });
 
-  it('displays current section', () => {
+  it('displays error message when provided', () => {
+    const error = 'Test error message';
     render(
-      <GenerationProgressUI
-        sections={mockProgress}
-        currentSection="Demographics"
+      <GenerationProgressUI 
+        sections={defaultSections} 
+        error={error}
       />
     );
-
-    expect(screen.getByText(/currently processing: demographics/i)).toBeInTheDocument();
+    
+    expect(screen.getByText(error)).toBeInTheDocument();
   });
 
-  it('shows error state correctly', () => {
-    const progressWithError = {
-      ...mockProgress,
-      demographics: {
-        ...mockProgress.demographics,
+  it('renders section with error state correctly', () => {
+    const sectionsWithError: Record<string, GenerationProgress> = {
+      'section1': {
+        section: 'Demographics',
+        progress: 25,
         status: 'error',
-        error: 'Test error message'
+        error: 'Failed to process demographics'
       }
     };
-
-    render(
-      <GenerationProgressUI
-        sections={progressWithError}
-        error="Overall error message"
-      />
-    );
-
-    expect(screen.getByText('Test error message')).toBeInTheDocument();
-    expect(screen.getByText('Overall error message')).toBeInTheDocument();
+    
+    render(<GenerationProgressUI sections={sectionsWithError} />);
+    
+    expect(screen.getByText('Demographics')).toBeInTheDocument();
+    const progressBars = screen.getAllByRole('progressbar');
+    expect(progressBars[1].textContent).toBe('25%');
+    expect(progressBars[1]).toHaveClass('bg-red-200');
+    expect(screen.getByText('Failed to process demographics')).toBeInTheDocument();
   });
 
-  it('shows different states for sections', () => {
-    const mixedProgress = {
-      demographics: {
+  it('handles empty sections object', () => {
+    render(<GenerationProgressUI sections={{}} />);
+    
+    expect(screen.getByText('Report Generation Progress')).toBeInTheDocument();
+    const progressBar = screen.getByRole('progressbar');
+    expect(progressBar.textContent).toBe('0%');
+  });
+
+  it('renders completed sections with correct styling', () => {
+    const sectionsWithComplete: Record<string, GenerationProgress> = {
+      'section1': {
         section: 'Demographics',
         progress: 100,
         status: 'complete'
+      }
+    };
+    
+    render(<GenerationProgressUI sections={sectionsWithComplete} />);
+    
+    const progressBars = screen.getAllByRole('progressbar');
+    expect(progressBars[1]).toHaveClass('bg-green-200');
+  });
+
+  it('renders error sections with correct styling', () => {
+    const sectionsWithError: Record<string, GenerationProgress> = {
+      'section1': {
+        section: 'Demographics',
+        progress: 25,
+        status: 'error'
+      }
+    };
+    
+    render(<GenerationProgressUI sections={sectionsWithError} />);
+    
+    const progressBars = screen.getAllByRole('progressbar');
+    expect(progressBars[1]).toHaveClass('bg-red-200');
+  });
+
+  it('handles sections with decimal progress values', () => {
+    const sectionsWithDecimals: Record<string, GenerationProgress> = {
+      'section1': {
+        section: 'Demographics',
+        progress: 33.33,
+        status: 'processing'
       },
-      medical: {
+      'section2': {
         section: 'Medical History',
-        progress: 50,
-        status: 'processing'
-      },
-      symptoms: {
-        section: 'Symptoms',
-        progress: 0,
-        status: 'error',
-        error: 'Failed to generate'
-      }
-    };
-
-    render(
-      <GenerationProgressUI
-        sections={mixedProgress}
-        currentSection="Medical History"
-      />
-    );
-
-    // Check complete section
-    expect(screen.getByText('100%')).toBeInTheDocument();
-    
-    // Check processing section
-    expect(screen.getByText('50%')).toBeInTheDocument();
-    
-    // Check error section
-    expect(screen.getByText('Failed to generate')).toBeInTheDocument();
-  });
-
-  it('handles empty sections gracefully', () => {
-    render(
-      <GenerationProgressUI
-        sections={{}}
-        currentSection={undefined}
-      />
-    );
-
-    expect(screen.getByText('Report Generation Progress')).toBeInTheDocument();
-    expect(screen.getByText('0%')).toBeInTheDocument();
-  });
-
-  it('formats progress numbers correctly', () => {
-    const preciseProgress = {
-      test: {
-        section: 'Test',
-        progress: 33.333333,
+        progress: 66.67,
         status: 'processing'
       }
     };
-
-    render(
-      <GenerationProgressUI
-        sections={preciseProgress}
-        currentSection="Test"
-      />
-    );
-
-    expect(screen.getByText('33%')).toBeInTheDocument();
+    
+    render(<GenerationProgressUI sections={sectionsWithDecimals} />);
+    
+    const progressBars = screen.getAllByRole('progressbar');
+    expect(progressBars[1].textContent).toBe('33%');
+    expect(progressBars[2].textContent).toBe('67%');
+    expect(progressBars[0].textContent).toBe('50%');
   });
 });

@@ -1,0 +1,221 @@
+{
+  "scenarios": {
+    "basic": {
+      "assessment": {
+        "initial": {
+          "personal": {
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "dateOfBirth": "1980-05-15",
+            "phone": "555-0123",
+            "email": "jane.doe@email.com"
+          },
+          "insurance": {
+            "provider": "ABC Insurance",
+            "policyNumber": "POL123456"
+          },
+          "legal": {
+            "representativeName": "John Smith",
+            "firm": "Smith & Associates"
+          }
+        },
+        "medical": {
+          "injury": {
+            "circumstance": "Slip and fall at work",
+            "date": "2024-12-01",
+            "description": "Patient slipped on wet floor, injuring right shoulder",
+            "notes": "Incident reported to workplace safety"
+          },
+          "symptoms": [
+            {
+              "location": "Right Shoulder",
+              "type": "Pain",
+              "severity": "6/10",
+              "frequency": "Constant",
+              "aggravating": ["Overhead reaching", "Lifting"],
+              "relieving": ["Rest", "Ice"]
+            }
+          ],
+          "treatments": ["Physiotherapy", "Pain management"],
+          "medications": [
+            {
+              "name": "Ibuprofen",
+              "dosage": "400mg",
+              "frequency": "PRN"
+            }
+          ],
+          "imaging": [
+            {
+              "type": "X-Ray",
+              "date": "2024-12-02",
+              "findings": "No acute fracture"
+            }
+          ]
+        },
+        "functional": {
+          "tolerances": {
+            "overhead_reaching": {
+              "painLevel": 7,
+              "limitations": "Limited to occasional reaching",
+              "adaptations": "Uses step stool, repositions items"
+            }
+          },
+          "rangeOfMotion": {
+            "Shoulder_Flexion": {
+              "score": "2/4",
+              "notes": "Limited with pain",
+              "type": "ROM"
+            }
+          },
+          "manualMuscleTesting": {},
+          "overallNotes": "Limited overhead activities",
+          "recommendations": ["Workstation modification", "Ergonomic assessment"],
+          "followUpNeeded": true,
+          "followUpNotes": "Review in 6 weeks"
+        },
+        "environmental": {
+          "propertyOverview": {
+            "propertyType": "Single Family Home",
+            "layoutDescription": "Two story home with main floor access",
+            "access": {
+              "exterior": {
+                "description": "Level entry from driveway"
+              },
+              "interior": {
+                "description": "All essential areas accessible on main floor",
+                "hasStairs": true,
+                "numberOfStairs": 14
+              }
+            },
+            "recommendedModifications": ["Grab bars in bathroom"],
+            "identifiedHazards": ["Loose carpet on stairs"]
+          },
+          "safety": {
+            "hazards": ["Poor lighting on stairs"],
+            "concerns": "Stair access to bedroom level",
+            "recommendations": "Install additional lighting"
+          }
+        },
+        "ama": {
+          "edition": "6th Edition",
+          "assessmentDate": "2024-02-11",
+          "diagnosisCategories": ["Shoulder Injury"],
+          "totalImpairment": "5%",
+          "methodology": "Standard approach",
+          "recommendations": ["Continue physiotherapy"],
+          "additionalNotes": "Good recovery potential"
+        },
+        "attendantCare": {
+          "overview": {
+            "totalHoursPerDay": "2",
+            "caregiverTypes": ["PSW"],
+            "supervisedCare": false,
+            "specializedTraining": false,
+            "scheduleFlexibility": "Flexible timing"
+          },
+          "tasks": ["Dressing assistance", "Bathing supervision"],
+          "schedule": ["Morning care - 1 hour", "Evening care - 1 hour"],
+          "equipment": ["Shower chair", "Grab bars"],
+          "training": {
+            "required": false,
+            "topics": [],
+            "duration": "",
+            "provider": "",
+            "specialConsiderations": ""
+          },
+          "recommendations": ["Review in 6 weeks"],
+          "notes": "Independent with most ADLs"
+        }
+      }
+    },
+    "error": {
+      "assessment": {
+        "initial": {
+          "personal": {
+            "firstName": "",
+            "lastName": "",
+            "dateOfBirth": "invalid-date",
+            "phone": "",
+            "email": "invalid-email"
+          },
+          "insurance": {},
+          "legal": {}
+        },
+        "medical": {
+          "injury": {
+            "circumstance": "",
+            "date": "2024-13-45",
+            "description": "",
+            "notes": ""
+          },
+          "symptoms": [],
+          "treatments": [],
+          "medications": [],
+          "imaging": []
+        },
+        "functional": {
+          "tolerances": {},
+          "rangeOfMotion": {},
+          "manualMuscleTesting": {},
+          "overallNotes": "",
+          "recommendations": [],
+          "followUpNeeded": false,
+          "followUpNotes": ""
+        },
+        "environmental": {
+          "propertyOverview": {
+            "propertyType": "",
+            "layoutDescription": "",
+            "access": {
+              "exterior": {
+                "description": ""
+              },
+              "interior": {
+                "description": "",
+                "hasStairs": false,
+                "numberOfStairs": 0
+              }
+            },
+            "recommendedModifications": [],
+            "identifiedHazards": []
+          },
+          "safety": {
+            "hazards": [],
+            "concerns": "",
+            "recommendations": ""
+          }
+        },
+        "ama": {
+          "edition": "",
+          "assessmentDate": "",
+          "diagnosisCategories": [],
+          "totalImpairment": "",
+          "methodology": "",
+          "recommendations": [],
+          "additionalNotes": ""
+        },
+        "attendantCare": {
+          "overview": {
+            "totalHoursPerDay": "",
+            "caregiverTypes": [],
+            "supervisedCare": false,
+            "specializedTraining": false,
+            "scheduleFlexibility": ""
+          },
+          "tasks": [],
+          "schedule": [],
+          "equipment": [],
+          "training": {
+            "required": false,
+            "topics": [],
+            "duration": "",
+            "provider": "",
+            "specialConsiderations": ""
+          },
+          "recommendations": [],
+          "notes": ""
+        }
+      }
+    }
+  }
+}

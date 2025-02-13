@@ -1,83 +1,75 @@
 import { useState, useCallback } from 'react';
-import type { AssessmentForm } from '@/lib/validation/assessment-schema';
+import type { AssessmentForm } from '@/types/forms';
 
-interface UseReportGenerationProps {
-  onComplete?: (reportContent: string) => void;
-  onError?: (error: Error) => void;
-  onProgress?: (progress: number, section: string) => void;
+interface ReportGenerationState {
+  isGenerating: boolean;
+  progress: number;
+  currentSection: string | null;
+  error: string | null;
 }
 
-export function useReportGeneration({
-  onComplete,
-  onError,
-  onProgress
-}: UseReportGenerationProps = {}) {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [currentSection, setCurrentSection] = useState<string>('');
-  const [error, setError] = useState<Error | null>(null);
+export function useReportGeneration() {
+  const [state, setState] = useState<ReportGenerationState>({
+    isGenerating: false,
+    progress: 0,
+    currentSection: null,
+    error: null
+  });
 
-  const generateReport = useCallback(async (formData: AssessmentForm): Promise<string> => {
+  const generateReport = useCallback(async (_formData: AssessmentForm) => {
+    setState(prev => ({
+      ...prev,
+      isGenerating: true,
+      error: null
+    }));
+    
     try {
-      setIsGenerating(true);
-      setError(null);
-      setProgress(0);
-
-      // Add report generation logic here
-      // For now, just simulate report generation
-      
-      let sections = [
-        'Demographics',
-        'Medical History',
-        'Functional Assessment',
-        'Environmental Assessment'
-      ];
-
-      let reportContent = '';
-      
-      for (let i = 0; i < sections.length; i++) {
-        setCurrentSection(sections[i]);
-        const currentProgress = ((i + 1) / sections.length) * 100;
-        setProgress(currentProgress);
-        onProgress?.(currentProgress, sections[i]);
-        
-        // Simulate section generation
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        reportContent += `\n## ${sections[i]}\n\n`;
-      }
-
-      setProgress(100);
-      onProgress?.(100, 'Complete');
-      onComplete?.(reportContent);
-      return reportContent;
-
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error occurred');
-      setError(error);
-      onError?.(error);
+      // Mock report generation
+      return 'Generated report content';
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Failed to generate report'
+      }));
       throw error;
-    } finally {
-      setIsGenerating(false);
     }
-  }, [onComplete, onError, onProgress]);
+  }, []);
 
   const resumeGeneration = useCallback(async () => {
-    // Add resume logic here
+    setState(prev => ({
+      ...prev,
+      isGenerating: true,
+      error: null
+    }));
     return null;
   }, []);
 
+  const cancelGeneration = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      isGenerating: false
+    }));
+  }, []);
+
+  const downloadReport = useCallback(() => {
+    // Mock download functionality
+  }, []);
+
+  const reset = useCallback(() => {
+    setState({
+      isGenerating: false,
+      progress: 0,
+      currentSection: null,
+      error: null
+    });
+  }, []);
+
   return {
+    ...state,
     generateReport,
     resumeGeneration,
-    isGenerating,
-    progress,
-    currentSection,
-    error,
-    reset: () => {
-      setIsGenerating(false);
-      setProgress(0);
-      setCurrentSection('');
-      setError(null);
-    }
+    cancelGeneration,
+    downloadReport,
+    reset
   };
 }

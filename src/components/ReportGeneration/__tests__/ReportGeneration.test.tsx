@@ -1,30 +1,184 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { ReportPreview } from '../components/ReportPreview';
 import { SectionPreview } from '../components/SectionPreview';
 import ReportGenerator from '@/lib/reports/ReportGenerator';
-import { SectionHistory } from '@/lib/reports/sectionHistory';
+import type { Assessment } from '@/types/assessment';
+import type { GenerationProgress } from '@/lib/reports/ReportGenerator';
+
+// Mock UI components
+jest.mock('@/components/ui/card', () => ({
+  Card: ({ 
+    children, 
+    className 
+  }: React.PropsWithChildren<{ className?: string }>) => (
+    <div className={className}>{children}</div>
+  ),
+  CardHeader: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  CardTitle: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  CardContent: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+}));
+
+jest.mock('@/components/ui/button', () => ({
+  Button: ({ 
+    children, 
+    onClick, 
+    disabled, 
+    ...props 
+  }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button onClick={onClick} disabled={disabled} {...props}>{children}</button>
+  ),
+}));
+
+jest.mock('@/components/ui/dialog', () => ({
+  Dialog: ({ 
+    children, 
+    open 
+  }: React.PropsWithChildren<{ open: boolean }>) => (
+    open ? <div role="dialog">{children}</div> : null
+  ),
+  DialogContent: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogHeader: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogTitle: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogFooter: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+}));
+
+jest.mock('@/components/ui/tabs', () => ({
+  Tabs: ({ 
+    children, 
+    value, 
+    onValueChange 
+  }: React.PropsWithChildren<{
+    value: string;
+    onValueChange: (value: string) => void;
+  }>) => (
+    <div data-testid="tabs-container">
+      <select 
+        value={value} 
+        onChange={(e) => onValueChange(e.target.value)}
+        data-testid="tab-select"
+      >
+        <option value="demographics">Demographics</option>
+        <option value="medical">Medical History</option>
+      </select>
+      {children}
+    </div>
+  ),
+  TabsList: ({ children }: React.PropsWithChildren) => (
+    <div role="tablist">{children}</div>
+  ),
+  TabsTrigger: ({ 
+    children, 
+    value 
+  }: React.PropsWithChildren<{ value: string }>) => (
+    <button role="tab" value={value}>{children}</button>
+  ),
+  TabsContent: ({ 
+    children, 
+    value 
+  }: React.PropsWithChildren<{ value: string }>) => (
+    <div role="tabpanel" data-value={value}>
+      {children}
+    </div>
+  ),
+}));
+
+jest.mock('@/components/ui/progress', () => ({
+  Progress: ({ value }: { value: number }) => (
+    <div 
+      role="progressbar" 
+      data-progress={value}
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      {value}%
+    </div>
+  ),
+}));
+
+jest.mock('@/components/ui/textarea', () => ({
+  Textarea: ({ 
+    value, 
+    onChange, 
+    className 
+  }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
+    <textarea value={value} onChange={onChange} className={className} />
+  ),
+}));
+
+jest.mock('@/components/ui/scroll-area', () => ({
+  ScrollArea: ({ 
+    children, 
+    className 
+  }: React.PropsWithChildren<{ className?: string }>) => (
+    <div data-testid="scroll-area" className={className}>{children}</div>
+  ),
+}));
+
+// Mock icons
+jest.mock('lucide-react', () => ({
+  AlertCircle: () => <div data-testid="alert-circle-icon">Alert Icon</div>,
+  Check: () => <div data-testid="check-icon">Check Icon</div>,
+  Edit2: () => <div data-testid="edit-icon">Edit Icon</div>,
+  Lock: () => <div data-testid="lock-icon">Lock Icon</div>,
+  Unlock: () => <div data-testid="unlock-icon">Unlock Icon</div>,
+  History: () => <div data-testid="history-icon">History Icon</div>,
+  RefreshCw: () => <div data-testid="refresh-icon">Refresh Icon</div>,
+  Save: () => <div data-testid="save-icon">Save Icon</div>,
+}));
+
+// Mock the prompt templates
+jest.mock('@/lib/reports/promptTemplates', () => ({
+  promptTemplates: {
+    demographics: {
+      system: 'System prompt',
+      human: 'Human prompt',
+    },
+    medical: {
+      system: 'Medical system prompt',
+      human: 'Medical human prompt',
+    },
+  },
+}));
 
 // Mock the ReportGenerator
 jest.mock('@/lib/reports/ReportGenerator');
 const MockedReportGenerator = ReportGenerator as jest.MockedClass<typeof ReportGenerator>;
 
 // Mock assessment data
-const mockAssessment = {
-  initial: {
-    demographics: {
-      firstName: 'John',
-      lastName: 'Doe',
-      dateOfBirth: '1990-01-01'
+const mockAssessment: Assessment = {
+  demographics: {
+    firstName: 'John',
+    lastName: 'Doe',
+    dateOfBirth: '1990-01-01',
+    gender: 'Male',
+    phone: '123-456-7890',
+    email: 'john.doe@example.com',
+    address: '123 Main St',
+    maritalStatus: 'Single',
+    emergencyContact: {
+      name: 'Jane Doe',
+      relationship: 'Sister',
+      phone: '987-654-3210'
     }
   },
-  medical: {
-    injury: {
-      date: '2024-01-01',
-      description: 'Test injury'
-    }
-  }
+  medicalHistory: {
+    conditions: [],
+    medications: [],
+    allergies: [],
+    surgeries: '',
+    treatments: [],
+    currentTreatment: []
+  },
+  symptoms: {
+    physical: [],
+    cognitive: [],
+    generalNotes: ''
+  },
+  functionalAssessment: {},
+  environmental: {},
+  adl: {},
+  amaGuides: {}
 };
 
 describe('Report Generation Components', () => {
@@ -41,7 +195,7 @@ describe('Report Generation Components', () => {
         system: 'System prompt',
         human: 'Human prompt'
       },
-      onRegenerateSection: jest.fn(),
+      onRegenerateSection: jest.fn().mockResolvedValue(undefined),
       onLockSection: jest.fn(),
       onUpdateContent: jest.fn(),
       isLocked: false,
@@ -55,44 +209,82 @@ describe('Report Generation Components', () => {
       expect(screen.getByText('Test content')).toBeInTheDocument();
     });
 
-    it('handles editing mode correctly', async () => {
-      render(<SectionPreview {...defaultProps} />);
+    it('handles editing mode correctly', () => {
+      render(<SectionPreview {...defaultProps} isEditing={true} />);
       
-      // Click edit button
-      const editButton = screen.getByRole('button', { name: /edit/i });
-      await userEvent.click(editButton);
+      const textarea = screen.getByRole('textbox');
+      expect(textarea).toBeInTheDocument();
+      expect(textarea).toHaveValue('Test content');
       
-      expect(defaultProps.onToggleEdit).toHaveBeenCalled();
+      fireEvent.change(textarea, { target: { value: 'Updated content' } });
+      expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Updated content');
     });
 
-    it('shows prompt editor when customize prompt is clicked', async () => {
+    it('toggles edit mode when edit button is clicked', () => {
       render(<SectionPreview {...defaultProps} />);
       
-      const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-      await userEvent.click(customizeButton);
+      const editButton = screen.getByTestId('edit-icon').parentElement;
+      fireEvent.click(editButton!);
       
-      expect(screen.getByText('System Prompt')).toBeInTheDocument();
-      expect(screen.getByText('Human Prompt')).toBeInTheDocument();
+      expect(defaultProps.onToggleEdit).toHaveBeenCalled();
     });
 
     it('prevents editing when section is locked', () => {
       render(<SectionPreview {...defaultProps} isLocked={true} />);
       
-      const editButton = screen.getByRole('button', { name: /edit/i });
+      const editButton = screen.getByTestId('edit-icon').parentElement;
       expect(editButton).toBeDisabled();
     });
 
-    it('shows version history', async () => {
-      const history = new SectionHistory();
-      history.addVersion('demographics', 'Version 1');
-      history.addVersion('demographics', 'Version 2');
-
+    it('handles section locking', () => {
       render(<SectionPreview {...defaultProps} />);
       
-      const historyButton = screen.getByRole('button', { name: /history/i });
-      await userEvent.click(historyButton);
+      const lockButton = screen.getByRole('button', { name: /toggle lock/i });
+      fireEvent.click(lockButton);
       
-      expect(screen.getByText('Previous Versions')).toBeInTheDocument();
+      expect(defaultProps.onLockSection).toHaveBeenCalled();
+    });
+
+    it('preserves unsaved changes on regeneration', async () => {
+      const onRegenerateSection = jest.fn().mockResolvedValue('New content');
+      render(
+        <SectionPreview 
+          {...defaultProps} 
+          isEditing={true}
+          onRegenerateSection={onRegenerateSection}
+        />
+      );
+
+      // Make changes
+      const textarea = screen.getByRole('textbox');
+      fireEvent.change(textarea, { target: { value: 'Unsaved changes' } });
+
+      // Trigger regeneration
+      const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+      fireEvent.click(regenerateButton!);
+
+      // Should show warning
+      expect(screen.getByText(/unsaved changes/i)).toBeInTheDocument();
+      expect(onRegenerateSection).not.toHaveBeenCalled();
+    });
+
+    it('shows error state correctly', async () => {
+      const error = new Error('Generation failed');
+      const onRegenerateSection = jest.fn().mockRejectedValue(error);
+
+      render(
+        <SectionPreview 
+          {...defaultProps} 
+          onRegenerateSection={onRegenerateSection}
+        />
+      );
+
+      const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+      fireEvent.click(regenerateButton!);
+
+      await waitFor(() => {
+        expect(screen.getByText(/generation failed/i)).toBeInTheDocument();
+      });
     });
   });
 
@@ -104,67 +296,103 @@ describe('Report Generation Components', () => {
     };
 
     beforeEach(() => {
-      MockedReportGenerator.prototype.transformSections.mockResolvedValue({
-        demographics: {
-          title: 'Demographics',
-          content: 'Test demographics',
-          subsections: {}
+      MockedReportGenerator.mockImplementation((assessment: Assessment) => ({
+        transformer: {
+          transformAssessment: jest.fn().mockResolvedValue({}),
+          validateAssessment: jest.fn().mockResolvedValue(true)
         },
-        medical: {
-          title: 'Medical History',
-          content: 'Test medical history',
-          subsections: {}
-        }
-      });
-
-      MockedReportGenerator.prototype.generateReport.mockResolvedValue('Complete report');
+        claudeGenerator: {
+          generateText: jest.fn().mockResolvedValue('Generated text'),
+          validateResponse: jest.fn().mockReturnValue(true)
+        },
+        validator: {
+          validateSection: jest.fn().mockReturnValue(true),
+          validatePrompt: jest.fn().mockReturnValue(true)
+        },
+        sections: [],
+        generateSection: jest.fn().mockResolvedValue('Generated section'),
+        transformSections: jest.fn().mockResolvedValue({
+          demographics: {
+            title: 'Demographics',
+            content: 'Test demographics',
+            order: 1
+          },
+          medical: {
+            title: 'Medical History',
+            content: 'Test medical history',
+            order: 2
+          }
+        }),
+        generateReport: jest.fn().mockImplementation(({ onProgress }) => {
+          onProgress({
+            section: 'demographics',
+            status: 'processing' as const,
+            progress: 50
+          });
+          return Promise.resolve('Generated report');
+        }),
+        regenerateSection: jest.fn().mockResolvedValue('New section content')
+      }));
     });
 
-    it('renders with initial sections', async () => {
+    it('renders correctly with initial sections', async () => {
       render(<ReportPreview {...defaultProps} />);
       
       await waitFor(() => {
-        expect(screen.getByText('Demographics')).toBeInTheDocument();
-        expect(screen.getByText('Medical History')).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: /demographics/i })).toBeInTheDocument();
+        expect(screen.getByRole('tab', { name: /medical history/i })).toBeInTheDocument();
       });
     });
 
-    it('handles section regeneration', async () => {
+    it('handles tab switching', async () => {
       render(<ReportPreview {...defaultProps} />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('Demographics')).toBeInTheDocument();
-      });
-
-      const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-      await userEvent.click(customizeButton);
-
-      const regenerateButton = screen.getByRole('button', { name: /regenerate/i });
-      await userEvent.click(regenerateButton);
-
-      expect(MockedReportGenerator.prototype.regenerateSection).toHaveBeenCalled();
-    });
-
-    it('tracks generation progress', async () => {
-      render(<ReportPreview {...defaultProps} />);
-      
-      await waitFor(() => {
-        expect(screen.getByText('Report Generation Progress')).toBeInTheDocument();
-        expect(screen.getByText('100%')).toBeInTheDocument();
+        const tabSelect = screen.getByTestId('tab-select');
+        fireEvent.change(tabSelect, { target: { value: 'medical' } });
+        expect(screen.getByText('Test medical history')).toBeInTheDocument();
       });
     });
 
-    it('saves final report', async () => {
+    it('handles saving report', async () => {
       render(<ReportPreview {...defaultProps} />);
-      
+
       await waitFor(() => {
-        expect(screen.getByText('Save Report')).toBeInTheDocument();
+        const saveButton = screen.getByRole('button', { name: /save report/i });
+        fireEvent.click(saveButton);
+        expect(defaultProps.onComplete).toHaveBeenCalledWith('Generated report');
       });
+    });
 
-      const saveButton = screen.getByRole('button', { name: /save report/i });
-      await userEvent.click(saveButton);
+    it('shows generation progress', async () => {
+      render(<ReportPreview {...defaultProps} />);
 
-      expect(defaultProps.onComplete).toHaveBeenCalledWith('Complete report');
+      await waitFor(() => {
+        expect(screen.getByRole('progressbar')).toHaveAttribute('data-progress', '50');
+        expect(screen.getByText(/processing/i)).toBeInTheDocument();
+      });
+    });
+
+    it('handles errors during generation', async () => {
+      MockedReportGenerator.mockImplementation((assessment: Assessment) => ({
+        ...MockedReportGenerator.mock.results[0].value,
+        generateReport: jest.fn().mockRejectedValue(new Error('Generation failed'))
+      }));
+
+      render(<ReportPreview {...defaultProps} />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/generation failed/i)).toBeInTheDocument();
+      });
+    });
+
+    it('handles cancellation', async () => {
+      render(<ReportPreview {...defaultProps} />);
+
+      const cancelButton = screen.getByRole('button', { name: /cancel/i });
+      fireEvent.click(cancelButton);
+
+      expect(defaultProps.onClose).toHaveBeenCalled();
     });
   });
 });

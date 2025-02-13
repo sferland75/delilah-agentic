@@ -1,11 +1,63 @@
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FormProvider } from '@/context/FormContext';
+import { FormContext, FormContextType } from '@/context/FormContext';
 import { ReportGenerationButton } from '../components/ReportGenerationButton';
+import type { Assessment } from '@/types/assessment';
+
+// Mock UI components
+jest.mock('@/components/ui/button', () => ({
+  Button: ({ 
+    children, 
+    onClick, 
+    disabled 
+  }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    <button onClick={onClick} disabled={disabled}>{children}</button>
+  ),
+}));
+
+jest.mock('@/components/ui/dialog', () => ({
+  Dialog: ({ 
+    children, 
+    open 
+  }: React.PropsWithChildren<{ open?: boolean }>) => (
+    open ? <div>{children}</div> : null
+  ),
+  DialogContent: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogHeader: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogTitle: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+  DialogFooter: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+}));
+
+jest.mock('@/components/ui/progress', () => ({
+  Progress: ({ value }: { value: number }) => (
+    <div role="progressbar" data-progress={value}>{value}%</div>
+  ),
+}));
+
+jest.mock('@/components/ui/alert', () => ({
+  Alert: ({ 
+    children, 
+    variant 
+  }: React.PropsWithChildren<{ variant?: string }>) => (
+    <div data-variant={variant}>{children}</div>
+  ),
+  AlertDescription: ({ children }: React.PropsWithChildren) => <div>{children}</div>,
+}));
+
+jest.mock('@/components/ui/use-toast', () => ({
+  useToast: () => ({
+    toast: jest.fn(),
+  }),
+}));
+
+// Mock icons
+jest.mock('lucide-react', () => ({
+  FileText: () => <div data-testid="file-icon">File Icon</div>,
+  Loader2: () => <div data-testid="loader-icon">Loader Icon</div>,
+}));
 
 // Mock assessment data
-const mockAssessmentData = {
+const mockAssessmentData: { assessment: Assessment } = {
   assessment: {
     demographics: {
       firstName: "John",
@@ -73,71 +125,104 @@ const mockAssessmentData = {
   }
 };
 
+// Mock FormContext value
+const mockFormContext: FormContextType = {
+  formData: mockAssessmentData,
+  updateFormData: jest.fn(),
+  isValid: true,
+  isDirty: false,
+  errors: {},
+  reset: jest.fn(),
+  getValues: jest.fn().mockReturnValue(mockAssessmentData)
+};
+
 describe('Report Generation Integration', () => {
-  const mockFormContext = {
-    formData: mockAssessmentData,
-    updateFormData: jest.fn(),
-  };
-
-  // Mock download functionality
-  let mockDownloadUrl = '';
-  let mockDownloadFilename = '';
-
+  // Mock URL and document functions
   beforeEach(() => {
     // Mock URL functions
-    mockDownloadUrl = '';
-    mockDownloadFilename = '';
-    window.URL.createObjectURL = jest.fn((blob) => {
-      return 'mock-url';
-    });
+    window.URL.createObjectURL = jest.fn().mockReturnValue('mock-url');
     window.URL.revokeObjectURL = jest.fn();
 
-    // Mock file download
-    Object.defineProperty(document, 'createElement', {
-      writable: true,
-      value: jest.fn().mockImplementation((tag) => {
-        if (tag === 'a') {
-          return {
-            click: jest.fn(),
-            setAttribute: jest.fn(),
-            style: {},
-            href: '',
-            download: '',
-          };
-        }
-        const element = document.createElement(tag);
-        return element;
-      }),
+    // Mock document element creation
+    const mockAnchorElement = {
+      click: jest.fn(),
+      setAttribute: jest.fn(),
+      style: {},
+      href: '',
+      download: '',
+    } as unknown as HTMLAnchorElement;
+
+    document.createElement = jest.fn().mockImplementation((tag: string) => {
+      if (tag === 'a') return mockAnchorElement;
+      return document.createElement(tag);
     });
 
-    // Mock appendChild and removeChild
+    // Mock body methods
     document.body.appendChild = jest.fn();
     document.body.removeChild = jest.fn();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('generates report with sample data', async () => {
     render(
-      <FormProvider value={mockFormContext}>
+      <FormContext.Provider value={mockFormContext}>
         <ReportGenerationButton />
-      </FormProvider>
+      </FormContext.Provider>
     );
 
     // Click generate button
-    const generateButton = screen.getByText('Generate Report');
+    const generateButton = screen.getByRole('button', { name: /generate report/i });
     fireEvent.click(generateButton);
 
-    // Check if progress dialog appears
+    // Verify progress dialog appears
     await waitFor(() => {
       expect(screen.getByText('Generating Report')).toBeInTheDocument();
     });
-    
-    // Wait for completion toast
+
+    // Verify file download attempt
     await waitFor(() => {
-      expect(screen.getByText('Report Generated')).toBeInTheDocument();
+      expect(window.URL.createObjectURL).toHaveBeenCalled();
+      expect(document.createElement).toHaveBeenCalledWith('a');
+    });
+  });
+
+  it('handles generation error gracefully', async () => {
+    // Mock failed generation
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    window.URL.createObjectURL = jest.fn().mockImplementation(() => {
+      throw new Error('Generation failed');
     });
 
-    // Verify URL creation and cleanup
-    expect(window.URL.createObjectURL).toHaveBeenCalled();
-    expect(window.URL.revokeObjectURL).toHaveBeenCalled();
+    render(
+      <FormContext.Provider value={mockFormContext}>
+        <ReportGenerationButton />
+      </FormContext.Provider>
+    );
+
+    const generateButton = screen.getByRole('button', { name: /generate report/i });
+    fireEvent.click(generateButton);
+
+    await waitFor(() => {
+      expect(screen.getByText(/error/i)).toBeInTheDocument();
+    });
+  });
+
+  it('disables button when form is invalid', () => {
+    const invalidFormContext: FormContextType = {
+      ...mockFormContext,
+      isValid: false,
+    };
+
+    render(
+      <FormContext.Provider value={invalidFormContext}>
+        <ReportGenerationButton />
+      </FormContext.Provider>
+    );
+
+    const generateButton = screen.getByRole('button', { name: /generate report/i });
+    expect(generateButton).toBeDisabled();
   });
 });

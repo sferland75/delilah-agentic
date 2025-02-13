@@ -1,3 +1,3 @@
 @echo off
 echo Pushing changes to repository...
-git push origin main
+git push origin version-2.0

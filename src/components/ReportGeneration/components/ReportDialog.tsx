@@ -29,6 +29,8 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
     downloadReport,
   } = useReportGeneration();
 
+  const showDownloadButton = progress === 100 && !error;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
@@ -62,7 +64,7 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 Close
               </Button>
-              {progress === 100 && (
+              {showDownloadButton && (
                 <Button onClick={downloadReport}>
                   Download Report
                 </Button>
@@ -74,5 +76,3 @@ export const ReportDialog: React.FC<ReportDialogProps> = ({
     </Dialog>
   );
 };
-
-export default ReportDialog;

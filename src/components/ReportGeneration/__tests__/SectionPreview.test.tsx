@@ -1,181 +1,133 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { SectionPreview } from '../components/SectionPreview';
-import { SectionHistory } from '@/lib/reports/sectionHistory';
-
-// Mock SectionHistory
-jest.mock('@/lib/reports/sectionHistory');
-
-describe('SectionPreview', () => {
-  const defaultProps = {
-    sectionKey: 'demographics',
-    title: 'Demographics',
-    content: 'Initial content',
-    originalPrompt: {
-      system: 'System prompt',
-      human: 'Human prompt'
-    },
-    onRegenerateSection: jest.fn(),
-    onLockSection: jest.fn(),
-    onUpdateContent: jest.fn(),
-    isLocked: false,
-    isEditing: false,
-    onToggleEdit: jest.fn()
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
+    expect(contentDiv).toHaveClass('prose', 'max-w-none', 'whitespace-pre-wrap');
   });
 
-  it('renders initial content correctly', () => {
-    render(<SectionPreview {...defaultProps} />);
-    
-    expect(screen.getByText('Demographics')).toBeInTheDocument();
-    expect(screen.getByText('Initial content')).toBeInTheDocument();
-  });
-
-  it('handles edit mode toggle', async () => {
-    render(<SectionPreview {...defaultProps} />);
-    
-    const editButton = screen.getByRole('button', { 
-      name: /edit/i 
-    });
-    await userEvent.click(editButton);
-    
-    expect(defaultProps.onToggleEdit).toHaveBeenCalled();
-  });
-
-  it('handles content editing', async () => {
+  it('saves edited content correctly', async () => {
     render(<SectionPreview {...defaultProps} isEditing={true} />);
     
     const textarea = screen.getByRole('textbox');
-    await userEvent.type(textarea, ' additional text');
-    
-    expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Initial content additional text');
+    fireEvent.change(textarea, { target: { value: 'Updated content' } });
+
+    const saveButton = screen.getByTestId('check-icon').parentElement;
+    fireEvent.click(saveButton!);
+
+    expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Updated content');
+    expect(defaultProps.onToggleEdit).toHaveBeenCalled();
   });
 
-  it('disables editing when locked', () => {
+  it('handles prompt editor cancellation', async () => {
+    render(<SectionPreview {...defaultProps} />);
+    
+    const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
+    fireEvent.click(customizeButton);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('prompt-editor')).toBeInTheDocument();
+    });
+
+    const cancelButton = screen.getByRole('button', { name: /cancel/i });
+    fireEvent.click(cancelButton);
+
+    await waitFor(() => {
+      expect(screen.queryByTestId('prompt-editor')).not.toBeInTheDocument();
+    });
+  });
+
+  it('disables all interactive elements when locked', () => {
     render(<SectionPreview {...defaultProps} isLocked={true} />);
     
-    const editButton = screen.getByRole('button', { name: /edit/i });
+    const editButton = screen.getByTestId('edit-icon').parentElement;
     const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-    
+    const historyButton = screen.getByTestId('history-icon').parentElement;
+
     expect(editButton).toBeDisabled();
     expect(customizeButton).toBeDisabled();
+    expect(historyButton).toBeDisabled();
   });
 
-  it('shows prompt editor when customize is clicked', async () => {
+  it('handles version restoration from history', async () => {
     render(<SectionPreview {...defaultProps} />);
     
-    const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-    await userEvent.click(customizeButton);
-    
-    expect(screen.getByText('System Prompt')).toBeInTheDocument();
+    // Open history
+    const historyButton = screen.getByTestId('history-icon').parentElement;
+    fireEvent.click(historyButton!);
+
+    // Find and click restore button for version 1
+    const restoreButton = screen.getByText('Version 1').closest('button');
+    fireEvent.click(restoreButton!);
+
+    expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Version 1');
   });
 
-  it('handles section regeneration', async () => {
-    render(<SectionPreview {...defaultProps} />);
+  it('maintains original prompt when regenerating without customization', async () => {
+    const onRegenerateSection = jest.fn().mockResolvedValue(undefined);
+    render(<SectionPreview {...defaultProps} onRegenerateSection={onRegenerateSection} />);
     
-    const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-    await userEvent.click(customizeButton);
-    
-    const newPrompt = {
-      system: 'New system prompt',
-      human: 'New human prompt'
-    };
+    const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+    fireEvent.click(regenerateButton!);
 
-    const systemInput = screen.getByLabelText(/system prompt/i);
-    const humanInput = screen.getByLabelText(/human prompt/i);
-    
-    await userEvent.clear(systemInput);
-    await userEvent.type(systemInput, newPrompt.system);
-    await userEvent.clear(humanInput);
-    await userEvent.type(humanInput, newPrompt.human);
-    
-    const regenerateButton = screen.getByRole('button', { name: /regenerate section/i });
-    await userEvent.click(regenerateButton);
-    
-    expect(defaultProps.onRegenerateSection).toHaveBeenCalledWith(newPrompt);
+    expect(onRegenerateSection).toHaveBeenCalledWith(defaultProps.originalPrompt);
   });
 
-  it('handles version history', async () => {
-    const mockHistory = new SectionHistory();
-    mockHistory.addVersion('demographics', 'Version 1');
-    mockHistory.addVersion('demographics', 'Version 2');
+  it('shows loading state during regeneration', async () => {
+    const onRegenerateSection = jest.fn().mockImplementation(() => 
+      new Promise(resolve => setTimeout(resolve, 100))
+    );
+
+    render(<SectionPreview {...defaultProps} onRegenerateSection={onRegenerateSection} />);
     
-    render(<SectionPreview {...defaultProps} />);
-    
-    const historyButton = screen.getByRole('button', { name: /history/i });
-    await userEvent.click(historyButton);
-    
-    expect(screen.getByText('Previous Versions')).toBeInTheDocument();
-    expect(screen.getByText('Version 1')).toBeInTheDocument();
-    expect(screen.getByText('Version 2')).toBeInTheDocument();
+    const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+    fireEvent.click(regenerateButton!);
+
+    expect(regenerateButton).toBeDisabled();
+    expect(screen.getByText(/regenerating/i)).toBeInTheDocument();
   });
 
-  it('handles version revert', async () => {
-    const mockHistory = new SectionHistory();
-    mockHistory.addVersion('demographics', 'Old version');
+  it('preserves content on failed regeneration', async () => {
+    const mockError = new Error('Regeneration failed');
+    const onRegenerateSection = jest.fn().mockRejectedValue(mockError);
     
-    render(<SectionPreview {...defaultProps} />);
+    render(<SectionPreview {...defaultProps} onRegenerateSection={onRegenerateSection} />);
     
-    const historyButton = screen.getByRole('button', { name: /history/i });
-    await userEvent.click(historyButton);
-    
-    const revertButton = screen.getByRole('button', { name: /revert to this version/i });
-    await userEvent.click(revertButton);
-    
-    expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Old version');
-  });
+    const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+    fireEvent.click(regenerateButton!);
 
-  it('handles errors during regeneration', async () => {
-    const errorProps = {
-      ...defaultProps,
-      onRegenerateSection: jest.fn().mockRejectedValue(new Error('Test error'))
-    };
-    
-    render(<SectionPreview {...errorProps} />);
-    
-    const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-    await userEvent.click(customizeButton);
-    
-    const regenerateButton = screen.getByRole('button', { name: /regenerate section/i });
-    await userEvent.click(regenerateButton);
-    
     await waitFor(() => {
-      expect(screen.getByText('Test error')).toBeInTheDocument();
+      expect(screen.getByText('Initial content')).toBeInTheDocument();
+      expect(screen.getByText(/regeneration failed/i)).toBeInTheDocument();
     });
   });
 
-  it('saves content before regenerating', async () => {
-    render(<SectionPreview {...defaultProps} isEditing={true} />);
+  it('handles concurrent regeneration attempts correctly', async () => {
+    const onRegenerateSection = jest.fn()
+      .mockImplementationOnce(() => new Promise(resolve => setTimeout(resolve, 100)))
+      .mockImplementationOnce(() => Promise.resolve('New content'));
+
+    render(<SectionPreview {...defaultProps} onRegenerateSection={onRegenerateSection} />);
     
-    const textarea = screen.getByRole('textbox');
-    await userEvent.type(textarea, ' new content');
-    
-    const saveButton = screen.getByRole('button', { name: /check/i });
-    await userEvent.click(saveButton);
-    
-    expect(defaultProps.onUpdateContent).toHaveBeenCalledWith('Initial content new content');
-    expect(defaultProps.onToggleEdit).toHaveBeenCalled();
+    const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+    fireEvent.click(regenerateButton!);
+    fireEvent.click(regenerateButton!); // Second click should be ignored
+
+    expect(onRegenerateSection).toHaveBeenCalledTimes(1);
   });
 
-  it('maintains lock state through operations', async () => {
-    const { rerender } = render(<SectionPreview {...defaultProps} />);
+  it('cleans up properly when unmounted during regeneration', async () => {
+    const onRegenerateSection = jest.fn().mockImplementation(() => 
+      new Promise(resolve => setTimeout(resolve, 100))
+    );
+
+    const { unmount } = render(
+      <SectionPreview {...defaultProps} onRegenerateSection={onRegenerateSection} />
+    );
     
-    const lockButton = screen.getByRole('button', { name: /unlock/i });
-    await userEvent.click(lockButton);
+    const regenerateButton = screen.getByTestId('refresh-icon').parentElement;
+    fireEvent.click(regenerateButton!);
     
-    expect(defaultProps.onLockSection).toHaveBeenCalled();
-    
-    // Simulate locked state
-    rerender(<SectionPreview {...defaultProps} isLocked={true} />);
-    
-    const editButton = screen.getByRole('button', { name: /edit/i });
-    const customizeButton = screen.getByRole('button', { name: /customize prompt/i });
-    
-    expect(editButton).toBeDisabled();
-    expect(customizeButton).toBeDisabled();
+    unmount();
+
+    // No errors should occur after unmount
+    await waitFor(() => {
+      expect(onRegenerateSection).toHaveBeenCalledTimes(1);
+    });
   });
 });

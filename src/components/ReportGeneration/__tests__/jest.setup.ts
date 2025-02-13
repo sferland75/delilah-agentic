@@ -29,7 +29,12 @@ jest.mock('lucide-react', () => ({
   CheckCircle: mockIcon('CheckCircle'),
   Circle: mockIcon('Circle'),
   Download: mockIcon('Download'),
-  FileText: mockIcon('FileText')
+  FileText: mockIcon('FileText'),
+  Lock: mockIcon('Lock'),
+  Unlock: mockIcon('Unlock'),
+  History: mockIcon('History'),
+  Edit2: mockIcon('Edit2'),
+  Check: mockIcon('Check')
 }));
 
 // Mock Dialog components
@@ -39,6 +44,7 @@ const createMockComponent = (name: string) => {
       'div',
       {
         'data-testid': `mock-${name.toLowerCase()}`,
+        'role': name.toLowerCase(),
         ...props
       },
       children
@@ -53,7 +59,8 @@ jest.mock('@/components/ui/dialog', () => ({
   DialogHeader: createMockComponent('DialogHeader'),
   DialogTitle: createMockComponent('DialogTitle'),
   DialogDescription: createMockComponent('DialogDescription'),
-  DialogFooter: createMockComponent('DialogFooter')
+  DialogFooter: createMockComponent('DialogFooter'),
+  DialogClose: createMockComponent('DialogClose')
 }));
 
 // Mock Button component
@@ -66,6 +73,7 @@ jest.mock('@/components/ui/button', () => ({
         onClick,
         disabled,
         'data-testid': props['data-testid'] || 'button',
+        'aria-label': props['aria-label'],
         ...props
       },
       children
@@ -97,7 +105,80 @@ jest.mock('@/components/ui/progress', () => ({
 
 // Mock Alert components
 jest.mock('@/components/ui/alert', () => ({
-  Alert: createMockComponent('Alert'),
+  Alert: ({ children, variant, className, ...props }: MockComponentProps) =>
+    React.createElement(
+      'div',
+      {
+        'data-testid': 'alert',
+        'data-variant': variant,
+        className,
+        ...props
+      },
+      children
+    ),
   AlertTitle: createMockComponent('AlertTitle'),
   AlertDescription: createMockComponent('AlertDescription')
+}));
+
+// Mock Textarea component
+jest.mock('@/components/ui/textarea', () => ({
+  Textarea: ({ value, onChange, className, ...props }: MockComponentProps) =>
+    React.createElement(
+      'textarea',
+      {
+        value,
+        onChange,
+        className,
+        'data-testid': 'textarea',
+        ...props
+      }
+    )
+}));
+
+// Mock ScrollArea component
+jest.mock('@/components/ui/scroll-area', () => ({
+  ScrollArea: ({ children, className, ...props }: MockComponentProps) =>
+    React.createElement(
+      'div',
+      {
+        'data-testid': 'scroll-area',
+        className,
+        ...props
+      },
+      children
+    )
+}));
+
+// Mock PromptEditor component
+jest.mock('../components/PromptEditor', () => ({
+  PromptEditor: ({ onSubmit, onClose }: any) =>
+    React.createElement(
+      'div',
+      { 'data-testid': 'prompt-editor' },
+      [
+        React.createElement('textarea', { 
+          'data-testid': 'system-prompt',
+          key: 'system',
+          defaultValue: 'test system'
+        }),
+        React.createElement('textarea', {
+          'data-testid': 'human-prompt',
+          key: 'human',
+          defaultValue: 'test human'
+        }),
+        React.createElement(
+          'button',
+          { 
+            key: 'submit',
+            onClick: () => onSubmit({ system: 'test system', human: 'test human' })
+          },
+          'Submit'
+        ),
+        React.createElement(
+          'button',
+          { key: 'cancel', onClick: onClose },
+          'Cancel'
+        )
+      ]
+    )
 }));
