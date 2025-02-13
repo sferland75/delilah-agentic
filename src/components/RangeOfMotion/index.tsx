@@ -16,11 +16,14 @@ import { ROMAssessment } from './ROMAssessment';
 export function RangeOfMotion() {
   const form = useFormContext();
 
+<<<<<<< HEAD
   if (!form) {
     console.error('RangeOfMotion must be used within a FormProvider');
     return null;
   }
 
+=======
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   return (
     <Card className="border-2 border-slate-200 shadow-sm">
       <CardHeader className="bg-slate-50 border-b border-slate-200">

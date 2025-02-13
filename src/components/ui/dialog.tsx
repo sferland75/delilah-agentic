@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
@@ -6,6 +7,21 @@ import { cn } from "@/lib/utils";
 const Dialog = DialogPrimitive.Root;
 const DialogTrigger = DialogPrimitive.Trigger;
 const DialogPortal = DialogPrimitive.Portal;
+=======
+import * as React from "react"
+import * as DialogPrimitive from "@radix-ui/react-dialog"
+import { X } from "lucide-react"
+
+import { cn } from "@/lib/utils"
+
+const Dialog = DialogPrimitive.Root
+
+const DialogTrigger = DialogPrimitive.Trigger
+
+const DialogPortal = DialogPrimitive.Portal
+
+const DialogClose = DialogPrimitive.Close
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
@@ -14,13 +30,22 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
+<<<<<<< HEAD
       "fixed inset-0 z-50 bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+=======
+      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
       className
     )}
     {...props}
   />
+<<<<<<< HEAD
 ));
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+=======
+))
+DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
@@ -43,30 +68,57 @@ const DialogContent = React.forwardRef<
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
   </DialogPortal>
+<<<<<<< HEAD
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
+=======
+))
+DialogContent.displayName = DialogPrimitive.Content.displayName
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
+<<<<<<< HEAD
     className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)}
     {...props}
   />
 );
 DialogHeader.displayName = "DialogHeader";
+=======
+    className={cn(
+      "flex flex-col space-y-1.5 text-center sm:text-left",
+      className
+    )}
+    {...props}
+  />
+)
+DialogHeader.displayName = "DialogHeader"
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
+<<<<<<< HEAD
     className={cn("flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2", className)}
     {...props}
   />
 );
 DialogFooter.displayName = "DialogFooter";
+=======
+    className={cn(
+      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+      className
+    )}
+    {...props}
+  />
+)
+DialogFooter.displayName = "DialogFooter"
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -74,11 +126,22 @@ const DialogTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
+<<<<<<< HEAD
     className={cn("text-lg font-semibold leading-none tracking-tight", className)}
     {...props}
   />
 ));
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
+=======
+    className={cn(
+      "text-lg font-semibold leading-none tracking-tight",
+      className
+    )}
+    {...props}
+  />
+))
+DialogTitle.displayName = DialogPrimitive.Title.displayName
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 const DialogDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
@@ -89,17 +152,30 @@ const DialogDescription = React.forwardRef<
     className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
+<<<<<<< HEAD
 ));
 DialogDescription.displayName = DialogPrimitive.Description.displayName;
+=======
+))
+DialogDescription.displayName = DialogPrimitive.Description.displayName
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 export {
   Dialog,
   DialogPortal,
   DialogOverlay,
   DialogTrigger,
+<<<<<<< HEAD
+=======
+  DialogClose,
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   DialogContent,
   DialogHeader,
   DialogFooter,
   DialogTitle,
   DialogDescription,
+<<<<<<< HEAD
 };
+=======
+}
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801

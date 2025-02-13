@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { LucideIcon } from 'lucide-react';
+<<<<<<< HEAD
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
@@ -25,11 +26,16 @@ const formatDate = (date: Date | string | null | undefined): string => {
   }
 };
 
+=======
+import { independenceLevels } from '../constants';
+
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 interface ADLFieldProps {
   basePath: string;
   title: string;
   subtitle?: string;
   icon: LucideIcon;
+<<<<<<< HEAD
   requiresFrequency?: boolean;
   requiresTimeTaken?: boolean;
   requiresAssistiveDevices?: boolean;
@@ -55,10 +61,18 @@ export function ADLField({
     const date = new Date(dateStr);
     return !isNaN(date.getTime()) ? date : undefined;
   };
+=======
+}
+
+export function ADLField({ basePath, title, subtitle, icon: Icon }: ADLFieldProps) {
+  const { register, setValue, watch } = useFormContext();
+  const independenceLevel = watch(`${basePath}.independence`);
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
   return (
     <Card className="p-4">
       <div className="flex items-start gap-3">
+<<<<<<< HEAD
         <Icon className="h-4 w-4 mt-1" />
         <div className="flex-1 space-y-4">
           <div className="flex justify-between items-start">
@@ -85,6 +99,13 @@ export function ADLField({
                 />
               </PopoverContent>
             </Popover>
+=======
+        <Icon className="h-4 w-4 text-primary mt-1" />
+        <div className="flex-1 space-y-4">
+          <div>
+            <h3 className="font-medium">{title}</h3>
+            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
           </div>
 
           <div className="space-y-4">
@@ -107,6 +128,7 @@ export function ADLField({
               </Select>
             </div>
 
+<<<<<<< HEAD
             {requiresAssistiveDevices && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -168,6 +190,8 @@ export function ADLField({
               </div>
             )}
 
+=======
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
             <div>
               <Label>Details & Observations</Label>
               <Textarea

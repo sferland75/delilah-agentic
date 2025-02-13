@@ -1,4 +1,5 @@
 # Dependencies
+<<<<<<< HEAD
 node_modules/
 
 # Build output
@@ -9,10 +10,20 @@ build/
 coverage/
 
 # Environment variables
+=======
+/node_modules
+
+# Build outputs
+/dist
+/build
+
+# Environment files
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 .env
 .env.local
 .env.*.local
 
+<<<<<<< HEAD
 # IDE
 .vscode/
 .idea/
@@ -23,10 +34,33 @@ coverage/
 Thumbs.db
 
 # Debug
+=======
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+<<<<<<< HEAD
 # Test artifacts
 __snapshots__/
 *.snap
+=======
+# Backup files
+backup_*/*
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801

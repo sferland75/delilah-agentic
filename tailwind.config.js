@@ -1,9 +1,21 @@
 /** @type {import('tailwindcss').Config} */
+<<<<<<< HEAD
 module.exports = {
   darkMode: ["class"],
   content: [
     './src/**/*.{ts,tsx}',
   ],
+=======
+export default {
+  darkMode: ["class"],
+  content: [
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
+  ],
+  prefix: "",
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   theme: {
     container: {
       center: true,
@@ -55,12 +67,20 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
+<<<<<<< HEAD
           from: { height: 0 },
+=======
+          from: { height: "0" },
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
           to: { height: "var(--radix-accordion-content-height)" },
         },
         "accordion-up": {
           from: { height: "var(--radix-accordion-content-height)" },
+<<<<<<< HEAD
           to: { height: 0 },
+=======
+          to: { height: "0" },
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
         },
       },
       animation: {

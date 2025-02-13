@@ -1,6 +1,10 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
+<<<<<<< HEAD
 import { Save, Download, Upload, FileX, Bug } from 'lucide-react';
+=======
+import { Save, Download, Upload, FileX } from 'lucide-react';
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 import { useForm } from '../context/FormContext';
 import { useToast } from "@/components/ui/use-toast";
 import { ConfirmationDialog } from './dialogs/ConfirmationDialog';
@@ -88,6 +92,7 @@ export const Header: React.FC = () => {
     }
   };
 
+<<<<<<< HEAD
   const showDebugState = () => {
     try {
       // Get current localStorage state
@@ -109,6 +114,8 @@ export const Header: React.FC = () => {
     }
   };
 
+=======
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   const exportFinalJSON = () => {
     try {
       const metadata = {
@@ -196,6 +203,7 @@ export const Header: React.FC = () => {
           <span className="text-sm text-slate-500 ml-4">
             {lastSaved ? `Last saved: ${new Date(lastSaved).toLocaleTimeString()}` : 'No saved draft'}
           </span>
+<<<<<<< HEAD
 
           <Button
             onClick={showDebugState}
@@ -206,6 +214,8 @@ export const Header: React.FC = () => {
             <Bug className="h-4 w-4 mr-1" />
             Show State
           </Button>
+=======
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
         </div>
 
         <div className="flex items-center gap-2">

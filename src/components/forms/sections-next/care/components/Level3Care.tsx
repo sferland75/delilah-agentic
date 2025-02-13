@@ -26,6 +26,11 @@ export function Level3Care({ form }: Level3CareProps) {
         </p>
         
         <Accordion type="single" collapsible className="space-y-4">
+<<<<<<< HEAD
+=======
+          {/* Previous content remains the same until therapy section */}
+          
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
           <AccordionItem value="therapy">
             <AccordionTrigger className="text-lg font-semibold">Other Therapy</AccordionTrigger>
             <AccordionContent className="space-y-4 pt-4">

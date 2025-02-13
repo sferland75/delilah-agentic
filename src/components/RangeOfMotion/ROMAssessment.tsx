@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
+=======
+import React from 'react';
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 import { Control, useFormContext } from 'react-hook-form';
 import {
   FormField,
@@ -22,7 +26,11 @@ interface ROMAssessmentProps {
 }
 
 export function ROMAssessment({ control, prefix }: ROMAssessmentProps) {
+<<<<<<< HEAD
   const { setValue, getValues } = useFormContext();
+=======
+  const { setValue } = useFormContext();
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   const [openSections, setOpenSections] = React.useState<string[]>([]);
   const [modifiedSections, setModifiedSections] = React.useState<string[]>([]);
 
@@ -34,6 +42,7 @@ export function ROMAssessment({ control, prefix }: ROMAssessmentProps) {
     );
   };
 
+<<<<<<< HEAD
   // Handle form resets
   useEffect(() => {
     const handleFormReset = () => {
@@ -104,6 +113,18 @@ export function ROMAssessment({ control, prefix }: ROMAssessmentProps) {
   }, [getValues, prefix]);
 
   // Rest of the component remains the same...
+=======
+  // Set initial values to normal (100%)
+  React.useEffect(() => {
+    CORE_JOINTS.forEach((joint) => {
+      joint.movements.forEach((movement) => {
+        setValue(`${prefix}.${joint.joint}.${movement.name}.left`, "100", { shouldDirty: false });
+        setValue(`${prefix}.${joint.joint}.${movement.name}.right`, "100", { shouldDirty: false });
+      });
+    });
+  }, [setValue, prefix]);
+
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
   return (
     <div className="space-y-6">
       {CORE_JOINTS.map((joint) => (

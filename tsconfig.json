@@ -12,6 +12,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+<<<<<<< HEAD
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
@@ -23,6 +24,19 @@
     "paths": {
       "@/*": ["src/*"],
       "@test/*": ["src/test/*"]
+=======
+    "noUnusedLocals": false,  // Disable unused local variable checks
+    "noUnusedParameters": false,  // Disable unused parameter checks
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/types/*": ["./src/components/types/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/hooks/*": ["./src/hooks/*"]
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     }
   },
   "include": ["src"],

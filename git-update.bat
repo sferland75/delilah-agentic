@@ -1,4 +1,5 @@
 @echo off
+<<<<<<< HEAD
 echo Adding all changed files...
 git add .
 
@@ -7,3 +8,15 @@ git commit -m "feat: Major assessment improvements and bug fixes" -m "- Fixed MM
 
 echo Pushing to version-2.0...
 git push origin version-2.0
+=======
+git add .
+git commit -m "Update assessment forms and fix bugs
+
+- Simplified ROM assessment with percentages and defaults
+- Streamlined MMT for core muscle groups
+- Enhanced mobility & transfers section
+- Fixed exterior features component
+- Updated environmental assessment
+- Improved UI with collapsible sections
+- Updated README"
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801

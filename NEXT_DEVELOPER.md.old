@@ -1,0 +1,122 @@
+# Delilah Narrative Development - Next Steps
+
+## Current Status (January 2025)
+- BaseAgent test coverage: 84.78%
+- NarrativeEngine coverage: 26.74%
+- Analyzers coverage: 3-31%
+
+## Immediate Issues to Address
+
+### 1. SymptomAnalyzer Bug
+- Location: `src/components/ReportGeneration/narrative/SymptomAnalyzer.ts:91`
+- Issue: `toLowerCase()` on undefined value
+- Fix needed: Add null checks and proper data validation
+- Impact: Blocking all narrative tests
+
+### 2. Test Data Structure
+- Current test data isn't matching analyzer expectations
+- Need to update `narrative-test-utils.ts` with correct data structure
+- Focus on symptoms data format first
+
+### 3. Coverage Priorities
+1. SymptomAnalyzer (10.89%)
+2. MedicationAnalyzer (3.27%)
+3. TemporalAnalyzer (31.48%)
+4. ADLAnalyzer (15.62%)
+
+## Development Workflow
+
+1. Run Tests
+```bash
+npm test src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts
+```
+
+2. Check Coverage
+```bash
+npm test -- --coverage
+```
+
+3. Update Test Data
+- Use `createNarrativeTestData()` from `narrative-test-utils.ts`
+- Ensure data matches analyzer expectations
+
+## Key Files
+
+### Core Files
+- `src/components/ReportGeneration/narrative/NarrativeEngine.ts`
+- `src/components/ReportGeneration/narrative/SymptomAnalyzer.ts`
+- `src/components/ReportGeneration/testing/narrative-test-utils.ts`
+
+### Test Files
+- `src/components/ReportGeneration/narrative/__tests__/NarrativeEngine.test.ts`
+- `src/components/ReportGeneration/testing/narrative-test-utils.test.ts`
+
+## Development Tips
+
+1. Start with SymptomAnalyzer
+   - Add defensive programming
+   - Validate data structure
+   - Add detailed error messages
+
+2. Follow Test Pattern
+   ```typescript
+   describe('ComponentName', () => {
+     describe('Core Functionality', () => {
+       // Basic functionality tests
+     });
+     
+     describe('Error Handling', () => {
+       // Error cases
+     });
+     
+     describe('Integration', () => {
+       // Integration with other components
+     });
+   });
+   ```
+
+3. Use Test Utilities
+   ```typescript
+   const { context, data } = createNarrativeTestContext();
+   validateNarrativeOutput(narrative, expectations);
+   ```
+
+## Architecture Notes
+
+1. Data Flow
+   ```
+   Assessment Data → NarrativeEngine
+                  → Analyzers (Symptom, Medication, etc.)
+                  → Narrative Generation
+   ```
+
+2. Error Handling
+   - All analyzers should handle null/undefined gracefully
+   - Use default values when appropriate
+   - Log warnings for unexpected data
+
+## Next Steps
+
+1. Fix SymptomAnalyzer
+   - Add null checks
+   - Validate input data
+   - Update tests
+
+2. Improve Test Coverage
+   - Focus on analyzer components
+   - Add integration tests
+   - Validate error handling
+
+3. Document Patterns
+   - Update analyzer documentation
+   - Add data structure examples
+   - Document common issues
+
+## Resources
+- Previous tests in `BaseAgent.test.ts`
+- Type definitions in `types/report.ts`
+- Narrative utilities in `testing/narrative/`
+
+## Contact
+For questions about implementation details or architecture decisions:
+[Previous Developer Contact Info]

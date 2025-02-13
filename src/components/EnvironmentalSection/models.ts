@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export interface PropertyAccess {
   entranceType: string;
   numberOfSteps: number;
@@ -167,4 +168,32 @@ export interface EnvironmentalAssessment {
   propertyOverview: PropertyOverview;
   roomAssessment: RoomAssessment;
   safetyAssessment: SafetyAssessment;
+=======
+import type { AccessibilityLevel, AssessmentLevel } from '@/lib/validation/assessment-schema';
+
+export interface ExteriorFeature {
+  id: string;
+  name: string;
+  type: string;
+  accessibility: AccessibilityLevel;
+  safety: AssessmentLevel;
+  condition?: string;
+  recommendations: string[];
+  hazards: string[];
+}
+
+export interface OutdoorSpace {
+  id: string;
+  type: string;
+  dimensions: string;
+  accessibility: string;
+  maintenance: string;
+  features: string;
+  concerns: string;
+  notes: string;
+}
+
+export interface Room extends ExteriorFeature {
+  measurements?: string;
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 }

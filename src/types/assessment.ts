@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 export enum IndependenceLevel {
     Independent = 'independent',
     ModifiedIndependent = 'modified_independent',
@@ -115,3 +116,7 @@ export interface AssessmentData {
         };
     };
 }
+=======
+// Redirect to lib/validation
+export * from '@/lib/validation/assessment-schema';
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801

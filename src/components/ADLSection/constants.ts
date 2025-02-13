@@ -18,6 +18,7 @@ import {
   Briefcase,
   Building,
   GraduationCap,
+<<<<<<< HEAD
   Activity,
   Car,
   Map,
@@ -71,6 +72,20 @@ export const independenceLevels = [
     label: "Activity Not Applicable",
     description: "Activity is not relevant to client's situation"
   }
+=======
+  Activity
+} from 'lucide-react';
+
+export const independenceLevels = [
+  { value: "independent", label: "Independent (7) - Complete independence" },
+  { value: "modified_independent", label: "Modified Independent (6) - Uses devices/adaptations" },
+  { value: "supervision", label: "Supervision (5) - Supervision/setup only" },
+  { value: "minimal_assistance", label: "Minimal Assistance (4) - >75% independent" },
+  { value: "moderate_assistance", label: "Moderate Assistance (3) - 50-75% independent" },
+  { value: "maximal_assistance", label: "Maximal Assistance (2) - 25-49% independent" },
+  { value: "total_assistance", label: "Total Assistance (1) - <25% independent" },
+  { value: "not_applicable", label: "Activity Not Applicable" }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 ];
 
 export const adlCategories = {
@@ -78,6 +93,7 @@ export const adlCategories = {
     title: "Bathing & Hygiene",
     icon: Bath,
     items: [
+<<<<<<< HEAD
       { 
         id: "shower", 
         title: "Bathing/Showering", 
@@ -109,12 +125,19 @@ export const adlCategories = {
         requiresAssistiveDevices: true,
         subtitle: "Using the bathroom"
       }
+=======
+      { id: "shower", title: "Bathing/Showering", icon: Bath },
+      { id: "grooming", title: "Grooming", icon: User },
+      { id: "oral_care", title: "Oral Care", icon: User },
+      { id: "toileting", title: "Toileting", icon: Bath }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   },
   dressing: {
     title: "Dressing",
     icon: Shirt,
     items: [
+<<<<<<< HEAD
       { 
         id: "upper_body", 
         title: "Upper Body Dressing", 
@@ -138,12 +161,18 @@ export const adlCategories = {
         requiresAssistiveDevices: true,
         subtitle: "Shoes, socks, orthotics"
       }
+=======
+      { id: "upper_body", title: "Upper Body Dressing", icon: Shirt },
+      { id: "lower_body", title: "Lower Body Dressing", icon: Shirt },
+      { id: "footwear", title: "Footwear Management", icon: Shirt }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   },
   feeding: {
     title: "Feeding",
     icon: Utensils,
     items: [
+<<<<<<< HEAD
       { 
         id: "eating", 
         title: "Eating", 
@@ -167,12 +196,18 @@ export const adlCategories = {
         requiresAssistiveDevices: true,
         subtitle: "Managing liquids safely"
       }
+=======
+      { id: "eating", title: "Eating", icon: Utensils },
+      { id: "setup", title: "Meal Setup", icon: Utensils },
+      { id: "drinking", title: "Drinking", icon: Utensils }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   },
   transfers: {
     title: "Functional Mobility",
     icon: ArrowUpDown,
     items: [
+<<<<<<< HEAD
       { 
         id: "bed_transfer", 
         title: "Bed Transfers", 
@@ -212,6 +247,12 @@ export const adlCategories = {
         requiresAssistiveDevices: true,
         requiresTimeTaken: true
       }
+=======
+      { id: "bed_transfer", title: "Bed Transfers", subtitle: "Moving in bed, getting in/out of bed", icon: Bed },
+      { id: "toilet_transfer", title: "Toilet Transfers", icon: ArrowUpDown },
+      { id: "shower_transfer", title: "Shower/Tub Transfers", icon: ArrowUpDown },
+      { id: "position_changes", title: "Position Changes", subtitle: "Sit to stand, chair transfers", icon: ArrowUpDown }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   }
 };
@@ -221,6 +262,7 @@ export const iadlCategories = {
     title: "Household Management",
     icon: Home,
     items: [
+<<<<<<< HEAD
       { 
         id: "cleaning", 
         title: "House Cleaning",
@@ -254,12 +296,19 @@ export const iadlCategories = {
         requiresFrequency: true,
         requiresAssistiveDevices: true
       }
+=======
+      { id: "cleaning", title: "House Cleaning", icon: Home },
+      { id: "laundry", title: "Laundry", icon: Shirt },
+      { id: "meal_prep", title: "Meal Preparation", icon: Utensils },
+      { id: "home_maintenance", title: "Home Maintenance", subtitle: "Basic repairs, yard work", icon: Home }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   },
   community: {
     title: "Community Integration",
     icon: Bus,
     items: [
+<<<<<<< HEAD
       { 
         id: "transportation", 
         title: "Transportation", 
@@ -350,6 +399,12 @@ export const iadlCategories = {
         requiresAssistiveDevices: true,
         requiresTimeTaken: true
       }
+=======
+      { id: "transportation", title: "Transportation", subtitle: "Driving, public transit use", icon: Bus },
+      { id: "shopping", title: "Shopping", icon: ShoppingCart },
+      { id: "money_management", title: "Financial Management", icon: CreditCard },
+      { id: "communication", title: "Communication", subtitle: "Phone, mail, email", icon: Phone }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   }
 };
@@ -359,6 +414,7 @@ export const healthCategories = {
     title: "Health Management",
     icon: HeartPulse,
     items: [
+<<<<<<< HEAD
       { 
         id: "medications", 
         title: "Medication Management",
@@ -390,12 +446,19 @@ export const healthCategories = {
         requiresFrequency: true,
         requiresTimeTaken: true
       }
+=======
+      { id: "medications", title: "Medication Management", icon: Pill },
+      { id: "appointments", title: "Medical Appointments", icon: Calendar },
+      { id: "monitoring", title: "Health Monitoring", subtitle: "Vitals, symptoms, etc.", icon: Activity },
+      { id: "exercise", title: "Exercise/Activity", icon: Activity }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   },
   routine: {
     title: "Health Routine",
     icon: Clock,
     items: [
+<<<<<<< HEAD
       { 
         id: "sleep", 
         title: "Sleep Management",
@@ -417,6 +480,11 @@ export const healthCategories = {
         icon: Utensils,
         requiresFrequency: true
       }
+=======
+      { id: "sleep", title: "Sleep Management", icon: Bed },
+      { id: "stress", title: "Stress Management", icon: Activity },
+      { id: "nutrition", title: "Nutrition Management", icon: Utensils }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   }
 };
@@ -426,6 +494,7 @@ export const workCategories = {
     title: "Work Status",
     icon: Briefcase,
     items: [
+<<<<<<< HEAD
       { 
         id: "current_status", 
         title: "Current Work Status",
@@ -451,6 +520,12 @@ export const workCategories = {
         subtitle: "Physical/cognitive limitations, environmental factors", 
         icon: ClipboardList
       }
+=======
+      { id: "current_status", title: "Current Work Status", icon: Briefcase },
+      { id: "workplace_accommodations", title: "Workplace Accommodations", icon: Building },
+      { id: "training_needs", title: "Training/Education Needs", icon: GraduationCap },
+      { id: "barriers", title: "Return to Work Barriers", icon: ClipboardList }
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
     ]
   }
 };

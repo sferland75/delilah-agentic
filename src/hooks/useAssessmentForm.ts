@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import type { AssessmentFormData } from '@/lib/validation/assessment-schema';
@@ -45,3 +46,33 @@ export const useAssessmentForm = () => {
 };
 
 export default useAssessmentForm;
+=======
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { type AssessmentForm, AssessmentSchema } from '@/types/form';
+
+const DEFAULT_VALUES: AssessmentForm = {
+  id: crypto.randomUUID(),
+  medicalHistory: {
+    preAccidentHistory: '',
+    mechanismOfInjury: '',
+    natureOfInjury: '',
+    currentTreatments: [],
+    medications: []
+  },
+  rangeOfMotion: [],
+  environmental: {
+    spaces: []
+  }
+};
+
+export function useAssessmentForm(defaultValues: Partial<AssessmentForm> = {}) {
+  return useForm<AssessmentForm>({
+    resolver: zodResolver(AssessmentSchema),
+    defaultValues: {
+      ...DEFAULT_VALUES,
+      ...defaultValues
+    }
+  });
+}
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801

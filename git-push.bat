@@ -3,6 +3,7 @@ echo Adding changes to git...
 git add .
 
 echo Creating commit...
+<<<<<<< HEAD
 git commit -m "feat(bodymap): Complete symptom tracking integration
 
 - Fixed pain assessment saving functionality
@@ -14,6 +15,9 @@ git commit -m "feat(bodymap): Complete symptom tracking integration
 - Enhanced symptom display and recording
 - Fixed region-specific pain assessments
 - Updated integration progress documentation"
+=======
+git commit -m "feat: Add collapsible cognitive symptoms section with severity ratings and observations"
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 
 echo Pushing to GitHub...
 git push origin main

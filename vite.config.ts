@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
+<<<<<<< HEAD
       '@': path.resolve(__dirname, './src')
     }
   },
@@ -13,4 +14,9 @@ export default defineConfig({
     port: 3000,
     open: true
   }
+=======
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
 });

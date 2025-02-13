@@ -132,4 +132,8 @@ export function CostSummary({ form }: CostSummaryProps) {
       </CardContent>
     </Card>
   );
+<<<<<<< HEAD
 }
+=======
+};
+>>>>>>> 5b8c461ac0328f7c90151fedd7d552697eff6801
