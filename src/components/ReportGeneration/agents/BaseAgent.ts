@@ -1,173 +1,123 @@
-import { AgentContext, AssessmentData, ProcessedData, ReportSection } from '../../../types/report';
-import { NarrativeEngine } from '../narrative/NarrativeEngine';
+import { AgentMetadata, SectionContent, DetailLevel, ProcessedData } from '../types';
 
-export interface AgentMetadata {
-    name: string;
-    priority: number;
-    dataKeys: string[];
-}
+export class BaseAgent {
+    protected name: string;
+    protected priority: number;
+    protected narrativeEnabled: boolean;
+    protected contextualAnalysis: boolean;
 
-export abstract class BaseAgent {
-    protected context: AgentContext;
-    protected metadata: AgentMetadata;
-    private narrativeEngine: NarrativeEngine | null = null;
-
-    constructor(context: AgentContext, metadata?: Partial<AgentMetadata>) {
-        this.context = context || { 
-            logger: console,
-            config: {
-                detailLevel: 'standard',
-                validateData: true,
-                formatPreference: 'clinical',
-                includeMetrics: false
-            },
-            features: {}
-        };
-        
-        this.metadata = {
-            name: 'BaseAgent',
-            priority: 0,
-            dataKeys: [],
-            ...metadata
-        };
-        
-        if (this.isNarrativeEnabled()) {
-            this.narrativeEngine = new NarrativeEngine(this.context);
-        }
+    constructor(
+        name: string = 'Base Section',
+        priority: number = 1,
+        options: {
+            narrativeEnabled?: boolean;
+            contextualAnalysis?: boolean;
+        } = {}
+    ) {
+        this.name = name;
+        this.priority = priority;
+        this.narrativeEnabled = options.narrativeEnabled ?? false;
+        this.contextualAnalysis = options.contextualAnalysis ?? false;
     }
 
-    abstract processData(data: AssessmentData): Promise<ProcessedData>;
-    
-    protected abstract formatBrief(data: any): string;
-    protected abstract formatStandard(data: any): string;
-    protected abstract formatDetailed(data: any): string;
-    
-    protected isNarrativeEnabled(): boolean {
-        return this.context.features?.enableNarrative ?? false;
+    public getMetadata(): AgentMetadata {
+        return {
+            name: this.name,
+            priority: this.priority
+        };
     }
 
-    async generateSection(data: AssessmentData): Promise<ReportSection> {
+    public async processData(input: { raw: any }): Promise<ProcessedData> {
         try {
-            // Process raw data
-            const processedData = await this.processData(data);
-
-            // If data processing failed, return error section
-            if (!processedData.valid) {
+            if (!input || !input.raw) {
                 return {
-                    sectionName: this.metadata.name,
-                    title: this.generateTitle(),
-                    type: this.getSectionType(),
-                    orderNumber: this.metadata.priority,
-                    content: `Standard: Error processing ${this.metadata.name.toLowerCase()} data`,
                     valid: false,
-                    errors: processedData.errors
+                    data: null,
+                    errors: ['No data provided']
                 };
             }
 
-            // Generate content based on whether narrative is enabled
-            const content = this.isNarrativeEnabled() 
-                ? await this.generateNarrativeContent(data, processedData)
-                : await this.generateStandardContent(processedData);
+            // Basic validation - override in child classes for specific validation
+            return {
+                valid: true,
+                data: input.raw
+            };
+        } catch (error) {
+            return {
+                valid: false,
+                data: null,
+                errors: [`Process error: ${error instanceof Error ? error.message : 'Unknown error'}`]
+            };
+        }
+    }
+
+    public async generateSection(input: { raw: any }): Promise<SectionContent> {
+        try {
+            const processed = await this.processData(input);
+            
+            if (!processed.valid || !processed.data) {
+                return {
+                    sectionName: this.name,
+                    content: 'Standard: Required data not found',
+                    orderNumber: this.priority,
+                    valid: false,
+                    errors: processed.errors
+                };
+            }
+
+            let content: string;
+            if (this.narrativeEnabled) {
+                try {
+                    content = await this.generateNarrativeContent(processed.data);
+                } catch (error) {
+                    content = await this.getFormattedContent(processed.data, 'standard');
+                }
+            } else {
+                content = await this.getFormattedContent(processed.data, 'standard');
+            }
 
             return {
-                sectionName: this.metadata.name,
-                title: this.generateTitle(),
-                type: this.getSectionType(),
-                orderNumber: this.metadata.priority,
+                sectionName: this.name,
                 content,
+                orderNumber: this.priority,
                 valid: true
             };
         } catch (error) {
             return {
-                sectionName: this.metadata.name,
-                title: this.generateTitle(),
-                type: this.getSectionType(),
-                orderNumber: this.metadata.priority,
-                content: `Standard: Error in ${this.metadata.name.toLowerCase()} - ${error instanceof Error ? error.message : 'Unknown error'}`,
+                sectionName: this.name,
+                content: `Standard: Catastrophic failure - ${error instanceof Error ? error.message : 'Unknown error'}`,
+                orderNumber: this.priority,
                 valid: false,
-                errors: [error instanceof Error ? error.message : 'Unknown error']
+                errors: ['Catastrophic failure in section generation']
             };
         }
     }
 
-    protected async generateStandardContent(processedData: ProcessedData): Promise<string> {
+    protected async getFormattedContent(data: any, level: DetailLevel): Promise<string> {
         try {
-            return await this.getFormattedContent(processedData.data, this.context.config.detailLevel);
-        } catch (error) {
-            return `Standard: Error formatting ${this.metadata.name.toLowerCase()} content`;
-        }
-    }
-
-    protected async generateNarrativeContent(data: AssessmentData, processedData: ProcessedData): Promise<string> {
-        if (!this.narrativeEngine) {
-            return this.generateStandardContent(processedData);
-        }
-
-        try {
-            const sectionType = this.getSectionType().toLowerCase();
-            const narrative = await this.narrativeEngine.generateNarrative(data.raw, sectionType);
-            
-            // If narrative generation fails or returns placeholder content, fall back to standard
-            if (!narrative || 
-                narrative === 'No data available for narrative generation' ||
-                narrative.includes('Unable to generate narrative')) {
-                return this.generateStandardContent(processedData);
-            }
-
-            return this.formatWithNarrative(processedData.data, narrative);
-        } catch (error) {
-            return this.generateStandardContent(processedData);
-        }
-    }
-
-    protected async getFormattedContent(data: any, detailLevel: 'brief' | 'standard' | 'detailed'): Promise<string> {
-        try {
-            switch (detailLevel) {
+            // Basic implementation - should be overridden in child classes
+            const prefix = 'Standard: ';
+            switch (level) {
                 case 'brief':
-                    return this.formatBrief(data);
-                case 'standard':
-                    return this.formatStandard(data);
+                    return `${prefix}Brief summary of ${this.name}`;
                 case 'detailed':
-                    return this.formatDetailed(data);
+                    return `${prefix}Detailed analysis of ${this.name}`;
+                case 'standard':
                 default:
-                    return this.formatStandard(data);
+                    return `${prefix}Standard report for ${this.name}`;
             }
         } catch (error) {
-            return `Standard: Error formatting ${this.metadata.name.toLowerCase()} content`;
+            return `Standard: Error formatting content - ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
     }
 
-    protected generateTitle(): string {
-        return this.metadata.name.replace(/Agent$/, '');
+    // For testing purposes
+    public async testGetFormattedContent(data: any, level: DetailLevel): Promise<string> {
+        return this.getFormattedContent(data, level);
     }
 
-    protected getSectionType(): string {
-        return this.metadata.name.replace(/Agent$/, '').toUpperCase();
-    }
-
-    protected formatWithNarrative(data: any, narrative: string): string {
-        try {
-            const sections: string[] = [];
-
-            if (narrative) {
-                sections.push(narrative);
-            }
-
-            if (this.context.config.detailLevel === 'detailed') {
-                const detailedContent = this.formatDetailed(data);
-                if (detailedContent && !detailedContent.includes('Error')) {
-                    sections.push(detailedContent);
-                }
-            }
-
-            return sections.filter(Boolean).join('\n\n') || 
-                   `Standard: No content available for ${this.metadata.name.toLowerCase()}`;
-        } catch (error) {
-            return this.generateStandardContent({
-                valid: false,
-                data: data,
-                errors: [error instanceof Error ? error.message : 'Error formatting narrative']
-            });
-        }
+    protected async generateNarrativeContent(data: any): Promise<string> {
+        // Base implementation - should be overridden in child classes
+        return `Standard: Narrative content for ${this.name}`;
     }
 }
